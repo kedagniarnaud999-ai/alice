@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Question, QuestionOption } from '@/types/test';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle2, Circle } from 'lucide-react';
 

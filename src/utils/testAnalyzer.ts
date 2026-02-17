@@ -206,7 +206,6 @@ export class TestAnalyzer {
     
     const hasComputer = realityScores['resource_computer'] || 0;
     const hasInternet = realityScores['resource_internet'] || 0;
-    const hasBudget = realityScores['resource_budget'] || 0;
 
     let feasibility = '';
 

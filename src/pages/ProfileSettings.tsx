@@ -4,7 +4,7 @@ import { authService } from '@/services/auth.api';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { User, Mail, Calendar, Shield } from 'lucide-react';
+import { User, Mail, Shield } from 'lucide-react';
 
 export const ProfileSettings: React.FC = () => {
   const { user } = useAuth();

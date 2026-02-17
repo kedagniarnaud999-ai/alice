@@ -69,7 +69,7 @@ class PathwayEngine {
   private selectRecommendedTracks(result: ProfileResult): LearningTrack[] {
     const tracks: LearningTrack[] = [];
     
-    result.primaryInterests.slice(0, 2).forEach((interest, index) => {
+    result.primaryInterests.slice(0, 2).forEach((interest) => {
       const track = this.buildTrackForInterest(interest, result);
       if (track) tracks.push(track);
     });
@@ -77,7 +77,7 @@ class PathwayEngine {
     return tracks;
   }
 
-  private buildTrackForInterest(interest: string, result: ProfileResult): LearningTrack | null {
+  private buildTrackForInterest(interest: string, _result: ProfileResult): LearningTrack | null {
     const modules = this.getModulesForInterest(interest);
     
     if (modules.length === 0) return null;
@@ -135,7 +135,7 @@ class PathwayEngine {
     return goals;
   }
 
-  private generateMilestones(result: ProfileResult): Milestone[] {
+  private generateMilestones(_result: ProfileResult): Milestone[] {
     return [
       {
         id: 'milestone_1',

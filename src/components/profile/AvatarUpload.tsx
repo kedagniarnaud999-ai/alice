@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/services/api.client';
 import { Button } from '@/components/ui/Button';
-import { User, Upload, Camera, X } from 'lucide-react';
+import { User, Camera } from 'lucide-react';
 
 export const AvatarUpload: React.FC = () => {
   const { user } = useAuth();

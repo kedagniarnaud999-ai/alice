@@ -52,7 +52,7 @@ export const ResetPassword: React.FC = () => {
         newPassword: formData.password,
       });
       setStatus('success');
-      setMessage(response.data.message || 'Votre mot de passe a été réinitialisé avec succès');
+      setMessage((response.data as any).message || 'Votre mot de passe a été réinitialisé avec succès');
       
       setTimeout(() => {
         navigate('/login');

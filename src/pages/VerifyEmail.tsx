@@ -23,7 +23,7 @@ export const VerifyEmail: React.FC = () => {
       try {
         const response = await apiClient.post('/auth/verify-email', { token });
         setStatus('success');
-        setMessage(response.data.message || 'Votre email a été vérifié avec succès !');
+        setMessage((response.data as any).message || 'Votre email a été vérifié avec succès !');
         
         setTimeout(() => {
           navigate('/login');

@@ -16,7 +16,7 @@ export const ForgotPassword: React.FC = () => {
     try {
       const response = await apiClient.post('/auth/forgot-password', { email });
       setStatus('success');
-      setMessage(response.data.message || 'Un email de réinitialisation a été envoyé');
+      setMessage((response.data as any).message || 'Un email de réinitialisation a été envoyé');
     } catch (error: any) {
       setStatus('error');
       setMessage(error.response?.data?.message || 'Une erreur s\'est produite. Veuillez réessayer.');
