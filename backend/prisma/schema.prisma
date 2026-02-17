@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  LINKEDIN
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MENTOR
+}
+
+enum CareerStage {
+  GRADUATE
+  UPSKILLING
+  RECONVERSION
+  JOBSEEKER
+  REPOSITIONING
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String?
+  name          String?
+  avatar        String?
+  role          UserRole      @default(USER)
+  provider      AuthProvider  @default(LOCAL)
+  providerId    String?
+  emailVerified Boolean       @default(false)
+  
+  emailVerificationToken   String?
+  emailVerificationExpires DateTime?
+  passwordResetToken       String?
+  passwordResetExpires     DateTime?
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  lastLoginAt   DateTime?
+
+  profile       Profile?
+  testResponses TestResponse[]
+  progression   UserProgression[]
+  
+  @@index([email])
+  @@map("users")
+}
+
+model Profile {
+  id                    String       @id @default(uuid())
+  userId                String       @unique
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  profileType           String
+  profileDescription    String       @db.Text
+  naturalTalents        String[]
+  motivationDrivers     String[]
+  primaryInterests      String[]
+  careerStage           CareerStage
+  feasibilityAssessment String       @db.Text
+  nextActions           String[]
+  
+  completedAt           DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  
+  @@map("profiles")
+}
+
+model TestResponse {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  questionId      String
+  selectedOptions String[]
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([userId])
+  @@map("test_responses")
+}
+
+model LearningModule {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @db.Text
+  duration    String
+  difficulty  String
+  category    String
+  skills      String[]
+  format      String
+  isFree      Boolean  @default(true)
+  content     String?  @db.Text
+  videoUrl    String?
+  order       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  progression UserProgression[]
+  
+  @@map("learning_modules")
+}
+
+model UserProgression {
+  id              String          @id @default(uuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  moduleId        String
+  module          LearningModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  
+  status          String          @default("not_started")
+  progress        Int             @default(0)
+  completedAt     DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@unique([userId, moduleId])
+  @@index([userId])
+  @@map("user_progression")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
