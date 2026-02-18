@@ -10,12 +10,10 @@ interface JwtPayload {
 
 declare global {
   namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-      };
+    interface User {
+      id: string;
+      email: string;
+      role: string;
     }
   }
 }
@@ -46,7 +44,7 @@ export const authenticate = async (
       throw new AppError('User not found', 401);
     }
 
-    req.user = user;
+    req.user = user as Express.User;
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
