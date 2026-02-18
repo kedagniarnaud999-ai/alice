@@ -127,17 +127,21 @@ router.post('/logout', async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
-router.get(
-  '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  })
-);
+const googleEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login?error=google` }),
-  async (req: Request, res: Response, next: NextFunction) => {
+router.get('/google', (req: Request, res: Response, next: NextFunction) => {
+  if (!googleEnabled) {
+    return res.status(503).json({ status: 'error', message: 'Google OAuth not configured' });
+  }
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
+
+router.get('/google/callback', (req: Request, res: Response, next: NextFunction) => {
+  if (!googleEnabled) {
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=google`);
+  }
+  passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login?error=google` })(req, res, async (err?: any) => {
+    if (err) return next(err);
     try {
       const user = req.user as any;
       const token = authService.generateAccessToken(user.id, user.email);
@@ -156,8 +160,8 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
-);
+  });
+});
 
 router.post(
   '/verify-email',
