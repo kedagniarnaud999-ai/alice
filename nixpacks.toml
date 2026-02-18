@@ -6,4 +6,4 @@ cmds = ['cd backend && npm ci']
 cmds = ['cd backend && npx prisma generate && npm run build']
 
 [start]
-cmd = 'cd backend && npx prisma migrate deploy && npm start'
+cmd = 'npx prisma migrate deploy && npm start'
