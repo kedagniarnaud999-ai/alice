@@ -17,7 +17,7 @@ import { errorHandler } from './middleware/errorHandler';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.APP_PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const uploadDir = path.join(__dirname, '../uploads/avatars');
 if (!fs.existsSync(uploadDir)) {
