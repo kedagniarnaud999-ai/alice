@@ -10,10 +10,12 @@ RUN npx prisma generate
 
 COPY backend/src ./src
 COPY backend/tsconfig.json ./
+COPY start.sh ./
+RUN chmod +x start.sh
 
 RUN npm run build
 
 ENV NODE_ENV=production
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+ENTRYPOINT ["/bin/sh", "/app/start.sh"]
