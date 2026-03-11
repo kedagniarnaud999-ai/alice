@@ -26,6 +26,24 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+// IMPORTANT: Cette route DOIT être déclarée AVANT /:id pour éviter qu'Express
+// l'intercepte en pensant que "progress" est un ID de module.
+router.get('/progress/me', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const progress = await prisma.userProgression.findMany({
+      where: { userId: req.user!.id },
+      include: { module: true },
+    });
+
+    res.json({
+      status: 'success',
+      data: { progress },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const module = await prisma.learningModule.findUnique({
@@ -75,22 +93,6 @@ router.post('/:id/progress', authenticate, async (req: Request, res: Response, n
     res.json({
       status: 'success',
       data: { userProgress },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/progress/me', authenticate, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const progress = await prisma.userProgression.findMany({
-      where: { userId: req.user!.id },
-      include: { module: true },
-    });
-
-    res.json({
-      status: 'success',
-      data: { progress },
     });
   } catch (error) {
     next(error);
