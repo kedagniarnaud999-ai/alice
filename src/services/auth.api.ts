@@ -27,9 +27,8 @@ export interface AuthResponse {
 export class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await apiClient.post<{ data: AuthResponse }>('/auth/register', data);
-    if (response.data.data.token) {
-      localStorage.setItem('token', response.data.data.token);
-    }
+    // Ne pas stocker le token lors de l'inscription
+    // L'utilisateur doit d'abord vérifier son email avant d'être connecté
     return response.data.data;
   }
 
