@@ -6,12 +6,14 @@ class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
+    console.log('[v0] API Client initialized with baseURL:', API_BASE_URL);
     this.client = axios.create({
       baseURL: API_BASE_URL,
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true,
+      // Désactivé temporairement pour éviter les problèmes CORS
+      // withCredentials: true,
     });
 
     this.client.interceptors.request.use(
