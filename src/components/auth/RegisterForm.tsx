@@ -39,17 +39,13 @@ export const RegisterForm: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('[v0] Starting registration with:', { name: formData.name, email: formData.email });
       await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
-      console.log('[v0] Registration successful, navigating to /verify-email-sent');
       navigate('/verify-email-sent');
     } catch (err: any) {
-      console.log('[v0] Registration error:', err);
-      console.log('[v0] Error response:', err.response);
       setError(err.response?.data?.message || 'Échec de l\'inscription. Veuillez réessayer.');
     } finally {
       setLoading(false);
@@ -57,7 +53,9 @@ export const RegisterForm: React.FC = () => {
   };
 
   const handleGoogleSignup = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
+    const rawUrl = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+    const apiUrl = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   return (

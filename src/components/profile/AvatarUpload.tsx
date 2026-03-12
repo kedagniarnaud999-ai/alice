@@ -73,7 +73,11 @@ export const AvatarUpload: React.FC = () => {
           <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
             {preview ? (
               <img
-                src={preview.startsWith('http') ? preview : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${preview}`}
+                src={preview.startsWith('http') ? preview : `${(() => {
+                  const rawUrl = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+                  const baseUrl = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
+                  return baseUrl.replace('/api', '');
+                })()}${preview}`}
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />

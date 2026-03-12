@@ -26,18 +26,10 @@ export interface AuthResponse {
 
 export class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
-    console.log('[v0] AuthService.register called with:', data);
-    try {
-      const response = await apiClient.post<{ data: AuthResponse }>('/auth/register', data);
-      console.log('[v0] AuthService.register response:', response.data);
-      // Ne pas stocker le token lors de l'inscription
-      // L'utilisateur doit d'abord vérifier son email avant d'être connecté
-      return response.data.data;
-    } catch (error: any) {
-      console.log('[v0] AuthService.register error:', error.message);
-      console.log('[v0] AuthService.register error response:', error.response?.data);
-      throw error;
-    }
+    const response = await apiClient.post<{ data: AuthResponse }>('/auth/register', data);
+    // Ne pas stocker le token lors de l'inscription
+    // L'utilisateur doit d'abord vérifier son email avant d'être connecté
+    return response.data.data;
   }
 
   async login(data: LoginData): Promise<AuthResponse> {

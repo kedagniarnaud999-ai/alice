@@ -27,7 +27,9 @@ export const LoginForm: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
+    const rawUrl = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+    const apiUrl = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
+    window.location.href = `${apiUrl}/auth/google`;
   };
 
   return (

@@ -1,12 +1,13 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+// S'assurer que l'URL a toujours le protocole https://
+const rawApiUrl = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+const API_BASE_URL = rawApiUrl.startsWith('http') ? rawApiUrl : `https://${rawApiUrl}`;
 
 class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
-    console.log('[v0] API Client initialized with baseURL:', API_BASE_URL);
     this.client = axios.create({
       baseURL: API_BASE_URL,
       headers: {
