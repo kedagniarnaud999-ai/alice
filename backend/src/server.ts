@@ -41,6 +41,10 @@ app.use(cors({
   origin: (origin, callback) => {
     // Autoriser les requêtes sans origin (ex: Postman, curl, SSR)
     if (!origin) return callback(null, true);
+    // Autoriser les domaines Vercel pour le développement
+    if (origin.includes('vercel.app') || origin.includes('v0.dev')) {
+      return callback(null, true);
+    }
     if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error(`CORS: origin '${origin}' not allowed`));
   },
