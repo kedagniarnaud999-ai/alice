@@ -1,21 +1,32 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://alice-production-1631.up.railway.app/api';
+// Fonction robuste pour nettoyer et déterminer l'URL
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  
+  if (envUrl) {
+    // Supprime les espaces et slashes inutiles à la fin
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  
+  // Fallback sécurisé pour la production
+  return 'https://alice-production-1631.up.railway.app/api';
+};
 
 class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
-    console.log('[v0] API Client initialized with baseURL:', API_BASE_URL);
+    const baseURL = getApiBaseUrl();
+    console.log('[v0] API Client initialized with baseURL:', baseURL);
+    
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
-      // Activé pour envoyer les cookies refreshToken
       withCredentials: true,
     });
-
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
