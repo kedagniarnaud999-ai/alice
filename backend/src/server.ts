@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import passport from './config/passport';
+import { prisma } from './config/database';
 
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
@@ -24,7 +25,16 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const limiter = rateLimit({
+// Rate limiting plus strict pour les routes d'authentification
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 requêtes par fenêtre (login/register)
+  message: 'Too many authentication attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: 'Too many requests from this IP, please try again later.',
@@ -55,7 +65,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-app.use('/api/', limiter);
+
+// Appliquer le rate limiting
+app.use('/api/auth', authLimiter); // Limite stricte pour auth
+app.use('/api/', generalLimiter); // Limite générale pour autres routes
 
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -68,9 +81,28 @@ app.use('/api/modules', moduleRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+// Graceful shutdown pour Prisma
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
 });
+
+const gracefulShutdown = async (signal: string) => {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  try {
+    await prisma.$disconnect();
+    console.log('Prisma disconnected successfully');
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
+  } catch (error) {
+    console.error('Error during shutdown:', error);
+    process.exit(1);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 export default app;
