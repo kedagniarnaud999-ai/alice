@@ -6,6 +6,7 @@ export interface User {
   name?: string;
   avatar?: string;
   role: string;
+  emailVerified?: boolean;
 }
 
 export interface RegisterData {
@@ -21,7 +22,8 @@ export interface LoginData {
 
 export interface AuthResponse {
   user: User;
-  token: string;
+  token?: string;
+  message?: string;
 }
 
 export class AuthService {
@@ -32,6 +34,7 @@ export class AuthService {
       console.log('[v0] AuthService.register response:', response.data);
       // Ne pas stocker le token lors de l'inscription
       // L'utilisateur doit d'abord vérifier son email avant d'être connecté
+      // Le backend ne retourne plus de token après inscription
       return response.data.data;
     } catch (error: any) {
       console.log('[v0] AuthService.register error:', error.message);

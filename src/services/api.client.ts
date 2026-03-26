@@ -12,8 +12,8 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      // Désactivé temporairement pour éviter les problèmes CORS
-      // withCredentials: true,
+      // Activé pour envoyer les cookies refreshToken
+      withCredentials: true,
     });
 
     this.client.interceptors.request.use(

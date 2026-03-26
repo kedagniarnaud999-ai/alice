@@ -41,6 +41,7 @@ export class AuthService {
         name: true,
         role: true,
         createdAt: true,
+        emailVerified: true,
       },
     });
 
@@ -59,12 +60,12 @@ export class AuthService {
       await sendVerificationEmail(email, verificationToken);
     }
 
-    const token = this.generateAccessToken(user.id, user.email);
-    const refreshToken = this.generateRefreshToken(user.id);
-
-    await this.saveRefreshToken(user.id, refreshToken);
-
-    return { user, token, refreshToken };
+    // IMPORTANT: Ne PAS retourner de token JWT après l'inscription
+    // L'utilisateur doit d'abord vérifier son email
+    return { 
+      user, 
+      message: 'Registration successful. Please check your email to verify your account.'
+    };
   }
 
   async login({ email, password }: LoginData) {
