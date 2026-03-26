@@ -43,66 +43,39 @@ const generalLimiter = rateLimit({
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
   .split(',')
   .map((o) => o.trim());
-
+// --- DÉBUT DU BLOC CORS À REMPLACER ---
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
+
 app.use(cors({
   origin: (origin, callback) => {
-    // Autoriser les requêtes sans origin (ex: Postman, curl, SSR)
+    // 1. Autoriser les requêtes sans origin (mobile, postman, etc.)
     if (!origin) return callback(null, true);
-    // Autoriser les domaines Vercel pour le développement
-    if (origin.includes('vercel.app') || origin.includes('v0.dev')) {
+    
+    // 2. Autoriser explicitement TOUS les sous-domaines Vercel (Production & Preview)
+    if (origin.includes('vercel.app')) {
+      console.log(`✅ CORS allowed (Vercel): ${origin}`);
       return callback(null, true);
     }
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS: origin '${origin}' not allowed`));
+    
+    // 3. Autoriser v0.dev si utilisé
+    if (origin.includes('v0.dev')) {
+      return callback(null, true);
+    }
+
+    // 4. Vérifier la liste blanche classique (localhost, etc.)
+    const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',');
+    if (allowedOrigins.some(o => o.trim() === origin)) {
+      return callback(null, true);
+    }
+
+    // 5. Refuser les autres
+    console.warn(`❌ CORS blocked: ${origin}`);
+    callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(passport.initialize());
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
-// Appliquer le rate limiting
-app.use('/api/auth', authLimiter); // Limite stricte pour auth
-app.use('/api/', generalLimiter); // Limite générale pour autres routes
-
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/profiles', profileRoutes);
-app.use('/api/modules', moduleRoutes);
-
-app.use(errorHandler);
-
-// Graceful shutdown pour Prisma
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
-});
-
-const gracefulShutdown = async (signal: string) => {
-  console.log(`\n${signal} received. Shutting down gracefully...`);
-  try {
-    await prisma.$disconnect();
-    console.log('Prisma disconnected successfully');
-    server.close(() => {
-      console.log('HTTP server closed');
-      process.exit(0);
-    });
-  } catch (error) {
-    console.error('Error during shutdown:', error);
-    process.exit(1);
-  }
-};
-
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
-export default app;
+// --- FIN DU BLOC CORS ---
