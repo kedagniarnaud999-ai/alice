@@ -1,16 +1,18 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-// Fonction robuste pour nettoyer et déterminer l'URL
+// Fonction robuste pour déterminer l'URL de l'API
 const getApiBaseUrl = () => {
+  // 1. Vérifier si une variable d'environnement est définie
   const envUrl = import.meta.env.VITE_API_URL;
   
   if (envUrl) {
-    // Supprime les espaces et slashes inutiles à la fin
+    // Nettoyer les espaces et slashes inutiles
     return envUrl.trim().replace(/\/+$/, '');
   }
   
-  // Fallback sécurisé pour la production
-  return 'https://alice-production-1631.up.railway.app/api';
+  // 2. Fallback : Utiliser un chemin relatif pour Vercel
+  // Cela pointe automatiquement vers le backend hébergé sur le même domaine
+  return '/api';
 };
 
 class ApiClient {
@@ -25,8 +27,11 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      // Important pour envoyer les cookies d'authentification
       withCredentials: true,
     });
+
+    // Intercepteur pour ajouter le token JWT aux requêtes
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
@@ -38,6 +43,7 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
+    // Intercepteur pour gérer le rafraîchissement du token (401)
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
@@ -51,6 +57,7 @@ class ApiClient {
               return this.client.request(error.config);
             }
           } catch (refreshError) {
+            // Échec du refresh : déconnexion
             localStorage.removeItem('token');
             window.location.href = '/login';
           }
