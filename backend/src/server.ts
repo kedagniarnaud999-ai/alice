@@ -3,6 +3,19 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+// Solution pour contourner la limite de variables sur Render
+if (process.env.ENV_CONFIG) {
+  try {
+    const config = JSON.parse(process.env.ENV_CONFIG);
+    Object.keys(config).forEach((key) => {
+      process.env[key] = config[key];
+    });
+    console.log('✅ Variables d\'environnement chargées depuis ENV_CONFIG');
+  } catch (error) {
+    console.error('❌ Erreur lors du chargement de ENV_CONFIG:', error);
+  }
+}
+// --- FIN DU CONTENU À AJOUTER ---
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
