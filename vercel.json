@@ -22,12 +22,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/index.html"
     }
-  ],
-  "functions": {
-    "backend/src/server.ts": {
-      "maxDuration": 10
-    }
-  }
+  ]
 }
