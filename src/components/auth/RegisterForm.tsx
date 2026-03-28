@@ -47,6 +47,7 @@ export const RegisterForm: React.FC = () => {
     setLoading(true);
 
     try {
+<<<<<<< HEAD
       await registerUser({
         name: data.name,
         email: data.email,
@@ -67,6 +68,20 @@ export const RegisterForm: React.FC = () => {
           <span>{message}</span>
         </div>
       );
+=======
+      console.log('[v0] Starting registration with:', { name: formData.name, email: formData.email });
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log('[v0] Registration successful, navigating to /verify-email-sent');
+      navigate('/verify-email-sent');
+    } catch (err: any) {
+      console.log('[v0] Registration error:', err);
+      console.log('[v0] Error response:', err.response);
+      setError(err.response?.data?.message || 'Échec de l\'inscription. Veuillez réessayer.');
+>>>>>>> 87e349ba4f2fd8810b023b72ff144c0b87df1db7
     } finally {
       setLoading(false);
     }

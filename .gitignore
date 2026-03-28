@@ -1,38 +1,47 @@
-node_modules
-dist
-dist-ssr
-*.local
-
-.DS_Store
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+```
+# Dependencies
+node_modules/
 
 # Environment variables
 .env
 .env.local
-.env.production
-env.local
+*.env.*
 
 # Logs
-logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# Vercel
-.vercel
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-# Backend
-backend/node_modules/
-backend/dist/
-backend/uploads/
-backend/.env
+# Build artifacts
+dist/
+build/
+target/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Package lock files (already in repo but good to have)
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+```

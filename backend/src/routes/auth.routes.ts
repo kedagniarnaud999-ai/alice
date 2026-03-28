@@ -29,18 +29,14 @@ router.post(
     try {
       const result = await authService.register(req.body);
 
-      res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      });
+      // Ne PAS définir de cookie refreshToken après l'inscription
+      // L'utilisateur doit d'abord vérifier son email
 
       res.status(201).json({
         status: 'success',
+        message: result.message,
         data: {
           user: result.user,
-          token: result.token,
         },
       });
     } catch (error) {

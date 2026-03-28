@@ -39,8 +39,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (data: RegisterData) => {
-    const response = await authService.register(data);
-    setUser(response.user);
+    // On inscrit l'utilisateur mais on ne le connecte PAS automatiquement
+    // L'utilisateur doit d'abord vérifier son email
+    await authService.register(data);
+    // Ne pas mettre à jour user ici - l'utilisateur doit vérifier son email d'abord
   };
 
   const logout = async () => {

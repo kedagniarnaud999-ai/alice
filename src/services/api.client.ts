@@ -1,19 +1,37 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Fonction robuste pour déterminer l'URL de l'API
+const getApiBaseUrl = () => {
+  // 1. Vérifier si une variable d'environnement est définie
+  const envUrl = import.meta.env.VITE_API_URL;
+  
+  if (envUrl) {
+    // Nettoyer les espaces et slashes inutiles
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  
+  // 2. Fallback : Utiliser un chemin relatif pour Vercel
+  // Cela pointe automatiquement vers le backend hébergé sur le même domaine
+  return '/api';
+};
 
 class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
+    const baseURL = getApiBaseUrl();
+    console.log('[v0] API Client initialized with baseURL:', baseURL);
+    
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
+      // Important pour envoyer les cookies d'authentification
       withCredentials: true,
     });
 
+    // Intercepteur pour ajouter le token JWT aux requêtes
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('token');
@@ -25,6 +43,7 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
+    // Intercepteur pour gérer le rafraîchissement du token (401)
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
@@ -38,6 +57,7 @@ class ApiClient {
               return this.client.request(error.config);
             }
           } catch (refreshError) {
+            // Échec du refresh : déconnexion
             localStorage.removeItem('token');
             window.location.href = '/login';
           }
