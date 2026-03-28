@@ -2,51 +2,71 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import toast from 'react-hot-toast';
+import { CheckCircle, XCircle } from 'lucide-react';
+
+const registerSchema = z.object({
+  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  email: z.string().email('Email invalide'),
+  password: z.string()
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+    .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+    .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Les mots de passe ne correspondent pas',
+  path: ['confirmPassword'],
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const RegisterForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères');
-      return;
-    }
-
+  const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
 
     try {
-      await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
+      await registerUser({
+        name: data.name,
+        email: data.email,
+        password: data.password,
       });
+      toast.success(
+        <div className="flex items-center gap-2">
+          <CheckCircle className="w-4 h-4" />
+          <span>Compte créé avec succès !</span>
+        </div>
+      );
       navigate('/verify-email-sent');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Échec de l\'inscription. Veuillez réessayer.');
+      const message = err.response?.data?.message || 'Échec de l\'inscription. Veuillez réessayer.';
+      toast.error(
+        <div className="flex items-center gap-2">
+          <XCircle className="w-4 h-4" />
+          <span>{message}</span>
+        </div>
+      );
     } finally {
       setLoading(false);
     }
@@ -67,12 +87,6 @@ export const RegisterForm: React.FC = () => {
             <p className="text-gray-600">Créez votre compte pour commencer</p>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -80,14 +94,15 @@ export const RegisterForm: React.FC = () => {
               </label>
               <input
                 id="name"
-                name="name"
                 type="text"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('name')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.name ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="Jean Dupont"
               />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+              )}
             </div>
 
             <div>
@@ -96,14 +111,15 @@ export const RegisterForm: React.FC = () => {
               </label>
               <input
                 id="email"
-                name="email"
                 type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('email')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="votre.email@exemple.com"
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -112,15 +128,16 @@ export const RegisterForm: React.FC = () => {
               </label>
               <input
                 id="password"
-                name="password"
                 type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('password')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="••••••••"
               />
-              <p className="mt-1 text-xs text-gray-500">Minimum 8 caractères</p>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre</p>
             </div>
 
             <div>
@@ -129,14 +146,15 @@ export const RegisterForm: React.FC = () => {
               </label>
               <input
                 id="confirmPassword"
-                name="confirmPassword"
                 type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('confirmPassword')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="••••••••"
               />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+              )}
             </div>
 
             <Button

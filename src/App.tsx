@@ -16,11 +16,12 @@ import { VerifyEmailSent } from '@/pages/VerifyEmailSent';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { AuthCallback } from '@/pages/AuthCallback';
+import { ProfileSettings } from '@/pages/ProfileSettings';
 import { TestAnalyzer } from '@/utils/testAnalyzer';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
 import { storageManager } from '@/utils/storageManager';
 
-type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'pathway' | 'dashboard';
+type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'pathway' | 'dashboard' | 'profile';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('home');
@@ -30,7 +31,7 @@ function App() {
   useEffect(() => {
     const savedResult = storageManager.loadProfileResult();
     const savedPathway = storageManager.loadPathway();
-    
+
     if (savedResult) {
       setProfileResult(savedResult);
     }
@@ -47,14 +48,20 @@ function App() {
     setAppState('test');
   };
 
-  const handleTestComplete = (responses: TestResponse[]) => {
+  const handleTestComplete = (responses: TestResponse[], result?: ProfileResult) => {
     setAppState('loading');
-    
+
     setTimeout(() => {
-      const analyzer = new TestAnalyzer(responses);
-      const result = analyzer.analyze();
-      setProfileResult(result);
-      storageManager.saveProfileResult(result);
+      let profileResultData = result;
+
+      // Si le résultat n'est pas passé, l'analyser localement (fallback)
+      if (!profileResultData) {
+        const analyzer = new TestAnalyzer(responses);
+        profileResultData = analyzer.analyze();
+      }
+
+      setProfileResult(profileResultData);
+      storageManager.saveProfileResult(profileResultData);
       setAppState('results');
     }, 1500);
   };
@@ -84,7 +91,7 @@ function App() {
     if (page === 'home') {
       setAppState('home');
     } else if (page === 'profile') {
-      setAppState('results');
+      setAppState('profile');
     } else if (page === 'pathway' && pathway) {
       setAppState('pathway');
     }
@@ -102,7 +109,7 @@ function App() {
   const TestApp = () => (
     <div className="min-h-screen">
       {appState === 'home' && (
-        <HomePage 
+        <HomePage
           onStartTest={handleStartTest}
           hasCompletedTest={hasCompletedTest}
           onViewResults={hasCompletedTest ? handleViewDashboard : handleViewResults}
@@ -112,7 +119,7 @@ function App() {
       {appState === 'welcome' && (
         <WelcomeScreen onStart={handleBeginTest} />
       )}
-      
+
       {appState === 'test' && (
         <TestFlow onComplete={handleTestComplete} />
       )}
@@ -120,10 +127,10 @@ function App() {
       {appState === 'loading' && (
         <LoadingScreen message="Analyse de votre profil en cours..." />
       )}
-      
+
       {appState === 'results' && profileResult && (
-        <ResultsDashboard 
-          result={profileResult} 
+        <ResultsDashboard
+          result={profileResult}
           onStartPathway={handleStartPathway}
         />
       )}
@@ -136,9 +143,13 @@ function App() {
           onResetData={handleResetData}
         />
       )}
-      
+
       {appState === 'pathway' && pathway && (
         <PathwayView pathway={pathway} />
+      )}
+
+      {appState === 'profile' && (
+        <ProfileSettings />
       )}
     </div>
   );
@@ -152,7 +163,7 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
-      
+
       <Route
         path="/*"
         element={

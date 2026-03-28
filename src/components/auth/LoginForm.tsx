@@ -2,25 +2,56 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import toast from 'react-hot-toast';
+import { CheckCircle, XCircle } from 'lucide-react';
+
+const loginSchema = z.object({
+  email: z.string().email('Email invalide'),
+  password: z.string().min(1, 'Le mot de passe est requis'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
 
     try {
-      await login({ email, password });
+      await login(data);
+      toast.success(
+        <div className="flex items-center gap-2">
+          <CheckCircle className="w-4 h-4" />
+          <span>Connexion réussie !</span>
+        </div>
+      );
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Échec de la connexion. Vérifiez vos identifiants.');
+      const message = err.response?.data?.message || 'Échec de la connexion. Vérifiez vos identifiants.';
+      toast.error(
+        <div className="flex items-center gap-2">
+          <XCircle className="w-4 h-4" />
+          <span>{message}</span>
+        </div>
+      );
     } finally {
       setLoading(false);
     }
@@ -41,12 +72,6 @@ export const LoginForm: React.FC = () => {
             <p className="text-gray-600">Connectez-vous pour continuer</p>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -55,12 +80,14 @@ export const LoginForm: React.FC = () => {
               <input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('email')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="votre.email@exemple.com"
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -70,12 +97,14 @@ export const LoginForm: React.FC = () => {
               <input
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                {...register('password')}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition ${errors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
                 placeholder="••••••••"
               />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-between">

@@ -1,29 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProfileResult } from '@/types/test';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ExportMenu } from './ExportMenu';
-import { 
-  Sparkles, 
-  Target, 
-  Heart, 
-  Compass, 
-  MapPin, 
+import {
+  Sparkles,
+  Target,
+  Heart,
+  Compass,
+  MapPin,
   CheckCircle2,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from 'lucide-react';
+import { profileService } from '@/services/profile.api';
+import { storageManager } from '@/utils/storageManager';
 
 interface ResultsDashboardProps {
-  result: ProfileResult;
+  result?: ProfileResult;
   onStartPathway: () => void;
 }
 
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
-  result,
+  result: initialResult,
   onStartPathway,
 }) => {
+  const [profileResult, setProfileResult] = useState<ProfileResult | null>(initialResult || null);
+  const [isLoading, setIsLoading] = useState(!initialResult);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (initialResult) {
+        setProfileResult(initialResult);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // Essayer de récupérer depuis le backend
+        const backendProfile = await profileService.getMyProfile();
+        setProfileResult(backendProfile);
+        storageManager.saveProfileResult(backendProfile);
+      } catch (error) {
+        console.error('Erreur chargement backend, fallback localStorage:', error);
+        // Fallback: localStorage
+        const localProfile = storageManager.loadProfileResult();
+        if (localProfile) {
+          setProfileResult(localProfile);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [initialResult]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Chargement de votre profil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileResult) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Aucun profil trouvé</p>
+          <Button onClick={onStartPathway}>Commencer le test</Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -37,7 +92,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           <p className="text-lg text-gray-600 mb-4">
             Découvrez qui vous êtes et comment avancer concrètement
           </p>
-          <ExportMenu result={result} />
+          <ExportMenu result={profileResult} />
         </div>
 
         <Card padding="lg" className="bg-gradient-to-br from-primary-50 to-purple-50 border-2 border-primary-200">
@@ -49,10 +104,10 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {result.profileType}
+                {profileResult.profileType}
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                {result.profileDescription}
+                {profileResult.profileDescription}
               </p>
             </div>
           </div>
@@ -71,7 +126,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {result.naturalTalents.map((talent, index) => (
+                {profileResult.naturalTalents.map((talent, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-800">{talent}</span>
@@ -93,7 +148,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {result.motivationDrivers.map((driver, index) => (
+                {profileResult.motivationDrivers.map((driver, index) => (
                   <Badge key={index} variant="accent" size="md">
                     {driver}
                   </Badge>
@@ -115,7 +170,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="grid sm:grid-cols-2 gap-3">
-              {result.primaryInterests.map((interest, index) => (
+              {profileResult.primaryInterests.map((interest, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg"
@@ -139,7 +194,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             <CardContent>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 border border-purple-300 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-purple-700" />
-                <span className="font-semibold text-purple-900">{result.careerStage}</span>
+                <span className="font-semibold text-purple-900">{profileResult.careerStage}</span>
               </div>
             </CardContent>
           </Card>
@@ -153,7 +208,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <p className="text-gray-700 leading-relaxed">
-                {result.feasibilityAssessment}
+                {profileResult.feasibilityAssessment}
               </p>
             </CardContent>
           </Card>
@@ -170,7 +225,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-3 mb-6">
-              {result.nextActions.map((action, index) => (
+              {profileResult.nextActions.map((action, index) => (
                 <div
                   key={index}
                   className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200"

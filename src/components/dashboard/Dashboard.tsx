@@ -1,33 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ProfileResult } from '@/types/test';
 import { PersonalizedPathway } from '@/utils/pathwayEngine';
-import { 
-  Home, 
-  Target, 
-  BookOpen, 
-  User, 
-  Settings, 
+import {
+  Home,
+  Target,
+  BookOpen,
+  User,
+  Settings,
   LogOut,
-  ChevronRight 
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
+import { profileService } from '@/services/profile.api';
+import { storageManager } from '@/utils/storageManager';
 
 interface DashboardProps {
-  profileResult: ProfileResult;
+  profileResult?: ProfileResult;
   pathway: PersonalizedPathway | null;
   onNavigate: (page: 'home' | 'profile' | 'pathway') => void;
   onResetData: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ 
-  profileResult, 
+export const Dashboard: React.FC<DashboardProps> = ({
+  profileResult: initialProfileResult,
   pathway,
   onNavigate,
   onResetData
 }) => {
+  const [profileResult, setProfileResult] = useState<ProfileResult | null>(initialProfileResult || null);
+  const [isLoading, setIsLoading] = useState(!initialProfileResult);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (initialProfileResult) {
+        setProfileResult(initialProfileResult);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // Essayer de récupérer depuis le backend
+        const backendProfile = await profileService.getMyProfile();
+        setProfileResult(backendProfile);
+        storageManager.saveProfileResult(backendProfile);
+      } catch (error) {
+        console.error('Erreur chargement backend, fallback localStorage:', error);
+        // Fallback: localStorage
+        const localProfile = storageManager.loadProfileResult();
+        if (localProfile) {
+          setProfileResult(localProfile);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [initialProfileResult]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Chargement du tableau de bord...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileResult) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Aucun profil trouvé</p>
+          <Button onClick={() => onNavigate('home')}>Commencer le test</Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleReset = () => {
     if (showResetConfirm) {
@@ -89,9 +144,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <p className="text-sm text-gray-600 mb-4">
               {profileResult.profileDescription}
             </p>
-            <Button 
-              onClick={() => onNavigate('profile')} 
-              variant="outline" 
+            <Button
+              onClick={() => onNavigate('profile')}
+              variant="outline"
               size="sm"
               className="w-full"
             >
@@ -121,9 +176,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '0%' }}></div>
               </div>
             </div>
-            <Button 
-              onClick={() => onNavigate('pathway')} 
-              variant="outline" 
+            <Button
+              onClick={() => onNavigate('pathway')}
+              variant="outline"
               size="sm"
               className="w-full"
               disabled={!pathway}
@@ -191,10 +246,10 @@ interface QuickAccessCardProps {
   disabled?: boolean;
 }
 
-const QuickAccessCard: React.FC<QuickAccessCardProps> = ({ 
-  icon, 
-  title, 
-  description, 
+const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
+  icon,
+  title,
+  description,
   onClick,
   disabled = false
 }) => (
@@ -204,8 +259,8 @@ const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
     className={`
       text-left p-6 bg-white rounded-xl border-2 border-gray-200 
       transition-all duration-200
-      ${disabled 
-        ? 'opacity-50 cursor-not-allowed' 
+      ${disabled
+        ? 'opacity-50 cursor-not-allowed'
         : 'hover:border-primary-300 hover:shadow-md cursor-pointer'
       }
     `}

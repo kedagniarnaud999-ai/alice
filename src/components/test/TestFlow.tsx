@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { TestResponse } from '@/types/test';
+import { TestResponse, ProfileResult } from '@/types/test';
 import { orientationQuestions } from '@/data/questions';
 import { QuestionCard } from './QuestionCard';
 import { SectionHeader } from './SectionHeader';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Button } from '@/components/ui/Button';
-import { ChevronLeft, Save } from 'lucide-react';
+import { ChevronLeft, Save, CheckCircle } from 'lucide-react';
 import { storageManager } from '@/utils/storageManager';
+import { TestAnalyzer } from '@/utils/testAnalyzer';
+import { profileService } from '@/services/profile.api';
 
 interface TestFlowProps {
-  onComplete: (responses: TestResponse[]) => void;
+  onComplete: (responses: TestResponse[], result?: ProfileResult) => void;
 }
 
 export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<TestResponse[]>([]);
   const [showSavedMessage, setShowSavedMessage] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const savedProgress = storageManager.loadTestProgress();
@@ -48,10 +52,10 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
   const currentResponse = responses.find(r => r.questionId === currentQuestion.id);
 
   const previousQuestion = currentIndex > 0 ? orientationQuestions[currentIndex - 1] : null;
-  const showSectionHeader = currentQuestion.section && 
+  const showSectionHeader = currentQuestion.section &&
     (!previousQuestion || previousQuestion.section !== currentQuestion.section);
 
-  const handleAnswer = (selectedOptions: string[]) => {
+  const handleAnswer = async (selectedOptions: string[]) => {
     const newResponse: TestResponse = {
       questionId: currentQuestion.id,
       selectedOptions,
@@ -63,7 +67,40 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
 
     if (isLastQuestion) {
       storageManager.clearTestProgress();
-      onComplete(updatedResponses);
+      setIsSaving(true);
+      setSaveError(null);
+
+      try {
+        // Analyser les réponses
+        const analyzer = new TestAnalyzer(updatedResponses);
+        const result = analyzer.analyze();
+
+        // Sauvegarder au backend (avec fallback localStorage)
+        try {
+          await profileService.saveTestResponses(updatedResponses);
+          await profileService.saveProfile(result);
+          console.log('✓ Profil et réponses sauvegardés au backend');
+        } catch (error) {
+          console.error('Erreur sauvegarde backend:', error);
+          setSaveError('Sauvegarde locale uniquement (backend indisponible)');
+          storageManager.saveProfileResult(result);
+        }
+
+        // Garder localStorage en fallback
+        storageManager.saveProfileResult(result);
+
+        onComplete(updatedResponses, result);
+      } catch (error) {
+        console.error('Erreur lors de l\'analyse:', error);
+        setSaveError('Erreur lors de l\'analyse. Veuillez réessayer.');
+        // Fallback: continuer avec localStorage
+        const analyzer = new TestAnalyzer(updatedResponses);
+        const result = analyzer.analyze();
+        storageManager.saveProfileResult(result);
+        onComplete(updatedResponses, result);
+      } finally {
+        setIsSaving(false);
+      }
     } else {
       setCurrentIndex(currentIndex + 1);
     }
@@ -85,20 +122,34 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
               total={totalQuestions}
               className="flex-1"
             />
-            {showSavedMessage && (
-              <div className="ml-4 flex items-center gap-2 text-sm text-green-600">
-                <Save className="w-4 h-4" />
-                <span>Sauvegardé</span>
-              </div>
-            )}
+            <div className="ml-4 flex items-center gap-2">
+              {isSaving && (
+                <div className="text-sm text-blue-600 animate-pulse">
+                  Sauvegarde...
+                </div>
+              )}
+              {showSavedMessage && !isSaving && (
+                <div className="flex items-center gap-2 text-sm text-green-600">
+                  <Save className="w-4 h-4" />
+                  <span>Sauvegardé</span>
+                </div>
+              )}
+              {saveError && (
+                <div className="flex items-center gap-2 text-sm text-amber-600">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{saveError}</span>
+                </div>
+              )}
+            </div>
           </div>
-          
+
           {currentIndex > 0 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={handleBack}
               className="text-gray-600"
+              disabled={isSaving}
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Retour
@@ -107,7 +158,7 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
         </div>
 
         {showSectionHeader && currentQuestion.section && currentQuestion.sectionDescription && (
-          <SectionHeader 
+          <SectionHeader
             title={currentQuestion.section}
             description={currentQuestion.sectionDescription}
           />
@@ -117,6 +168,7 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
           question={currentQuestion}
           onAnswer={handleAnswer}
           currentAnswer={currentResponse?.selectedOptions}
+          disabled={isSaving}
         />
       </div>
     </div>
