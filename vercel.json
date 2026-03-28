@@ -1,12 +1,7 @@
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "vite",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/src/server.ts" },
-    { "source": "/health", "destination": "/backend/src/server.ts" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
+"scripts": {
+  "dev": "vite",
+  "build": "tsc && vite build",
+  "vercel-build": "npm run build", 
+  "preview": "vite preview",
+  "lint": "eslint ."
+},
