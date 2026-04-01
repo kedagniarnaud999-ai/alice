@@ -8,16 +8,22 @@ interface QuestionCardProps {
   question: Question;
   onAnswer: (selectedOptions: string[]) => void;
   currentAnswer?: string[];
+  disabled?: boolean;
 }
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   onAnswer,
   currentAnswer = [],
+  disabled = false,
 }) => {
   const [selected, setSelected] = useState<string[]>(currentAnswer);
 
   const handleOptionClick = (optionId: string) => {
+    if (disabled) {
+      return;
+    }
+
     if (question.type === 'single') {
       setSelected([optionId]);
     } else {
@@ -67,6 +73,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
               option={option}
               isSelected={isSelected(option.id)}
               onClick={() => handleOptionClick(option.id)}
+              disabled={disabled}
             />
           ))}
         </div>
@@ -74,7 +81,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         <div className="flex justify-end pt-4">
           <Button
             onClick={handleSubmit}
-            disabled={!canSubmit}
+            disabled={!canSubmit || disabled}
             size="lg"
             className="min-w-[200px]"
           >
@@ -90,22 +97,26 @@ interface OptionButtonProps {
   option: QuestionOption;
   isSelected: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const OptionButton: React.FC<OptionButtonProps> = ({
   option,
   isSelected,
   onClick,
+  disabled = false,
 }) => {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`
         w-full text-left p-4 rounded-lg border-2 transition-all duration-200
         ${isSelected
           ? 'border-primary-500 bg-primary-50 shadow-sm'
           : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
         }
+        ${disabled ? 'cursor-not-allowed opacity-60' : ''}
       `}
     >
       <div className="flex items-start gap-3">

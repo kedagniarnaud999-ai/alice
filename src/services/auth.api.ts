@@ -1,4 +1,5 @@
-import { apiClient } from './api.client';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 
 export interface User {
   id: string;
@@ -26,48 +27,146 @@ export interface AuthResponse {
   message?: string;
 }
 
+const mapSupabaseUser = (user: SupabaseUser): User => ({
+  id: user.id,
+  email: user.email ?? '',
+  name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? '',
+  avatar: user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? '',
+  role: user.user_metadata?.role ?? 'USER',
+  emailVerified: !!user.email_confirmed_at,
+});
+
 export class AuthService {
   async register(data: RegisterData): Promise<AuthResponse> {
-    console.log('[v0] AuthService.register called with:', data);
-    try {
-      const response = await apiClient.post<{ data: AuthResponse }>('/auth/register', data);
-      console.log('[v0] AuthService.register response:', response.data);
-      // Ne pas stocker le token lors de l'inscription
-      // L'utilisateur doit d'abord vérifier son email avant d'être connecté
-      // Le backend ne retourne plus de token après inscription
-      return response.data.data;
-    } catch (error: any) {
-      console.log('[v0] AuthService.register error:', error.message);
-      console.log('[v0] AuthService.register error response:', error.response?.data);
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const { data: result, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        emailRedirectTo: redirectTo,
+        data: {
+          full_name: data.name,
+          role: 'USER',
+        },
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
+      message: 'Registration successful. Please check your email to verify your account.',
+    };
+  }
+
+  async login(data: LoginData): Promise<AuthResponse> {
+    const { data: result, error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error || !result.user || !result.session) {
+      throw error ?? new Error('Unable to create a Supabase session.');
+    }
+
+    return {
+      user: mapSupabaseUser(result.user),
+      token: result.session.access_token,
+    };
+  }
+
+  async loginWithGoogle(): Promise<void> {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
       throw error;
     }
   }
 
-  async login(data: LoginData): Promise<AuthResponse> {
-    const response = await apiClient.post<{ data: AuthResponse }>('/auth/login', data);
-    if (response.data.data.token) {
-      localStorage.setItem('token', response.data.data.token);
-    }
-    return response.data.data;
-  }
-
   async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
-    localStorage.removeItem('token');
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw error;
+    }
   }
 
-  async getCurrentUser(): Promise<User> {
-    const response = await apiClient.get<{ data: { user: User } }>('/users/me');
-    return response.data.data.user;
+  async getCurrentUser(): Promise<User | null> {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      throw error;
+    }
+
+    return data.user ? mapSupabaseUser(data.user) : null;
   }
 
   async updateProfile(data: { name?: string; avatar?: string }): Promise<User> {
-    const response = await apiClient.patch<{ data: { user: User } }>('/users/me', data);
-    return response.data.data.user;
+    const { data: currentUserData, error: getUserError } = await supabase.auth.getUser();
+    if (getUserError || !currentUserData.user) {
+      throw getUserError ?? new Error('No authenticated user found.');
+    }
+
+    const nextMetadata = {
+      ...currentUserData.user.user_metadata,
+      ...(data.name !== undefined ? { full_name: data.name } : {}),
+      ...(data.avatar !== undefined ? { avatar_url: data.avatar } : {}),
+    };
+
+    const { data: updated, error } = await supabase.auth.updateUser({
+      data: nextMetadata,
+    });
+
+    if (error || !updated.user) {
+      throw error ?? new Error('Unable to update the user profile.');
+    }
+
+    return mapSupabaseUser(updated.user);
+  }
+
+  async getSession(): Promise<Session | null> {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      throw error;
+    }
+    return data.session;
+  }
+
+  async exchangeCodeForSession(code: string): Promise<User | null> {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      throw error;
+    }
+    return data.user ? mapSupabaseUser(data.user) : null;
+  }
+
+  onAuthStateChange(callback: (user: User | null) => void) {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      callback(session?.user ? mapSupabaseUser(session.user) : null);
+    });
+
+    return () => subscription.unsubscribe();
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return false;
+  }
+
+  private buildPendingUser(data: RegisterData): User {
+    return {
+      id: '',
+      email: data.email,
+      name: data.name,
+      role: 'USER',
+      emailVerified: false,
+    };
   }
 }
 
