@@ -26,7 +26,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.60.1",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
