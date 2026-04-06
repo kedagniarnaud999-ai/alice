@@ -22,6 +22,7 @@ export const LoginForm: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [magicLinkEmail, setMagicLinkEmail] = useState(searchParams.get('email') ?? '');
   const callbackError = searchParams.get('error');
   const prefilledEmail = searchParams.get('email') ?? '';
 
@@ -79,7 +80,7 @@ export const LoginForm: React.FC = () => {
   };
 
   const handleMagicLink = async () => {
-    if (!currentEmail) {
+    if (!magicLinkEmail) {
       toast.error(
         <div className="flex items-center gap-2">
           <XCircle className="h-4 w-4" />
@@ -92,11 +93,11 @@ export const LoginForm: React.FC = () => {
     setMagicLinkLoading(true);
 
     try {
-      await authService.sendMagicLink(currentEmail);
+      await authService.sendMagicLink(magicLinkEmail);
       toast.success(
         <div className="flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
-          <span>Lien envoye. Consultez votre boite mail.</span>
+          <span>Lien envoye a {magicLinkEmail}. Consultez votre boite mail.</span>
         </div>
       );
     } catch (err: any) {
@@ -136,6 +137,17 @@ export const LoginForm: React.FC = () => {
             <p className="mb-4 text-sm text-gray-600">
               Recevez un lien de connexion securise par email, sans saisir de mot de passe.
             </p>
+            <label htmlFor="magic-link-email" className="mb-2 block text-sm font-medium text-gray-700">
+              Email pour le lien de connexion
+            </label>
+            <input
+              id="magic-link-email"
+              type="email"
+              value={magicLinkEmail}
+              onChange={(event) => setMagicLinkEmail(event.target.value)}
+              className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500"
+              placeholder="votre.email@exemple.com"
+            />
             <Button
               type="button"
               onClick={handleMagicLink}
