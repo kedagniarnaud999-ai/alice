@@ -85,6 +85,28 @@ export class ProfileService {
       throw error;
     }
   }
+
+  async clearMyData(): Promise<void> {
+    const userId = await getCurrentUserId();
+
+    const { error: deleteResponsesError } = await supabase
+      .from('test_responses')
+      .delete()
+      .eq('user_id', userId);
+
+    if (deleteResponsesError) {
+      throw deleteResponsesError;
+    }
+
+    const { error: deleteProfileError } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('user_id', userId);
+
+    if (deleteProfileError) {
+      throw deleteProfileError;
+    }
+  }
 }
 
 export const profileService = new ProfileService();

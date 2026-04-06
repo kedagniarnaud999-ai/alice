@@ -6,15 +6,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, Mail, Sparkles, XCircle } from 'lucide-react';
+import { authService } from '@/services/auth.api';
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+    name: z.string().min(2, 'Le nom doit contenir au moins 2 caracteres'),
     email: z.string().email('Email invalide'),
     password: z
       .string()
-      .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+      .min(8, 'Le mot de passe doit contenir au moins 8 caracteres')
       .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
       .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
       .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
@@ -28,13 +29,15 @@ const registerSchema = z
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export const RegisterForm: React.FC = () => {
-  const { register: registerUser, loginWithGoogle } = useAuth();
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -46,11 +49,13 @@ export const RegisterForm: React.FC = () => {
     },
   });
 
+  const currentEmail = watch('email');
+
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
 
     try {
-      await registerUser({
+      const result = await registerUser({
         name: data.name,
         email: data.email,
         password: data.password,
@@ -59,12 +64,21 @@ export const RegisterForm: React.FC = () => {
       toast.success(
         <div className="flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
-          <span>Compte créé avec succès !</span>
+          <span>
+            {result.isExistingAccount
+              ? 'Email deja connu. Consultez les options proposees.'
+              : 'Compte cree avec succes !'}
+          </span>
         </div>
       );
-      navigate('/verify-email-sent');
+
+      navigate(
+        `/verify-email-sent?email=${encodeURIComponent(data.email)}${
+          result.isExistingAccount ? '&existing=1' : ''
+        }`
+      );
     } catch (err: any) {
-      const message = err?.message || "Échec de l'inscription. Veuillez réessayer.";
+      const message = err?.message || "Echec de l'inscription. Veuillez reessayer.";
       toast.error(
         <div className="flex items-center gap-2">
           <XCircle className="h-4 w-4" />
@@ -76,16 +90,36 @@ export const RegisterForm: React.FC = () => {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleMagicLink = async () => {
+    if (!currentEmail) {
+      toast.error(
+        <div className="flex items-center gap-2">
+          <XCircle className="h-4 w-4" />
+          <span>Entrez votre email pour recevoir un lien de demarrage rapide.</span>
+        </div>
+      );
+      return;
+    }
+
+    setMagicLinkLoading(true);
+
     try {
-      await loginWithGoogle();
+      await authService.sendMagicLink(currentEmail);
+      toast.success(
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-4 w-4" />
+          <span>Lien envoye. Consultez votre boite mail.</span>
+        </div>
+      );
     } catch (err: any) {
       toast.error(
         <div className="flex items-center gap-2">
           <XCircle className="h-4 w-4" />
-          <span>{err?.message || 'Inscription Google indisponible.'}</span>
+          <span>{err?.message || "Impossible d'envoyer le lien de connexion."}</span>
         </div>
       );
+    } finally {
+      setMagicLinkLoading(false);
     }
   };
 
@@ -97,7 +131,37 @@ export const RegisterForm: React.FC = () => {
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
               Rejoignez <span className="text-primary-600">Ali Ce</span>
             </h1>
-            <p className="text-gray-600">Créez votre compte pour commencer</p>
+            <p className="text-gray-600">Creez votre compte pour commencer</p>
+          </div>
+
+          <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary-600" />
+              <h2 className="font-semibold text-gray-900">Demarrage rapide</h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Recevez un lien de connexion securise par email pour acceder rapidement a Ali Ce.
+            </p>
+            <Button
+              type="button"
+              onClick={handleMagicLink}
+              disabled={magicLinkLoading}
+              className="w-full"
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              {magicLinkLoading ? 'Envoi du lien...' : 'Recevoir un lien de demarrage rapide'}
+            </Button>
+          </div>
+
+          <div className="mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-gray-500">Ou creer un compte classique</span>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -144,18 +208,21 @@ export const RegisterForm: React.FC = () => {
                 className={`w-full rounded-lg border px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500 ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="••••••••"
+                placeholder="........"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}
               <p className="mt-1 text-xs text-gray-500">
-                Minimum 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+                Minimum 8 caracteres, 1 majuscule, 1 minuscule, 1 chiffre
               </p>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
                 Confirmer le mot de passe
               </label>
               <input
@@ -165,7 +232,7 @@ export const RegisterForm: React.FC = () => {
                 className={`w-full rounded-lg border px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500 ${
                   errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="••••••••"
+                placeholder="........"
               />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
@@ -173,7 +240,7 @@ export const RegisterForm: React.FC = () => {
             </div>
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Création du compte...' : 'Créer mon compte'}
+              {loading ? 'Creation du compte...' : 'Creer mon compte'}
             </Button>
           </form>
 
@@ -183,14 +250,14 @@ export const RegisterForm: React.FC = () => {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-4 text-gray-500">Ou s'inscrire avec</span>
+                <span className="bg-white px-4 text-gray-500">Connexion sociale</span>
               </div>
             </div>
 
             <button
               type="button"
-              onClick={handleGoogleSignup}
-              className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-3 transition hover:bg-gray-50"
+              disabled
+              className="mt-4 flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-500 opacity-80"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -210,12 +277,12 @@ export const RegisterForm: React.FC = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="font-medium text-gray-700">Google</span>
+              <span className="font-medium">Google bientot disponible</span>
             </button>
           </div>
 
           <p className="mt-8 text-center text-sm text-gray-600">
-            Vous avez déjà un compte ?{' '}
+            Vous avez deja un compte ?{' '}
             <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
               Connectez-vous
             </a>

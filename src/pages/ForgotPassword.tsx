@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, Mail } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { authService } from '@/services/auth.api';
 
 export const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [searchParams] = useSearchParams();
+  const [email, setEmail] = useState(searchParams.get('email') ?? '');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -13,18 +15,14 @@ export const ForgotPassword: React.FC = () => {
     setStatus('loading');
     setMessage('');
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-
-    if (error) {
+    try {
+      await authService.requestPasswordReset(email);
+      setStatus('success');
+      setMessage('Un email de reinitialisation a ete envoye.');
+    } catch (error: any) {
       setStatus('error');
-      setMessage(error.message || "Une erreur s'est produite. Veuillez réessayer.");
-      return;
+      setMessage(error?.message || "Une erreur s'est produite. Veuillez reessayer.");
     }
-
-    setStatus('success');
-    setMessage('Un email de réinitialisation a été envoyé.');
   };
 
   return (
@@ -35,9 +33,9 @@ export const ForgotPassword: React.FC = () => {
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
               <Mail className="h-8 w-8 text-primary-600" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">Mot de passe oublié ?</h1>
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Mot de passe oublie ?</h1>
             <p className="text-gray-600">
-              Entrez votre email pour recevoir un lien de réinitialisation
+              Entrez votre email pour recevoir un lien de reinitialisation
             </p>
           </div>
 
@@ -46,13 +44,18 @@ export const ForgotPassword: React.FC = () => {
               <div className="mb-6 flex justify-center">
                 <CheckCircle className="h-16 w-16 text-green-500" />
               </div>
-              <h2 className="mb-2 text-xl font-semibold text-gray-900">Email envoyé !</h2>
+              <h2 className="mb-2 text-xl font-semibold text-gray-900">Email envoye !</h2>
               <p className="mb-6 text-gray-600">{message}</p>
-              <p className="mb-8 text-sm text-gray-500">
-                Vérifiez votre boîte de réception puis suivez le lien envoyé par Supabase.
+              <p className="mb-4 text-sm text-gray-500">
+                Verifiez votre boite de reception puis suivez le lien envoye par Supabase.
               </p>
+              {email && (
+                <p className="mb-8 text-xs text-gray-500">
+                  Si vous ne le voyez pas, cherchez aussi dans les spams pour <strong>{email}</strong>.
+                </p>
+              )}
               <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
-                Retour à la connexion
+                Retour a la connexion
               </a>
             </div>
           ) : (
@@ -86,7 +89,7 @@ export const ForgotPassword: React.FC = () => {
 
               <p className="mt-6 text-center text-sm text-gray-600">
                 <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
-                  Retour à la connexion
+                  Retour a la connexion
                 </a>
               </p>
             </>

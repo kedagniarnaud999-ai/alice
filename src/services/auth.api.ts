@@ -27,6 +27,11 @@ export interface AuthResponse {
   message?: string;
 }
 
+export interface RegisterResponse extends AuthResponse {
+  requiresEmailVerification: boolean;
+  isExistingAccount: boolean;
+}
+
 const mapSupabaseUser = (user: SupabaseUser): User => ({
   id: user.id,
   email: user.email ?? '',
@@ -37,7 +42,7 @@ const mapSupabaseUser = (user: SupabaseUser): User => ({
 });
 
 export class AuthService {
-  async register(data: RegisterData): Promise<AuthResponse> {
+  async register(data: RegisterData): Promise<RegisterResponse> {
     const redirectTo = `${window.location.origin}/auth/callback`;
     const { data: result, error } = await supabase.auth.signUp({
       email: data.email,
@@ -55,9 +60,16 @@ export class AuthService {
       throw error;
     }
 
+    const isExistingAccount =
+      !!result.user && Array.isArray(result.user.identities) && result.user.identities.length === 0;
+
     return {
       user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
-      message: 'Registration successful. Please check your email to verify your account.',
+      requiresEmailVerification: true,
+      isExistingAccount,
+      message: isExistingAccount
+        ? 'Cet email semble deja associe a un compte. Connectez-vous ou reinitialisez votre mot de passe si besoin.'
+        : 'Registration successful. Please check your email to verify your account.',
     };
   }
 
@@ -135,6 +147,43 @@ export class AuthService {
       throw error;
     }
     return data.session;
+  }
+
+  async resendSignupConfirmation(email: string): Promise<void> {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  async sendMagicLink(email: string): Promise<void> {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
   }
 
   async exchangeCodeForSession(code: string): Promise<User | null> {

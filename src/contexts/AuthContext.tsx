@@ -1,12 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authService, type LoginData, type RegisterData, type User } from '@/services/auth.api';
+import {
+  authService,
+  type LoginData,
+  type RegisterData,
+  type RegisterResponse,
+  type User,
+} from '@/services/auth.api';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (data: LoginData) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  register: (data: RegisterData) => Promise<RegisterResponse>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
@@ -64,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (data: RegisterData) => {
-    await authService.register(data);
+    return authService.register(data);
   };
 
   const logout = async () => {

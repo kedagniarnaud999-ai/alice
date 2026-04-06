@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, Mail, Sparkles, XCircle } from 'lucide-react';
+import { authService } from '@/services/auth.api';
 
 const loginSchema = z.object({
   email: z.string().email('Email invalide'),
@@ -16,21 +17,41 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginForm: React.FC = () => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const callbackError = searchParams.get('error');
+  const prefilledEmail = searchParams.get('email') ?? '';
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      email: prefilledEmail,
       password: '',
     },
   });
+
+  useEffect(() => {
+    if (!callbackError) {
+      return;
+    }
+
+    toast.error(
+      <div className="flex items-center gap-2">
+        <XCircle className="h-4 w-4" />
+        <span>{callbackError}</span>
+      </div>
+    );
+  }, [callbackError]);
+
+  const currentEmail = watch('email');
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
@@ -40,12 +61,12 @@ export const LoginForm: React.FC = () => {
       toast.success(
         <div className="flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
-          <span>Connexion réussie !</span>
+          <span>Connexion reussie !</span>
         </div>
       );
       navigate('/dashboard');
     } catch (err: any) {
-      const message = err?.message || 'Échec de la connexion. Vérifiez vos identifiants.';
+      const message = err?.message || 'Echec de la connexion. Verifiez vos identifiants.';
       toast.error(
         <div className="flex items-center gap-2">
           <XCircle className="h-4 w-4" />
@@ -57,16 +78,36 @@ export const LoginForm: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleMagicLink = async () => {
+    if (!currentEmail) {
+      toast.error(
+        <div className="flex items-center gap-2">
+          <XCircle className="h-4 w-4" />
+          <span>Entrez votre email pour recevoir un lien de connexion.</span>
+        </div>
+      );
+      return;
+    }
+
+    setMagicLinkLoading(true);
+
     try {
-      await loginWithGoogle();
+      await authService.sendMagicLink(currentEmail);
+      toast.success(
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-4 w-4" />
+          <span>Lien envoye. Consultez votre boite mail.</span>
+        </div>
+      );
     } catch (err: any) {
       toast.error(
         <div className="flex items-center gap-2">
           <XCircle className="h-4 w-4" />
-          <span>{err?.message || 'Connexion Google indisponible.'}</span>
+          <span>{err?.message || "Impossible d'envoyer le lien de connexion."}</span>
         </div>
       );
+    } finally {
+      setMagicLinkLoading(false);
     }
   };
 
@@ -79,6 +120,42 @@ export const LoginForm: React.FC = () => {
               Bienvenue sur <span className="text-primary-600">Ali Ce</span>
             </h1>
             <p className="text-gray-600">Connectez-vous pour continuer</p>
+          </div>
+
+          {callbackError && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+              {callbackError}
+            </div>
+          )}
+
+          <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary-600" />
+              <h2 className="font-semibold text-gray-900">Demarrage rapide</h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Recevez un lien de connexion securise par email, sans saisir de mot de passe.
+            </p>
+            <Button
+              type="button"
+              onClick={handleMagicLink}
+              disabled={magicLinkLoading}
+              className="w-full"
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              {magicLinkLoading ? 'Envoi du lien...' : 'Recevoir un lien de connexion'}
+            </Button>
+          </div>
+
+          <div className="mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-gray-500">Ou avec votre mot de passe</span>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -109,7 +186,7 @@ export const LoginForm: React.FC = () => {
                 className={`w-full rounded-lg border px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500 ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="••••••••"
+                placeholder="........"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -117,9 +194,12 @@ export const LoginForm: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Session sécurisée via Supabase</span>
-              <a href="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
-                Mot de passe oublié ?
+              <span className="text-sm text-gray-600">Session securisee via Supabase</span>
+              <a
+                href={`/forgot-password${currentEmail ? `?email=${encodeURIComponent(currentEmail)}` : ''}`}
+                className="text-sm text-primary-600 hover:text-primary-700"
+              >
+                Mot de passe oublie ?
               </a>
             </div>
 
@@ -134,14 +214,14 @@ export const LoginForm: React.FC = () => {
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-4 text-gray-500">Ou continuer avec</span>
+                <span className="bg-white px-4 text-gray-500">Connexion sociale</span>
               </div>
             </div>
 
             <button
               type="button"
-              onClick={handleGoogleLogin}
-              className="mt-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-3 transition hover:bg-gray-50"
+              disabled
+              className="mt-4 flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-gray-500 opacity-80"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -161,7 +241,7 @@ export const LoginForm: React.FC = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="font-medium text-gray-700">Google</span>
+              <span className="font-medium">Google bientot disponible</span>
             </button>
           </div>
 

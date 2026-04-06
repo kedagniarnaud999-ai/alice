@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ali Ce - PRD V2</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #5f6c86;
+      --line: #dde3ef;
+      --brand: #0f6cbd;
+      --brand-soft: #eaf3ff;
+      --accent: #13795b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+    .page {
+      max-width: 980px;
+      margin: 40px auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 56px 64px;
+      box-shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
+    }
+    .cover {
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: 40px;
+      line-height: 1.1;
+    }
+    .subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      margin: 0;
+    }
+    h2 {
+      margin-top: 34px;
+      font-size: 26px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+    h3 {
+      margin-top: 24px;
+      font-size: 19px;
+      color: var(--brand);
+    }
+    p, li { font-size: 16px; }
+    ul { padding-left: 22px; }
+    .note {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: #eefaf5;
+      color: #204b3f;
+      border-radius: 8px;
+    }
+    @media print {
+      body { background: #fff; }
+      .page {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        max-width: none;
+        border-radius: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="cover">
+      <span class="eyebrow">Private Product Document</span>
+      <h1>Ali Ce</h1>
+      <p class="subtitle">Product Requirements Document - Version 2</p>
+    </section>
+
+    <h2>1. Introduction</h2>
+    <p>Ali Ce est une plateforme numerique d'orientation, de developpement des competences et de pilotage des parcours academiques et professionnels. Le produit a vocation a accompagner les individus dans la comprehension de leur profil, la structuration de leur trajectoire et le developpement progressif de leurs competences, tout en preparant une ouverture vers d'autres acteurs de l'ecosysteme : etablissements, entreprises, consultants et structures d'accompagnement.</p>
+    <p>Le produit doit etre concu avec une double exigence : offrir rapidement une experience utilisateur individuelle solide et demonstrable, tout en preparant un socle extensible vers des usages institutionnels et organisationnels plus larges.</p>
+
+    <h2>2. Contexte</h2>
+    <p>Les parcours academiques et professionnels sont souvent peu lisibles, insuffisamment suivis et mal relies a des objectifs concrets. Les individus manquent frequemment de reperes pour comprendre leurs forces, clarifier leur direction, suivre leur progression et valoriser leurs acquis. En parallele, les structures qui accompagnent ces parcours disposent rarement d'outils simples et robustes pour suivre des trajectoires, mesurer des besoins, recommander des remises a niveau ou piloter des cohortes a grande echelle.</p>
+    <p>Ali Ce repond a cette fragmentation en proposant un produit capable de relier orientation, progression, competences et employabilite.</p>
+
+    <h2>3. Vision produit</h2>
+    <p>La vision d'Ali Ce est de devenir une plateforme de continuite des parcours academiques et professionnels.</p>
+    <ul>
+      <li>aider un individu a comprendre son profil, orienter ses choix et suivre sa progression</li>
+      <li>permettre a des structures d'accompagnement de mieux organiser, suivre et valoriser les trajectoires qu'elles pilotent</li>
+      <li>a terme, permettre a des etablissements et entreprises de mieux relier donnees de parcours, besoins en competences et decisions d'accompagnement ou de formation</li>
+    </ul>
+
+    <h2>4. Ambition geographique</h2>
+    <p>Le point d'entree initial est fortement pertinent dans les contextes africains francophones, ou les enjeux d'orientation, de lisibilite des parcours et d'employabilite sont particulierement forts. Toutefois, Ali Ce ne doit pas etre concu comme un produit limite a cette zone.</p>
+    <p>L'objectif est de construire une base produit localement pertinente au depart, exportable rapidement ensuite, et adaptable a d'autres langues, marches, systemes educatifs et cadres d'employabilite.</p>
+
+    <h2>5. Probleme a resoudre</h2>
+    <h3>5.1 Cote individus</h3>
+    <ul>
+      <li>difficulte a se connaitre de maniere exploitable</li>
+      <li>difficulte a relier profil personnel, competences et objectif professionnel</li>
+      <li>absence de suivi structure de la progression</li>
+      <li>faible visibilite des competences et des acquis</li>
+      <li>manque de recommandations concretes et realistes</li>
+    </ul>
+    <h3>5.2 Cote structures</h3>
+    <ul>
+      <li>difficulte a suivre les parcours de maniere claire</li>
+      <li>difficulte a organiser des cohortes ou programmes d'accompagnement a grande echelle</li>
+      <li>faible capacite a ajuster les offres de formation ou de montee en competences</li>
+      <li>difficulte a produire une lecture operationnelle des besoins et des ecarts</li>
+    </ul>
+
+    <h2>6. Mission produit</h2>
+    <p>Transformer des parcours disperses ou flous en trajectoires lisibles, suivies et valorisees, en connectant orientation, progression, competences, formation, accompagnement et employabilite.</p>
+
+    <h2>7. Utilisateurs cibles</h2>
+    <h3>7.1 Cible initiale</h3>
+    <ul>
+      <li>etudiants</li>
+      <li>jeunes diplomes</li>
+      <li>chercheurs d'emploi</li>
+      <li>professionnels en repositionnement</li>
+      <li>professionnels en reconversion</li>
+      <li>personnes en montee en competences</li>
+    </ul>
+    <h3>7.2 Cibles d'expansion</h3>
+    <ul>
+      <li>universites et etablissements de formation</li>
+      <li>recruteurs et entreprises</li>
+      <li>consultants employabilite et carriere</li>
+      <li>centres d'employabilite et structures specialisees</li>
+      <li>parents et tuteurs dans un cadre institutionnel encadre</li>
+    </ul>
+
+    <h2>8. Proposition de valeur</h2>
+    <p>Ali Ce propose un environnement permettant de clarifier une direction, structurer un parcours, suivre une progression, identifier ou valoriser des competences et connecter l'apprentissage a des objectifs concrets.</p>
+    <p>La proposition de valeur centrale du produit est de transformer un parcours en trajectoire structuree et actionnable.</p>
+
+    <h2>9. Piliers du produit</h2>
+    <h3>9.1 Orientation et clarification de la voie</h3>
+    <p>Le produit doit aider l'utilisateur a identifier ses interets, ses talents, ses motivations, sa situation actuelle, ses contraintes et ses perspectives realistes.</p>
+    <h3>9.2 Suivi structure du parcours</h3>
+    <p>Le produit doit permettre de suivre l'etat d'avancement du parcours, les etapes franchies, les objectifs associes, les elements deja acquis et les prochaines actions pertinentes.</p>
+    <h3>9.3 Developpement et valorisation des competences</h3>
+    <p>Le produit doit permettre d'identifier les competences existantes, les ecarts a combler, les recommandations utiles de remise a niveau et les formations, certifications ou parcours adaptes.</p>
+
+    <h2>10. Strategie de scope</h2>
+    <p>Ali Ce doit etre pilote avec un principe de discipline produit : vision large, execution resserree. La vision de plateforme multi-acteurs ne doit pas conduire a surcharger le MVP.</p>
+
+    <h2>11. Scope du MVP</h2>
+    <h3>11.1 Objectif du MVP</h3>
+    <p>Le MVP a pour objectif de demontrer qu'un utilisateur individuel peut effectuer un parcours fluide et utile de bout en bout.</p>
+    <h3>11.2 Inclus dans le MVP</h3>
+    <ul>
+      <li>creation de compte</li>
+      <li>authentification et persistance de session</li>
+      <li>test d'orientation</li>
+      <li>generation d'un profil</li>
+      <li>sauvegarde du profil</li>
+      <li>restitution des resultats</li>
+      <li>dashboard individuel</li>
+      <li>profil utilisateur</li>
+      <li>avatar</li>
+      <li>parcours recommande</li>
+      <li>persistance en ligne des donnees critiques</li>
+      <li>experience responsive web</li>
+    </ul>
+    <h3>11.3 Exclus du MVP</h3>
+    <ul>
+      <li>portail universite complet</li>
+      <li>portail entreprise complet</li>
+      <li>portail consultant complet</li>
+      <li>espace parent autonome</li>
+      <li>analytics avances</li>
+      <li>administration complexe</li>
+      <li>systeme de paiement</li>
+      <li>marketplace complete</li>
+      <li>multi-tenant institutionnel avance</li>
+      <li>gestion RH complete</li>
+      <li>portail de gestion academique complet</li>
+    </ul>
+
+    <h2>12. Scope de la demo</h2>
+    <p>La demo court terme doit demontrer clairement l'inscription et la connexion, l'orientation complete, la generation et la lecture d'un profil, la sauvegarde et la recuperation des donnees, un dashboard personnel et un parcours recommande coherent.</p>
+
+    <h2>13. Modele d'expansion par poles</h2>
+    <h3>13.1 Pole apprenants / utilisateurs individuels</h3>
+    <p>Ce pole constitue le coeur initial du produit. Il permet a l'utilisateur de disposer d'un profil numerique, clarifier sa voie, suivre son parcours, acceder a des recommandations et retrouver son historique.</p>
+    <h3>13.2 Pole universites et etablissements</h3>
+    <p>Ce pole doit permettre aux etablissements de proposer des parcours ou dispositifs via la plateforme, equiper leurs etudiants, suivre des trajectoires academiques et professionnelles, analyser des besoins d'insertion et de progression et adapter leurs offres de formation en fonction des donnees observees, de la demande et des besoins du marche.</p>
+    <h3>13.3 Pole parents et tuteurs</h3>
+    <p>Ce pole n'existe pas comme produit autonome grand public. Il n'est active que dans un cadre institutionnel ou educatif encadre.</p>
+    <h3>13.4 Pole recruteurs et entreprises</h3>
+    <p>Ce pole doit aussi permettre aux entreprises d'utiliser Ali Ce comme outil de lecture, d'orientation et de montee en competences interne, notamment pour evaluer un employe au regard de ses objectifs et de ceux de l'entreprise, identifier des ecarts et recommander des remises a niveau.</p>
+    <h3>13.5 Pole consultants et centres d'employabilite</h3>
+    <p>Ce pole doit permettre aux consultants, centres d'employabilite et structures specialisees de proposer des accompagnements, suivre des beneficiaires, structurer des programmes, digitaliser l'organisation de cohortes et piloter des dispositifs d'accompagnement a grande echelle.</p>
+
+    <h2>14. Parcours utilisateur principal</h2>
+    <h3>14.1 Parcours actuel</h3>
+    <ol>
+      <li>L'utilisateur cree un compte</li>
+      <li>Il confirme son email</li>
+      <li>Il se connecte</li>
+      <li>Il passe le test d'orientation</li>
+      <li>Il recoit son profil</li>
+      <li>Il consulte ses recommandations</li>
+      <li>Il ouvre son dashboard</li>
+      <li>Il explore son parcours recommande</li>
+    </ol>
+    <h3>14.2 Extensions futures</h3>
+    <p>A terme, ce parcours pourra etre enrichi avec modules de formation persistes, progression detaillee, recommandations plus fines, accompagnement consultant, lecture institutionnelle, logique employeur / employe et valorisation des acquis.</p>
+
+    <h2>15. Exigences fonctionnelles</h2>
+    <h3>15.1 Exigences MVP</h3>
+    <ul>
+      <li>creation de compte</li>
+      <li>connexion et session persistante</li>
+      <li>test d'orientation complet</li>
+      <li>sauvegarde des reponses</li>
+      <li>generation, stockage et restitution du profil</li>
+      <li>dashboard relisant l'etat principal du parcours</li>
+      <li>modification du profil de base</li>
+      <li>reinitialisation du parcours</li>
+    </ul>
+    <h3>15.2 Exigences futures</h3>
+    <ul>
+      <li>gestion de modules et progression</li>
+      <li>recommandations enrichies</li>
+      <li>suivi de cohortes</li>
+      <li>adaptation d'offres de formation</li>
+      <li>lecture entreprise / employe</li>
+      <li>espaces multi-acteurs</li>
+    </ul>
+
+    <h2>16. Exigences non fonctionnelles</h2>
+    <ul>
+      <li>experience claire et rassurante</li>
+      <li>fonctionnement web responsive</li>
+      <li>robustesse du parcours principal</li>
+      <li>bonne persistance des donnees critiques</li>
+      <li>comprehension rapide des resultats</li>
+      <li>base technique simple a maintenir</li>
+      <li>architecture extensible a la montee en complexite future</li>
+    </ul>
+
+    <h2>17. Criteres de succes</h2>
+    <ul>
+      <li>parcours utilisateur principal fluide</li>
+      <li>valeur du profil percue comme utile</li>
+      <li>donnees persistantes</li>
+      <li>dashboard coherent</li>
+      <li>demonstration publique stable</li>
+      <li>base technique permettant une expansion sans refonte profonde</li>
+    </ul>
+
+    <h2>18. Risques</h2>
+    <ul>
+      <li>ouvrir trop tot tous les poles</li>
+      <li>construire de la complexite institutionnelle trop tot</li>
+      <li>diluer le produit dans une vision trop large</li>
+      <li>enfermer le produit dans un positionnement geographique trop etroit</li>
+      <li>promettre plus que ce que le noyau actuel peut soutenir</li>
+    </ul>
+
+    <h2>19. Priorites strategiques</h2>
+    <ul>
+      <li>Priorite 1 : fiabiliser le noyau individuel</li>
+      <li>Priorite 2 : structurer les modules et la progression reelle</li>
+      <li>Priorite 3 : preparer les premiers cas d'usage multi-acteurs</li>
+      <li>Priorite 4 : etendre les usages institutionnels, entreprise et cohortes</li>
+      <li>Priorite 5 : preparer l'adaptabilite geographique, linguistique et sectorielle</li>
+    </ul>
+
+    <h2>20. Conclusion</h2>
+    <p>Ali Ce doit etre construit comme un produit centre utilisateur dans sa phase initiale, mais pense comme une future plateforme de pilotage des parcours.</p>
+    <p>Sa force potentielle reside dans sa capacite a relier orientation, progression, competences et employabilite, tout en restant suffisamment discipline pour faire emerger d'abord un noyau de valeur simple, credible et demonstrable.</p>
+
+    <div class="note">
+      Document prive de cadrage produit. Recommande pour usage interne, partenaires de confiance, cadrage equipe et roadmap. Ne pas publier tel quel dans un depot public.
+    </div>
+  </main>
+</body>
+</html>
