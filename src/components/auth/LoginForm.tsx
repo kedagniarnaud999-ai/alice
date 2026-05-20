@@ -65,7 +65,7 @@ export const LoginForm: React.FC = () => {
           <span>Connexion reussie !</span>
         </div>
       );
-      navigate('/dashboard');
+      navigate('/app');
     } catch (err: any) {
       const message = err?.message || 'Echec de la connexion. Verifiez vos identifiants.';
       toast.error(
@@ -118,7 +118,7 @@ export const LoginForm: React.FC = () => {
         <div className="rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-8 text-center">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
-              Bienvenue sur <span className="text-primary-600">Ali Ce</span>
+              Bienvenue sur <span className="text-primary-600">AliTché</span>
             </h1>
             <p className="text-gray-600">Connectez-vous pour continuer</p>
           </div>

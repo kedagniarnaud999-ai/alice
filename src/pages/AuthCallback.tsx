@@ -22,7 +22,7 @@ export const AuthCallback: React.FC = () => {
         if (code) {
           await authService.exchangeCodeForSession(code);
         }
-        navigate('/dashboard', { replace: true });
+        navigate('/app', { replace: true });
       } catch (err: any) {
         navigate(`/login?error=${encodeURIComponent(err?.message || 'auth_callback_failed')}`, {
           replace: true,

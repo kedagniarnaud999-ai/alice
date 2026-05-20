@@ -14,8 +14,8 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ result }) => {
 
   const handleShare = async () => {
     const shareData = {
-      title: 'Mon Profil Ali Ce',
-      text: `J'ai découvert mon profil professionnel : ${result.profileType}`,
+      title: 'Mon Profil AliTché',
+      text: `J'ai decouvert mon profil professionnel : ${result.profileType}`,
       url: window.location.href,
     };
 
@@ -27,14 +27,14 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ result }) => {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Lien copié dans le presse-papier !');
+      alert('Lien copie dans le presse-papier !');
     }
   };
 
   const handleDownloadText = () => {
     const content = `
-MON PROFIL ALI CE
-================
+MON PROFIL ALITCHE
+==================
 
 Profil : ${result.profileType}
 ${result.profileDescription}
@@ -45,30 +45,30 @@ ${result.naturalTalents.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 MOTIVATIONS
 ${result.motivationDrivers.map((m, i) => `${i + 1}. ${m}`).join('\n')}
 
-CENTRES D'INTÉRÊT
-${result.primaryInterests.map((i, idx) => `${idx + 1}. ${i}`).join('\n')}
+CENTRES D'INTERET
+${result.primaryInterests.map((interest, idx) => `${idx + 1}. ${interest}`).join('\n')}
 
-POSITIONNEMENT CARRIÈRE
+POSITIONNEMENT CARRIERE
 ${result.careerStage}
 
-FAISABILITÉ
+FAISABILITE
 ${result.feasibilityAssessment}
 
 PROCHAINES ACTIONS
-${result.nextActions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
+${result.nextActions.map((action, i) => `${i + 1}. ${action}`).join('\n')}
 
 ---
-Généré par Ali Ce - ${new Date().toLocaleDateString('fr-FR')}
+Genere par AliTché - ${new Date().toLocaleDateString('fr-FR')}
     `.trim();
 
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `profil-ali-ce-${Date.now()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `profil-alitche-${Date.now()}.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
   };
 
@@ -80,7 +80,7 @@ Généré par Ali Ce - ${new Date().toLocaleDateString('fr-FR')}
         size="sm"
         className="flex items-center gap-2"
       >
-        <Printer className="w-4 h-4" />
+        <Printer className="h-4 w-4" />
         Imprimer
       </Button>
       <Button
@@ -89,8 +89,8 @@ Généré par Ali Ce - ${new Date().toLocaleDateString('fr-FR')}
         size="sm"
         className="flex items-center gap-2"
       >
-        <Download className="w-4 h-4" />
-        Télécharger
+        <Download className="h-4 w-4" />
+        Telecharger
       </Button>
       <Button
         onClick={handleShare}
@@ -98,7 +98,7 @@ Généré par Ali Ce - ${new Date().toLocaleDateString('fr-FR')}
         size="sm"
         className="flex items-center gap-2"
       >
-        <Share2 className="w-4 h-4" />
+        <Share2 className="h-4 w-4" />
         Partager
       </Button>
     </div>

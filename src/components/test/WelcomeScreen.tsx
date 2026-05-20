@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Compass, TrendingUp, Target, Clock } from 'lucide-react';
+import { TrendingUp, Target, Clock } from 'lucide-react';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -9,72 +9,79 @@ interface WelcomeScreenProps {
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-12">
-      <div className="max-w-4xl w-full">
-        <div className="text-center mb-8">
-          <div className="inline-block mb-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <Compass className="w-10 h-10 text-white" />
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 px-4 py-12">
+      <div className="mx-auto w-full max-w-4xl">
+        <div className="mb-8 text-center">
+          <div className="mb-5 inline-flex rounded-[2rem] bg-white p-3 shadow-xl shadow-blue-100/60">
+            <img
+              src="/brand/alitche_logo.png"
+              alt="Logo AliTché"
+              className="h-20 w-auto rounded-2xl object-contain sm:h-24"
+            />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Test d'Orientation Ali Ce
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+            Test d'orientation AliTché
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Découvrez votre profil professionnel et recevez un parcours personnalisé adapté à vos talents et objectifs
+          <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            Decouvrez votre profil professionnel et recevez un parcours personnalise adapte a vos
+            talents et objectifs.
           </p>
         </div>
 
-        <Card padding="lg" className="mb-6">
+        <Card padding="lg" className="mb-6 border-0 shadow-xl shadow-slate-100">
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                Ce test va vous aider à :
-              </h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <h2 className="mb-4 text-2xl font-semibold text-gray-900">Ce test va vous aider a :</h2>
+              <div className="grid gap-4 md:grid-cols-2">
                 <Feature
-                  icon={<Target className="w-6 h-6 text-primary-600" />}
+                  icon={<Target className="h-6 w-6 text-primary-600" />}
                   title="Identifier vos talents naturels"
-                  description="Les compétences que les autres reconnaissent en vous"
+                  description="Les competences que les autres reconnaissent deja en vous."
                 />
                 <Feature
-                  icon={<TrendingUp className="w-6 h-6 text-primary-600" />}
+                  icon={<TrendingUp className="h-6 w-6 text-primary-600" />}
                   title="Comprendre vos motivations"
-                  description="Ce qui vous donne de l'énergie et de l'engagement"
+                  description="Ce qui vous donne de l'energie et vous engage vraiment."
                 />
                 <Feature
-                  icon={<Compass className="w-6 h-6 text-primary-600" />}
+                  icon={<Target className="h-6 w-6 text-primary-600" />}
                   title="Clarifier votre direction"
-                  description="Les domaines et secteurs qui vous correspondent"
+                  description="Les domaines et types de parcours qui vous correspondent le mieux."
                 />
                 <Feature
-                  icon={<Clock className="w-6 h-6 text-primary-600" />}
-                  title="Obtenir un plan réaliste"
-                  description="Adapté à votre situation et vos contraintes"
+                  icon={<Clock className="h-6 w-6 text-primary-600" />}
+                  title="Obtenir un plan realiste"
+                  description="Un demarrage concret, adapte a votre situation et vos contraintes."
                 />
               </div>
             </div>
 
             <div className="border-t pt-6">
-              <h3 className="font-semibold text-gray-900 mb-3">
-                À propos du test
-              </h3>
+              <h3 className="mb-3 font-semibold text-gray-900">A propos du test</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
-                  <span className="text-primary-600 mt-1">•</span>
-                  <span><strong>23 questions</strong> rapides et concrètes</span>
+                  <span className="mt-1 text-primary-600">•</span>
+                  <span>
+                    <strong>23 questions</strong> rapides et concretes
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary-600 mt-1">•</span>
-                  <span><strong>10-15 minutes</strong> pour compléter</span>
+                  <span className="mt-1 text-primary-600">•</span>
+                  <span>
+                    <strong>10 a 15 minutes</strong> pour completer
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary-600 mt-1">•</span>
-                  <span><strong>Pas de bonnes ou mauvaises réponses</strong>, soyez authentique</span>
+                  <span className="mt-1 text-primary-600">•</span>
+                  <span>
+                    <strong>Pas de bonnes ou mauvaises reponses</strong>, soyez authentique
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-primary-600 mt-1">•</span>
-                  <span><strong>Résultats immédiats</strong> avec votre profil détaillé</span>
+                  <span className="mt-1 text-primary-600">•</span>
+                  <span>
+                    <strong>Resultats immediats</strong> avec votre profil detaille
+                  </span>
                 </li>
               </ul>
             </div>
@@ -86,7 +93,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             Commencer le test
           </Button>
           <p className="mt-4 text-sm text-gray-500">
-            Vos réponses restent confidentielles et sont utilisées uniquement pour générer vos recommandations
+            Vos reponses restent confidentielles et servent uniquement a generer des recommandations
+            utiles.
           </p>
         </div>
       </div>
@@ -105,7 +113,7 @@ const Feature: React.FC<FeatureProps> = ({ icon, title, description }) => {
     <div className="flex gap-3">
       <div className="flex-shrink-0">{icon}</div>
       <div>
-        <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
+        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
         <p className="text-sm text-gray-600">{description}</p>
       </div>
     </div>

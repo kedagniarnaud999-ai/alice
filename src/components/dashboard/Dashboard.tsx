@@ -117,7 +117,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Tableau de bord</h1>
-          <p className="text-lg text-gray-600">Gerez votre parcours Ali Ce</p>
+          <p className="text-lg text-gray-600">Gerez votre parcours AliTché</p>
         </div>
 
         <div className="mb-8 grid gap-6 md:grid-cols-3">

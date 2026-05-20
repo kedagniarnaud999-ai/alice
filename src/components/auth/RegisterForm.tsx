@@ -127,7 +127,7 @@ export const RegisterForm: React.FC = () => {
         <div className="rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-8 text-center">
             <h1 className="mb-2 text-3xl font-bold text-gray-900">
-              Rejoignez <span className="text-primary-600">Ali Ce</span>
+              Rejoignez <span className="text-primary-600">AliTché</span>
             </h1>
             <p className="text-gray-600">Creez votre compte pour commencer</p>
           </div>
@@ -138,7 +138,7 @@ export const RegisterForm: React.FC = () => {
               <h2 className="font-semibold text-gray-900">Demarrage rapide</h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Recevez un lien de connexion securise par email pour acceder rapidement a Ali Ce.
+              Recevez un lien de connexion securise par email pour acceder rapidement a AliTché.
             </p>
             <label
               htmlFor="magic-link-register-email"

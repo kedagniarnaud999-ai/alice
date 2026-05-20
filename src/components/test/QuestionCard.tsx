@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Question, QuestionOption } from '@/types/test';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -18,6 +18,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   disabled = false,
 }) => {
   const [selected, setSelected] = useState<string[]>(currentAnswer);
+
+  useEffect(() => {
+    setSelected(currentAnswer);
+  }, [currentAnswer, question.id]);
 
   const handleOptionClick = (optionId: string) => {
     if (disabled) {
@@ -43,9 +47,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   const handleSubmit = () => {
-    if (selected.length > 0) {
-      onAnswer(selected);
+    if (!canSubmit) {
+      return;
     }
+    onAnswer(selected);
   };
 
   const isSelected = (optionId: string) => selected.includes(optionId);

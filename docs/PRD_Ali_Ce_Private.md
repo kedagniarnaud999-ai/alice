@@ -1,9 +1,9 @@
-# Product Requirements Document
-## Ali Ce
+﻿# Product Requirements Document
+## AliTch?
 ## Version 2 - Document de cadrage produit
 
 ### 1. Introduction
-Ali Ce est une plateforme numerique d'orientation, de developpement des competences et de pilotage des parcours academiques et professionnels. Le produit a vocation a accompagner les individus dans la comprehension de leur profil, la structuration de leur trajectoire et le developpement progressif de leurs competences, tout en preparant une ouverture vers d'autres acteurs de l'ecosysteme : etablissements, entreprises, consultants et structures d'accompagnement.
+AliTch? est une plateforme numerique d'orientation, de developpement des competences et de pilotage des parcours academiques et professionnels. Le produit a vocation a accompagner les individus dans la comprehension de leur profil, la structuration de leur trajectoire et le developpement progressif de leurs competences, tout en preparant une ouverture vers d'autres acteurs de l'ecosysteme : etablissements, entreprises, consultants et structures d'accompagnement.
 
 Le produit doit etre concu avec une double exigence :
 - offrir rapidement une experience utilisateur individuelle solide et demonstrable
@@ -12,20 +12,20 @@ Le produit doit etre concu avec une double exigence :
 ### 2. Contexte
 Les parcours academiques et professionnels sont souvent peu lisibles, insuffisamment suivis et mal relies a des objectifs concrets. Les individus manquent frequemment de reperes pour comprendre leurs forces, clarifier leur direction, suivre leur progression et valoriser leurs acquis. En parallele, les structures qui accompagnent ces parcours disposent rarement d'outils simples et robustes pour suivre des trajectoires, mesurer des besoins, recommander des remises a niveau ou piloter des cohortes a grande echelle.
 
-Ali Ce repond a cette fragmentation en proposant un produit capable de relier orientation, progression, competences et employabilite.
+AliTch? repond a cette fragmentation en proposant un produit capable de relier orientation, progression, competences et employabilite.
 
 ### 3. Vision produit
-La vision d'Ali Ce est de devenir une plateforme de continuite des parcours academiques et professionnels.
+La vision d'AliTch? est de devenir une plateforme de continuite des parcours academiques et professionnels.
 
 Le produit doit permettre :
 - a un individu de comprendre son profil, orienter ses choix et suivre sa progression
 - a des structures d'accompagnement de mieux organiser, suivre et valoriser les trajectoires qu'elles pilotent
 - a terme, a des etablissements et entreprises de mieux relier donnees de parcours, besoins en competences et decisions d'accompagnement ou de formation
 
-Ali Ce demarre comme un produit centre sur l'utilisateur individuel, mais doit etre pense des l'origine comme une plateforme extensible a plusieurs types d'acteurs.
+AliTch? demarre comme un produit centre sur l'utilisateur individuel, mais doit etre pense des l'origine comme une plateforme extensible a plusieurs types d'acteurs.
 
 ### 4. Ambition geographique
-Le point d'entree initial est fortement pertinent dans les contextes africains francophones, ou les enjeux d'orientation, de lisibilite des parcours et d'employabilite sont particulierement forts. Toutefois, Ali Ce ne doit pas etre concu comme un produit limite a cette zone.
+Le point d'entree initial est fortement pertinent dans les contextes africains francophones, ou les enjeux d'orientation, de lisibilite des parcours et d'employabilite sont particulierement forts. Toutefois, AliTch? ne doit pas etre concu comme un produit limite a cette zone.
 
 L'objectif est de construire une base produit :
 - localement pertinente au depart
@@ -35,7 +35,7 @@ L'objectif est de construire une base produit :
 L'Afrique francophone constitue un marche d'entree, non une frontiere produit.
 
 ### 5. Probleme a resoudre
-Ali Ce cherche a repondre a plusieurs problemes structurels.
+AliTch? cherche a repondre a plusieurs problemes structurels.
 
 #### 5.1 Cote individus
 - difficulte a se connaitre de maniere exploitable
@@ -51,7 +51,7 @@ Ali Ce cherche a repondre a plusieurs problemes structurels.
 - difficulte a produire une lecture operationnelle des besoins et des ecarts
 
 ### 6. Mission produit
-La mission d'Ali Ce est de transformer des parcours disperses ou flous en trajectoires lisibles, suivies et valorisees, en connectant :
+La mission d'AliTch? est de transformer des parcours disperses ou flous en trajectoires lisibles, suivies et valorisees, en connectant :
 - orientation
 - progression
 - competences
@@ -76,7 +76,7 @@ La mission d'Ali Ce est de transformer des parcours disperses ou flous en trajec
 - parents et tuteurs dans un cadre institutionnel encadre
 
 ### 8. Proposition de valeur
-Ali Ce propose un environnement permettant de :
+AliTch? propose un environnement permettant de :
 - clarifier une direction
 - structurer un parcours
 - suivre une progression
@@ -111,7 +111,7 @@ Le produit doit permettre d'identifier :
 - les formations, certifications ou parcours adaptes
 
 ### 10. Strategie de scope
-Ali Ce doit etre pilote avec un principe de discipline produit : vision large, execution resserree.
+AliTch? doit etre pilote avec un principe de discipline produit : vision large, execution resserree.
 
 La vision de plateforme multi-acteurs ne doit pas conduire a surcharger le MVP. Le MVP doit prouver une valeur forte sur le parcours individuel avant toute extension complexe.
 
@@ -184,7 +184,7 @@ Sa valeur consiste a permettre, selon les autorisations definies :
 - un meilleur accompagnement des choix d'orientation
 
 #### 13.4 Pole recruteurs et entreprises
-Ce pole ne doit pas etre reduit a la seule logique de recrutement. Il doit egalement permettre aux entreprises d'utiliser Ali Ce comme outil de lecture, d'orientation et de montee en competences interne.
+Ce pole ne doit pas etre reduit a la seule logique de recrutement. Il doit egalement permettre aux entreprises d'utiliser AliTch? comme outil de lecture, d'orientation et de montee en competences interne.
 
 A terme, ce pole devra permettre de :
 - lire le profil d'un employe
@@ -295,6 +295,8 @@ Etendre les usages institutionnels, entreprise et cohortes
 Preparer l'adaptabilite geographique, linguistique et sectorielle
 
 ### 20. Conclusion
-Ali Ce doit etre construit comme un produit centre utilisateur dans sa phase initiale, mais pense comme une future plateforme de pilotage des parcours.
+AliTch? doit etre construit comme un produit centre utilisateur dans sa phase initiale, mais pense comme une future plateforme de pilotage des parcours.
 
 Sa force potentielle reside dans sa capacite a relier orientation, progression, competences et employabilite, tout en restant suffisamment discipline pour faire emerger d'abord un noyau de valeur simple, credible et demonstrable.
+
+

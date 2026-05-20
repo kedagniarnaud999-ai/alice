@@ -85,7 +85,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-purple-600 shadow-lg">
             <Sparkles className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Votre Profil Ali Ce</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Votre Profil AliTché</h1>
           <p className="mb-4 text-lg text-gray-600">
             Découvrez qui vous êtes et comment avancer concrètement
           </p>

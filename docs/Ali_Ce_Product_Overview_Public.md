@@ -1,7 +1,7 @@
-# Ali Ce - Product Overview
+﻿# AliTch? - Product Overview
 
-## What Ali Ce is
-Ali Ce is a digital platform designed to help people better understand their profile, clarify their direction, and build stronger academic and professional pathways over time.
+## What AliTch? is
+AliTch? is a digital platform designed to help people better understand their profile, clarify their direction, and build stronger academic and professional pathways over time.
 
 The product combines orientation, pathway visibility, and skills development in a single user experience.
 
@@ -12,7 +12,7 @@ Many learners and professionals struggle to:
 - follow their progress over time
 - turn learning efforts into visible, usable outcomes
 
-Ali Ce helps make those pathways more readable, more actionable, and easier to follow.
+AliTch? helps make those pathways more readable, more actionable, and easier to follow.
 
 ## Core experience
 The current product experience focuses on helping an individual:
@@ -23,7 +23,7 @@ The current product experience focuses on helping an individual:
 - review progress in a personal dashboard
 
 ## Who it serves
-Ali Ce is designed for:
+AliTch? is designed for:
 - students
 - recent graduates
 - job seekers
@@ -31,7 +31,7 @@ Ali Ce is designed for:
 - people developing new skills
 
 ## Product direction
-Ali Ce is being built first around a strong individual experience, with a longer-term vision of supporting broader learning, employability, and pathway management use cases.
+AliTch? is being built first around a strong individual experience, with a longer-term vision of supporting broader learning, employability, and pathway management use cases.
 
 ## Current stack
 - React
@@ -39,3 +39,5 @@ Ali Ce is being built first around a strong individual experience, with a longer
 - Vite
 - Supabase
 - Vercel
+
+

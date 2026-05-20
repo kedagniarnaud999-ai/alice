@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { TestResponse, ProfileResult } from '@/types/test';
 import { HomePage } from '@/components/home/HomePage';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
@@ -23,9 +23,62 @@ import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
 import { useAuth } from '@/contexts/AuthContext';
 
-type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'pathway' | 'dashboard' | 'profile';
+type AppState =
+  | 'home'
+  | 'welcome'
+  | 'test'
+  | 'loading'
+  | 'results'
+  | 'pathway'
+  | 'dashboard'
+  | 'profile';
 
 function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<PublicHome />} />
+      <Route path="/login" element={<LoginForm />} />
+      <Route path="/register" element={<RegisterForm />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route
+        path="/app"
+        element={
+          <ProtectedRoute>
+            <WorkspaceApp />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+const PublicHome = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen message="Chargement..." />;
+  }
+
+  return (
+    <HomePage
+      isAuthenticated={isAuthenticated}
+      hasCompletedTest={false}
+      onStartTest={() => navigate('/app')}
+      onViewResults={() => navigate('/app')}
+      onLogin={() => navigate('/login')}
+      onRegister={() => navigate('/register')}
+    />
+  );
+};
+
+const WorkspaceApp = () => {
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [appState, setAppState] = useState<AppState>('home');
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(null);
@@ -216,76 +269,55 @@ function App() {
 
   const hasCompletedTest = !!profileResult;
 
-  const TestApp = () => {
-    if (initializing) {
-      return <LoadingScreen message="Chargement de votre profil..." />;
-    }
-
-    return (
-      <div className="min-h-screen">
-        {appState === 'home' && (
-          <HomePage
-            onStartTest={handleStartTest}
-            hasCompletedTest={hasCompletedTest}
-            onViewResults={hasCompletedTest ? handleViewDashboard : handleViewResults}
-          />
-        )}
-
-        {appState === 'welcome' && <WelcomeScreen onStart={handleBeginTest} />}
-
-        {appState === 'test' && <TestFlow onComplete={handleTestComplete} />}
-
-        {appState === 'loading' && (
-          <LoadingScreen message="Analyse de votre profil en cours..." />
-        )}
-
-        {appState === 'results' && profileResult && (
-          <ResultsDashboard result={profileResult} onStartPathway={handleStartPathway} />
-        )}
-
-        {appState === 'dashboard' && profileResult && (
-          <Dashboard
-            profileResult={profileResult}
-            pathway={pathway}
-            moduleProgress={moduleProgress}
-            onNavigate={handleDashboardNavigate}
-            onResetData={handleResetData}
-          />
-        )}
-
-        {appState === 'pathway' && pathway && (
-          <PathwayView
-            pathway={pathway}
-            moduleProgress={moduleProgress}
-            onUpdateModuleProgress={handleModuleProgressChange}
-          />
-        )}
-
-        {appState === 'profile' && <ProfileSettings />}
-      </div>
-    );
-  };
+  if (initializing) {
+    return <LoadingScreen message="Chargement de votre profil..." />;
+  }
 
   return (
-    <Routes>
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
+    <div className="min-h-screen">
+      {appState === 'home' && (
+        <HomePage
+          isAuthenticated
+          onStartTest={handleStartTest}
+          hasCompletedTest={hasCompletedTest}
+          onViewResults={hasCompletedTest ? handleViewDashboard : handleViewResults}
+          onLogin={() => navigate('/login')}
+          onRegister={() => navigate('/register')}
+        />
+      )}
 
-      <Route
-        path="/*"
-        element={
-          <ProtectedRoute>
-            <TestApp />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+      {appState === 'welcome' && <WelcomeScreen onStart={handleBeginTest} />}
+
+      {appState === 'test' && <TestFlow onComplete={handleTestComplete} />}
+
+      {appState === 'loading' && <LoadingScreen message="Analyse de votre profil en cours..." />}
+
+      {appState === 'results' && profileResult && (
+        <ResultsDashboard result={profileResult} onStartPathway={handleStartPathway} />
+      )}
+
+      {appState === 'dashboard' && profileResult && (
+        <Dashboard
+          profileResult={profileResult}
+          pathway={pathway}
+          moduleProgress={moduleProgress}
+          onNavigate={handleDashboardNavigate}
+          onResetData={handleResetData}
+        />
+      )}
+
+      {appState === 'pathway' && pathway && (
+        <PathwayView
+          pathway={pathway}
+          moduleProgress={moduleProgress}
+          onUpdateModuleProgress={handleModuleProgressChange}
+          onBack={() => setAppState('dashboard')}
+        />
+      )}
+
+      {appState === 'profile' && <ProfileSettings />}
+    </div>
   );
-}
+};
 
 export default App;
