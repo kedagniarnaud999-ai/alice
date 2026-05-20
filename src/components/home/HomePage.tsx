@@ -220,7 +220,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               {!isAuthenticated && (
                 <div className="mt-6">
                   <Button onClick={onStartTest} size="lg">
-                    Commencer maintenant
+                    Lancer le parcours
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>
@@ -315,7 +315,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <Button onClick={onLogin} variant="outline" size="sm">
                     Connexion
                   </Button>
-                  <Button onClick={onRegister} variant="ghost" size="sm">
+                  <Button onClick={onRegister} variant="outline" size="sm">
                     Créer un compte
                   </Button>
                 </>
