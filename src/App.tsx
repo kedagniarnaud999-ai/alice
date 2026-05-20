@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { TestResponse, ProfileResult } from '@/types/test';
-import { HomePage } from '@/components/home/HomePage';
+import { AliTcheLanding } from '@/components/home/AliTcheLanding';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
 import { TestFlow } from '@/components/test/TestFlow';
 import { ResultsDashboard } from '@/components/results/ResultsDashboard';
@@ -102,7 +102,7 @@ function App() {
   const TestApp = () => (
     <div className="min-h-screen">
       {appState === 'home' && (
-        <HomePage 
+        <AliTcheLanding 
           onStartTest={handleStartTest}
           hasCompletedTest={hasCompletedTest}
           onViewResults={hasCompletedTest ? handleViewDashboard : handleViewResults}
