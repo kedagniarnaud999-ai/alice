@@ -1,68 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-  }
-}
-
-@layer base {
   * {
-    @apply border-gray-200;
+    border-color: theme('colors.outline-variant');
   }
+  
   body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    @apply bg-background text-on-surface font-body-md antialiased;
+  }
+
+  /* Material Symbols Utility */
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .material-symbols-filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 }
 
 @layer components {
   .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop;
   }
 
-  .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+  /* Glass Navigation Effect */
+  .glass-nav {
+    backdrop-filter: blur(12px);
+    background-color: rgba(247, 249, 251, 0.7);
   }
 
-  .btn {
-    @apply inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 disabled:pointer-events-none disabled:opacity-50;
+  /* Hero Gradient Background */
+  .hero-gradient {
+    background: linear-gradient(135deg, rgba(247,249,251,1) 0%, rgba(216,226,255,0.4) 100%);
   }
 
-  .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 px-6 py-3;
+  /* Card Hover Animation */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(31, 92, 182, 0.12);
   }
 
-  .btn-secondary {
-    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 px-6 py-3;
+  /* Active Navigation Indicator */
+  .active-nav-indicator {
+    @apply relative;
+  }
+  
+  .active-nav-indicator::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 4px;
+    background-color: #38BDF8;
+    border-radius: 9999px;
   }
 
-  .btn-ghost {
-    @apply hover:bg-gray-100 px-4 py-2;
-  }
-
-  .input {
-    @apply flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 disabled:cursor-not-allowed disabled:opacity-50;
+  /* Selection Colors */
+  ::selection {
+    @apply bg-primary-fixed text-on-primary-fixed;
   }
 }
 
@@ -86,5 +103,13 @@
   * {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, theme('colors.primary') 0%, theme('colors.secondary-container') 100%);
   }
 }
