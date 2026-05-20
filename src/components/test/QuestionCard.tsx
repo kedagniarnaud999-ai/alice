@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Question, QuestionOption } from '@/types/test';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -14,14 +14,15 @@ interface QuestionCardProps {
 export const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   onAnswer,
-  currentAnswer = [],
+  currentAnswer,
   disabled = false,
 }) => {
-  const [selected, setSelected] = useState<string[]>(currentAnswer);
+  const currentAnswerKey = useMemo(() => (currentAnswer ?? []).join('|'), [currentAnswer]);
+  const [selected, setSelected] = useState<string[]>(currentAnswer ? [...currentAnswer] : []);
 
   useEffect(() => {
-    setSelected(currentAnswer);
-  }, [currentAnswer, question.id]);
+    setSelected(currentAnswer ? [...currentAnswer] : []);
+  }, [currentAnswer, currentAnswerKey, question.id]);
 
   const handleOptionClick = (optionId: string) => {
     if (disabled) {
@@ -29,20 +30,21 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     }
 
     if (question.type === 'single') {
-      setSelected([optionId]);
+      setSelected(() => [optionId]);
     } else {
       const maxSelections = question.maxSelections || question.options.length;
-      
-      if (selected.includes(optionId)) {
-        setSelected(selected.filter(id => id !== optionId));
-      } else {
-        if (selected.length >= maxSelections) {
-          const newSelected = [...selected.slice(1), optionId];
-          setSelected(newSelected);
-        } else {
-          setSelected([...selected, optionId]);
+
+      setSelected((previous) => {
+        if (previous.includes(optionId)) {
+          return previous.filter((id) => id !== optionId);
         }
-      }
+
+        if (previous.length >= maxSelections) {
+          return [...previous.slice(1), optionId];
+        } else {
+          return [...previous, optionId];
+        }
+      });
     }
   };
 
@@ -113,6 +115,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
 }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className={`
