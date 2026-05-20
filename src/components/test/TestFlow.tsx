@@ -75,14 +75,14 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
         const analyzer = new TestAnalyzer(updatedResponses);
         const result = analyzer.analyze();
 
-        // Sauvegarder au backend (avec fallback localStorage)
+        // Tenter une sauvegarde distante, avec fallback local volontaire
         try {
           await profileService.saveTestResponses(updatedResponses);
           await profileService.saveProfile(result);
           console.log('✓ Profil et réponses sauvegardés au backend');
         } catch (error) {
           console.error('Erreur sauvegarde backend:', error);
-          setSaveError('Sauvegarde locale uniquement (backend indisponible)');
+          setSaveError("Résultat conservé localement pour l'instant");
           storageManager.saveProfileResult(result);
         }
 

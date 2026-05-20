@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import { ArrowRight, CheckCircle2, Compass, Heart, Loader2, MapPin, Sparkles, Target, TrendingUp } from 'lucide-react';
 import { ProfileResult } from '@/types/test';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ExportMenu } from './ExportMenu';
-import {
-  Sparkles,
-  Target,
-  Heart,
-  Compass,
-  MapPin,
-  CheckCircle2,
-  ArrowRight,
-  TrendingUp,
-  Loader2,
-} from 'lucide-react';
 import { profileService } from '@/services/profile.api';
 import { storageManager } from '@/utils/storageManager';
 
 interface ResultsDashboardProps {
   result?: ProfileResult;
   onStartPathway: () => void;
+  primaryActionLabel?: string;
+  helperText?: string;
+  hideExportMenu?: boolean;
+  guestMode?: boolean;
 }
 
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   result: initialResult,
   onStartPathway,
+  primaryActionLabel = 'Démarrer mon parcours personnalisé',
+  helperText,
+  hideExportMenu = false,
+  guestMode = false,
 }) => {
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(initialResult || null);
   const [isLoading, setIsLoading] = useState(!initialResult);
@@ -71,7 +69,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="text-center">
-          <p className="mb-4 text-gray-600">Aucun profil trouvé</p>
+          <p className="mb-4 text-gray-600">Aucun profil trouve</p>
           <Button onClick={onStartPathway}>Commencer le test</Button>
         </div>
       </div>
@@ -79,20 +77,43 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 px-4 py-12">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#edf6ff,_#ffffff_42%,_#f8fafc_100%)] px-4 py-12">
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-purple-600 shadow-lg">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-600 to-sky-500 shadow-lg">
             <Sparkles className="h-8 w-8 text-white" />
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Votre Profil AliTché</h1>
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Votre profil AliTché</h1>
           <p className="mb-4 text-lg text-gray-600">
-            Découvrez qui vous êtes et comment avancer concrètement
+            Une première lecture de qui vous êtes, de ce qui vous porte et de la suite la plus utile.
           </p>
-          <ExportMenu result={profileResult} />
+          {!hideExportMenu && <ExportMenu result={profileResult} />}
         </div>
 
-        <Card padding="lg" className="border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-purple-50">
+        {guestMode && (
+          <Card padding="lg" className="border border-primary-200 bg-gradient-to-r from-primary-50 to-sky-50">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary-700">
+                  Parcours terminé
+                </p>
+                <h2 className="mt-2 text-2xl font-bold text-slate-900">
+                  Votre résultat est prêt. Donnez-lui une vraie continuité.
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
+                  Créez votre compte pour retrouver ce profil, accéder à vos recommandations et
+                  poursuivre votre progression avec un espace personnel.
+                </p>
+              </div>
+              <Button onClick={onStartPathway} size="lg" className="shrink-0">
+                {primaryActionLabel}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        <Card padding="lg" className="border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-sky-50">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600">
@@ -111,7 +132,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             <CardHeader>
               <div className="mb-2 flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-amber-600" />
-                <CardTitle>Vos Talents Naturels</CardTitle>
+                <CardTitle>Vos talents naturels</CardTitle>
               </div>
               <p className="text-sm text-gray-600">Ce que les autres reconnaissent en vous</p>
             </CardHeader>
@@ -131,9 +152,9 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             <CardHeader>
               <div className="mb-2 flex items-center gap-2">
                 <Heart className="h-5 w-5 text-rose-600" />
-                <CardTitle>Ce Qui Vous Motive</CardTitle>
+                <CardTitle>Ce qui vous motive</CardTitle>
               </div>
-              <p className="text-sm text-gray-600">Vos sources d'énergie et d'engagement</p>
+              <p className="text-sm text-gray-600">Vos sources d'energie et d'engagement</p>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -151,7 +172,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           <CardHeader>
             <div className="mb-2 flex items-center gap-2">
               <Compass className="h-5 w-5 text-blue-600" />
-              <CardTitle>Vos Centres d'Intérêt Principaux</CardTitle>
+              <CardTitle>Vos centres d'interet principaux</CardTitle>
             </div>
             <p className="text-sm text-gray-600">Les domaines qui vous attirent naturellement</p>
           </CardHeader>
@@ -175,7 +196,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             <CardHeader>
               <div className="mb-2 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-purple-600" />
-                <CardTitle>Votre Position Actuelle</CardTitle>
+                <CardTitle>Votre position actuelle</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -201,7 +222,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
 
         <Card padding="lg" className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
           <CardHeader>
-            <CardTitle className="text-xl">Vos Prochaines Actions</CardTitle>
+            <CardTitle className="text-xl">Vos prochaines actions</CardTitle>
             <p className="mt-1 text-sm text-gray-600">Par où commencer concrètement</p>
           </CardHeader>
           <CardContent>
@@ -220,15 +241,18 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
             </div>
 
             <Button onClick={onStartPathway} size="lg" className="group w-full sm:w-auto">
-              Démarrer Mon Parcours Personnalisé
+              {primaryActionLabel}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
+
+            {helperText && <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-600">{helperText}</p>}
           </CardContent>
         </Card>
 
         <div className="py-6 text-center">
           <p className="text-sm text-gray-500">
-            Ce profil est un point de départ. Vos talents et intérêts peuvent évoluer avec le temps.
+            Ce profil est un point de départ. Vos talents et vos choix peuvent encore évoluer avec
+            le temps.
           </p>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { TestResponse, ProfileResult } from '@/types/test';
 import { HomePage } from '@/components/home/HomePage';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
 import { TestFlow } from '@/components/test/TestFlow';
@@ -22,21 +21,16 @@ import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
 import { useAuth } from '@/contexts/AuthContext';
+import { ProfileResult, TestResponse } from '@/types/test';
 
-type AppState =
-  | 'home'
-  | 'welcome'
-  | 'test'
-  | 'loading'
-  | 'results'
-  | 'pathway'
-  | 'dashboard'
-  | 'profile';
+type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'pathway' | 'dashboard' | 'profile';
+type TrialState = 'welcome' | 'test' | 'loading' | 'results';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<PublicHome />} />
+      <Route path="/trial" element={<TrialExperience />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
@@ -69,11 +63,62 @@ const PublicHome = () => {
     <HomePage
       isAuthenticated={isAuthenticated}
       hasCompletedTest={false}
-      onStartTest={() => navigate('/app')}
+      onStartTest={() => navigate(isAuthenticated ? '/app' : '/trial')}
       onViewResults={() => navigate('/app')}
       onLogin={() => navigate('/login')}
       onRegister={() => navigate('/register')}
     />
+  );
+};
+
+const TrialExperience = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [trialState, setTrialState] = useState<TrialState>('welcome');
+  const [profileResult, setProfileResult] = useState<ProfileResult | null>(storageManager.loadProfileResult());
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/app', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleComplete = (_responses: TestResponse[], result?: ProfileResult) => {
+    setTrialState('loading');
+
+    setTimeout(() => {
+      if (!result) {
+        setTrialState('welcome');
+        return;
+      }
+
+      setProfileResult(result);
+      storageManager.saveProfileResult(result);
+      setTrialState('results');
+    }, 900);
+  };
+
+  if (trialState === 'welcome') {
+    return <WelcomeScreen onStart={() => setTrialState('test')} />;
+  }
+
+  if (trialState === 'test') {
+    return <TestFlow onComplete={handleComplete} />;
+  }
+
+  if (trialState === 'loading') {
+    return <LoadingScreen message="Analyse de votre profil en cours..." />;
+  }
+
+  return (
+      <ResultsDashboard
+        result={profileResult ?? undefined}
+        guestMode
+        hideExportMenu={false}
+        primaryActionLabel="Créer mon compte pour poursuivre"
+        helperText="Retrouvez ce profil, vos recommandations et la suite de votre parcours dans un espace personnel."
+        onStartPathway={() => navigate('/register?from=trial')}
+      />
   );
 };
 
@@ -129,7 +174,23 @@ const WorkspaceApp = () => {
         setModuleProgress(remoteProgress);
         storageManager.saveModuleProgress(remoteProgress);
       } catch (error) {
-        console.warn('No remote profile available yet, keeping the local state.', error);
+        console.warn('No remote profile available yet, trying local continuity.', error);
+
+        if (savedResult) {
+          try {
+            await profileService.saveProfile(savedResult);
+            if (!isMounted) {
+              return;
+            }
+
+            const nextPathway = savedPathway ?? pathwayEngine.generatePathway(savedResult);
+            setProfileResult(savedResult);
+            setPathway(nextPathway);
+            storageManager.savePathway(nextPathway);
+          } catch (syncError) {
+            console.warn('Unable to sync the local trial profile yet.', syncError);
+          }
+        }
       } finally {
         if (isMounted) {
           setInitializing(false);
