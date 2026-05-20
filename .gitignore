@@ -1,58 +1,55 @@
-```gitignore
+```
 # Dependencies
 node_modules/
 
-# Build outputs
-dist/
-build/
-*.css.map
+# Vite cache
+node_modules/.vite/
 
-# Environment variables
+# Environment
 .env
 .env.local
-*.env.*
-
-# Editor/IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
+.env.*
 
 # Logs
 *.log
 
-# Coverage reports
-coverage/
-htmlcov/
-*.coverage
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-.coverage.*
-
-# Compiled/Binary files
-*.exe
-*.dll
-*.so
-*.a
-*.obj
-*.out
+# Temporary files
+*.tmp
+*.swp
 
 # OS generated files
 .DS_Store
 Thumbs.db
 
-# MyPy cache
-.mypy_cache/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.venv.bak/
+env.bak/
 
-# Pytest cache
-.pytest_cache/
+# Build outputs
+dist/
+build/
+target/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
 # Compressed files
 *.zip
