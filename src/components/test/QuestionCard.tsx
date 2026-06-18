@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Question, QuestionOption } from '@/types/test';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -17,46 +17,48 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   currentAnswer,
   disabled = false,
 }) => {
-  const currentAnswerKey = useMemo(() => (currentAnswer ?? []).join('|'), [currentAnswer]);
-  const [selected, setSelected] = useState<string[]>(currentAnswer ? [...currentAnswer] : []);
+  const [selected, setSelected] = useState<string[]>(currentAnswer ?? []);
 
   useEffect(() => {
-    setSelected(currentAnswer ? [...currentAnswer] : []);
-  }, [currentAnswer, currentAnswerKey, question.id]);
+    setSelected(currentAnswer ?? []);
+  }, [currentAnswer, question.id]);
 
-  const handleOptionClick = (optionId: string) => {
+  const handleOptionChange = (optionId: string) => {
     if (disabled) {
       return;
     }
 
     if (question.type === 'single') {
-      setSelected(() => [optionId]);
-    } else {
-      const maxSelections = question.maxSelections || question.options.length;
-
-      setSelected((previous) => {
-        if (previous.includes(optionId)) {
-          return previous.filter((id) => id !== optionId);
-        }
-
-        if (previous.length >= maxSelections) {
-          return [...previous.slice(1), optionId];
-        } else {
-          return [...previous, optionId];
-        }
-      });
-    }
-  };
-
-  const handleSubmit = () => {
-    if (!canSubmit) {
+      setSelected([optionId]);
       return;
     }
+
+    const maxSelections = question.maxSelections ?? question.options.length;
+
+    setSelected((previous) => {
+      if (previous.includes(optionId)) {
+        return previous.filter((id) => id !== optionId);
+      }
+
+      if (previous.length >= maxSelections) {
+        return [...previous.slice(1), optionId];
+      }
+
+      return [...previous, optionId];
+    });
+  };
+
+  const canSubmit = selected.length > 0;
+
+  const handleSubmit = () => {
+    if (!canSubmit || disabled) {
+      return;
+    }
+
     onAnswer(selected);
   };
 
   const isSelected = (optionId: string) => selected.includes(optionId);
-  const canSubmit = selected.length > 0;
 
   return (
     <Card padding="lg" className="max-w-3xl mx-auto">
@@ -67,23 +69,26 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           </h2>
           {question.type === 'multiple' && question.maxSelections && (
             <p className="mt-2 text-sm text-gray-500">
-              Sélectionnez jusqu'à {question.maxSelections} réponse{question.maxSelections > 1 ? 's' : ''} 
+              Sélectionnez jusqu'à {question.maxSelections} réponse{question.maxSelections > 1 ? 's' : ''}
               {selected.length > 0 && ` (${selected.length}/${question.maxSelections} sélectionnée${selected.length > 1 ? 's' : ''})`}
             </p>
           )}
         </div>
 
-        <div className="space-y-3">
+        <fieldset className="space-y-3" disabled={disabled}>
+          <legend className="sr-only">Choix de réponse</legend>
           {question.options.map((option) => (
-            <OptionButton
+            <OptionControl
               key={option.id}
               option={option}
+              questionId={question.id}
+              type={question.type}
               isSelected={isSelected(option.id)}
-              onClick={() => handleOptionClick(option.id)}
+              onChange={() => handleOptionChange(option.id)}
               disabled={disabled}
             />
           ))}
-        </div>
+        </fieldset>
 
         <div className="flex justify-end pt-4">
           <Button
@@ -100,26 +105,29 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   );
 };
 
-interface OptionButtonProps {
+interface OptionControlProps {
   option: QuestionOption;
+  questionId: string;
+  type: Question['type'];
   isSelected: boolean;
-  onClick: () => void;
+  onChange: () => void;
   disabled?: boolean;
 }
 
-const OptionButton: React.FC<OptionButtonProps> = ({
+const OptionControl: React.FC<OptionControlProps> = ({
   option,
+  questionId,
+  type,
   isSelected,
-  onClick,
+  onChange,
   disabled = false,
 }) => {
+  const inputType = type === 'single' ? 'radio' : 'checkbox';
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
+    <label
       className={`
-        w-full text-left p-4 rounded-lg border-2 transition-all duration-200
+        block w-full cursor-pointer rounded-lg border-2 p-4 text-left transition-all duration-200
         ${isSelected
           ? 'border-primary-500 bg-primary-50 shadow-sm'
           : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
@@ -128,17 +136,26 @@ const OptionButton: React.FC<OptionButtonProps> = ({
       `}
     >
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
+        <input
+          type={inputType}
+          name={questionId}
+          value={option.id}
+          checked={isSelected}
+          onChange={onChange}
+          disabled={disabled}
+          className="sr-only"
+        />
+        <span className="mt-0.5 flex-shrink-0" aria-hidden="true">
           {isSelected ? (
             <CheckCircle2 className="w-6 h-6 text-primary-600" />
           ) : (
             <Circle className="w-6 h-6 text-gray-300" />
           )}
-        </div>
+        </span>
         <span className={`flex-1 text-base leading-relaxed ${isSelected ? 'text-gray-900 font-medium' : 'text-gray-700'}`}>
           {option.text}
         </span>
       </div>
-    </button>
+    </label>
   );
 };
