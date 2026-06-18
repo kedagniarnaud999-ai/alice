@@ -6,9 +6,9 @@ import {
   Compass,
   Flag,
   GraduationCap,
-  Hub,
   Lightbulb,
   LogIn,
+  Network,
   Rocket,
   Share2,
   Sparkles,
@@ -236,7 +236,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <p className="text-[#424752]">Donnez une direction plus nette à votre parcours.</p>
               <div className="flex gap-4">
-                <FooterIcon label="Communauté" icon={<Hub className="h-5 w-5" />} />
+                <FooterIcon label="Communauté" icon={<Network className="h-5 w-5" />} />
                 <FooterIcon label="Partager" icon={<Share2 className="h-5 w-5" />} />
               </div>
             </div>
