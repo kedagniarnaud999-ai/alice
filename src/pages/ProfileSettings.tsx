@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/auth.api';
 import { AvatarUpload } from '@/components/profile/AvatarUpload';
@@ -7,12 +7,16 @@ import { Card } from '@/components/ui/Card';
 import { User, Mail, Shield } from 'lucide-react';
 
 export const ProfileSettings: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    setName(user?.name || '');
+  }, [user?.name]);
 
   const handleSave = async () => {
     setLoading(true);
@@ -21,47 +25,48 @@ export const ProfileSettings: React.FC = () => {
 
     try {
       await authService.updateProfile({ name });
+      await refreshUser();
       setSuccess('Profil mis à jour avec succès');
       setEditing(false);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Échec de la mise à jour');
+      setError(err?.message || 'Échec de la mise à jour');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Mon Profil</h1>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Mon Profil</h1>
         <p className="text-gray-600">Gérez vos informations personnelles</p>
       </div>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Photo de profil</h2>
+        <h2 className="mb-6 text-xl font-semibold text-gray-900">Photo de profil</h2>
         <AvatarUpload />
       </Card>
 
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Informations personnelles</h2>
+        <h2 className="mb-6 text-xl font-semibold text-gray-900">Informations personnelles</h2>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
+          <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
             {success}
           </div>
         )}
 
         <div className="space-y-6">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <User className="w-4 h-4" />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <User className="h-4 w-4" />
               Nom complet
             </label>
             {editing ? (
@@ -69,7 +74,7 @@ export const ProfileSettings: React.FC = () => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500"
               />
             ) : (
               <p className="text-gray-900">{user?.name || 'Non défini'}</p>
@@ -77,22 +82,22 @@ export const ProfileSettings: React.FC = () => {
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Mail className="w-4 h-4" />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Mail className="h-4 w-4" />
               Email
             </label>
             <p className="text-gray-900">{user?.email}</p>
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Shield className="w-4 h-4" />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Shield className="h-4 w-4" />
               Rôle
             </label>
             <p className="text-gray-900 capitalize">{user?.role?.toLowerCase()}</p>
           </div>
 
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 border-t border-gray-200 pt-4">
             {editing ? (
               <>
                 <Button onClick={handleSave} disabled={loading}>
@@ -110,9 +115,7 @@ export const ProfileSettings: React.FC = () => {
                 </Button>
               </>
             ) : (
-              <Button onClick={() => setEditing(true)}>
-                Modifier le profil
-              </Button>
+              <Button onClick={() => setEditing(true)}>Modifier le profil</Button>
             )}
           </div>
         </div>

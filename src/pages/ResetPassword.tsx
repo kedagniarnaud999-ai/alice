@@ -1,24 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { apiClient } from '@/services/api.client';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, Lock } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export const ResetPassword: React.FC = () => {
-  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     password: '',
     confirmPassword: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [hasSession, setHasSession] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const loadSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        setStatus('error');
+        setMessage(error.message);
+        return;
+      }
+
+      setHasSession(!!data.session);
+    };
+
+    loadSession();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
+    setFormData((current) => ({
+      ...current,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,64 +52,65 @@ export const ResetPassword: React.FC = () => {
       return;
     }
 
-    const token = searchParams.get('token');
-    if (!token) {
+    setStatus('loading');
+
+    const { error } = await supabase.auth.updateUser({
+      password: formData.password,
+    });
+
+    if (error) {
       setStatus('error');
-      setMessage('Token de réinitialisation manquant');
+      setMessage(error.message || 'Le lien de réinitialisation est invalide ou a expiré');
       return;
     }
 
-    setStatus('loading');
+    setStatus('success');
+    setMessage('Votre mot de passe a été réinitialisé avec succès.');
 
-    try {
-      const response = await apiClient.post('/auth/reset-password', {
-        token,
-        newPassword: formData.password,
-      });
-      setStatus('success');
-      setMessage((response.data as any).message || 'Votre mot de passe a été réinitialisé avec succès');
-      
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (error: any) {
-      setStatus('error');
-      setMessage(error.response?.data?.message || 'Le lien de réinitialisation est invalide ou a expiré');
-    }
+    setTimeout(() => {
+      navigate('/login');
+    }, 3000);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-              <Lock className="w-8 h-8 text-primary-600" />
+      <div className="w-full max-w-md">
+        <div className="rounded-2xl bg-white p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+              <Lock className="h-8 w-8 text-primary-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Nouveau mot de passe</h1>
+            <h1 className="mb-2 text-3xl font-bold text-gray-900">Nouveau mot de passe</h1>
             <p className="text-gray-600">Choisissez un nouveau mot de passe sécurisé</p>
           </div>
 
           {status === 'success' ? (
             <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <CheckCircle className="w-16 h-16 text-green-500" />
+              <div className="mb-6 flex justify-center">
+                <CheckCircle className="h-16 w-16 text-green-500" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Mot de passe réinitialisé !</h2>
-              <p className="text-gray-600 mb-6">{message}</p>
+              <h2 className="mb-2 text-xl font-semibold text-gray-900">Mot de passe réinitialisé !</h2>
+              <p className="mb-6 text-gray-600">{message}</p>
               <p className="text-sm text-gray-500">Redirection vers la page de connexion...</p>
             </div>
           ) : (
             <>
+              {!hasSession && status === 'idle' && (
+                <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                  Ouvrez cette page depuis le lien reçu par email afin que Supabase restaure la
+                  session de réinitialisation.
+                </div>
+              )}
+
               {message && status === 'error' && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm">
+                <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                   {message}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
                     Nouveau mot de passe
                   </label>
                   <input
@@ -104,14 +120,14 @@ export const ResetPassword: React.FC = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500"
                     placeholder="••••••••"
                   />
                   <p className="mt-1 text-xs text-gray-500">Minimum 8 caractères</p>
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-700">
                     Confirmer le mot de passe
                   </label>
                   <input
@@ -121,22 +137,18 @@ export const ResetPassword: React.FC = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 transition focus:border-transparent focus:ring-2 focus:ring-primary-500"
                     placeholder="••••••••"
                   />
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={status === 'loading' || !hasSession} className="w-full">
                   {status === 'loading' ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
                 </Button>
               </form>
 
               <p className="mt-6 text-center text-sm text-gray-600">
-                <a href="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+                <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
                   Retour à la connexion
                 </a>
               </p>

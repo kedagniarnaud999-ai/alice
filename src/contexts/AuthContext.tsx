@@ -1,12 +1,20 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService, User, LoginData, RegisterData } from '@/services/auth.api';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  authService,
+  type LoginData,
+  type RegisterData,
+  type RegisterResponse,
+  type User,
+} from '@/services/auth.api';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  register: (data: RegisterData) => Promise<RegisterResponse>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -17,20 +25,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const initAuth = async () => {
-      if (authService.isAuthenticated()) {
-        try {
-          const currentUser = await authService.getCurrentUser();
+      try {
+        const currentUser = await authService.getCurrentUser();
+        if (isMounted) {
           setUser(currentUser);
-        } catch (error) {
-          console.error('Failed to fetch user:', error);
-          localStorage.removeItem('token');
+        }
+      } catch (error) {
+        console.error('Failed to restore the Supabase session:', error);
+        if (isMounted) {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
         }
       }
-      setLoading(false);
     };
 
+    const unsubscribe = authService.onAuthStateChange((nextUser) => {
+      if (isMounted) {
+        setUser(nextUser);
+        setLoading(false);
+      }
+    });
+
     initAuth();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const login = async (data: LoginData) => {
@@ -38,16 +65,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(response.user);
   };
 
+  const loginWithGoogle = async () => {
+    await authService.loginWithGoogle();
+  };
+
   const register = async (data: RegisterData) => {
-    // On inscrit l'utilisateur mais on ne le connecte PAS automatiquement
-    // L'utilisateur doit d'abord vérifier son email
-    await authService.register(data);
-    // Ne pas mettre à jour user ici - l'utilisateur doit vérifier son email d'abord
+    return authService.register(data);
   };
 
   const logout = async () => {
     await authService.logout();
     setUser(null);
+  };
+
+  const refreshUser = async () => {
+    const nextUser = await authService.getCurrentUser();
+    setUser(nextUser);
   };
 
   return (
@@ -56,8 +89,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         loading,
         login,
+        loginWithGoogle,
         register,
         logout,
+        refreshUser,
         isAuthenticated: !!user,
       }}
     >

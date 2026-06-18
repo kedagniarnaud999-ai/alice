@@ -1,11 +1,13 @@
 import { TestResponse, ProfileResult } from '@/types/test';
 import { PersonalizedPathway } from './pathwayEngine';
+import { UserModuleProgress } from '@/services/module.api';
 
 const STORAGE_KEYS = {
   TEST_RESPONSES: 'alice_test_responses',
   TEST_PROGRESS: 'alice_test_progress',
   PROFILE_RESULT: 'alice_profile_result',
   PATHWAY: 'alice_pathway',
+  MODULE_PROGRESS: 'alice_module_progress',
   USER_PROFILE: 'alice_user_profile',
 };
 
@@ -85,6 +87,33 @@ class StorageManager {
     } catch (error) {
       console.error('Error saving pathway:', error);
     }
+  }
+
+  saveModuleProgress(progress: UserModuleProgress[]) {
+    try {
+      localStorage.setItem(
+        STORAGE_KEYS.MODULE_PROGRESS,
+        JSON.stringify({
+          progress,
+          savedAt: new Date().toISOString(),
+        })
+      );
+    } catch (error) {
+      console.error('Error saving module progress:', error);
+    }
+  }
+
+  loadModuleProgress(): UserModuleProgress[] {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.MODULE_PROGRESS);
+      if (saved) {
+        const data = JSON.parse(saved);
+        return data.progress ?? [];
+      }
+    } catch (error) {
+      console.error('Error loading module progress:', error);
+    }
+    return [];
   }
 
   loadPathway(): PersonalizedPathway | null {
