@@ -1,19 +1,15 @@
 import React from 'react';
 import {
   ArrowRight,
-  BriefcaseBusiness,
+  Briefcase,
   CheckCircle2,
   Compass,
-  Flag,
   GraduationCap,
-  Lightbulb,
   LogIn,
-  Network,
-  Rocket,
-  Share2,
   Sparkles,
+  Target,
   TrendingUp,
-  UserSearch,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { BrandMark } from '@/components/brand/BrandMark';
@@ -154,7 +150,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             <div className="grid gap-6 md:grid-cols-3">
               <FeatureCard
-                icon={<UserSearch className="h-8 w-8" />}
+                icon={<Users className="h-8 w-8" />}
                 title="Une lecture plus humaine"
                 text="Des formulations simples, concrètes et professionnelles pour mieux comprendre votre situation actuelle et vos besoins."
               />
@@ -164,7 +160,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 text="Le parcours relie votre profil, vos motivations et vos prochaines étapes au lieu de rester dans des concepts purement théoriques."
               />
               <FeatureCard
-                icon={<BriefcaseBusiness className="h-8 w-8" />}
+                icon={<Briefcase className="h-8 w-8" />}
                 title="Une perspective durable"
                 text="Vous pouvez ensuite retrouver vos modules, vos résultats et votre progression dans un même espace personnel sécurisé."
               />
@@ -182,14 +178,14 @@ export const HomePage: React.FC<HomePageProps> = ({
               </p>
               <Button onClick={onStartTest} size="lg" className="rounded-full bg-[#004494] px-8 hover:bg-[#003879]">
                 Lancer le parcours
-                <Rocket className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
             <div className="relative space-y-8">
               <div className="absolute bottom-10 left-8 top-10 w-0.5 bg-[#004494]/10" />
               <JourneyStep
-                icon={<Lightbulb className="h-6 w-6 text-[#004494]" />}
+                icon={<Target className="h-6 w-6 text-[#004494]" />}
                 number="01"
                 title="Vous répondez à un parcours guidé"
                 description="Quelques minutes pour mieux faire ressortir vos talents, vos intérêts et vos moteurs."
@@ -201,7 +197,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 description="Un rendu clair qui vous aide à mieux comprendre ce qui vous correspond vraiment."
               />
               <JourneyStep
-                icon={<Flag className="h-6 w-6 text-[#004494]" />}
+                icon={<Compass className="h-6 w-6 text-[#004494]" />}
                 number="03"
                 title="Vous poursuivez avec des repères concrets"
                 description="Des pistes, des actions et une progression que vous pouvez retrouver ensuite dans votre espace."
@@ -236,8 +232,8 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <p className="text-[#424752]">Donnez une direction plus nette à votre parcours.</p>
               <div className="flex gap-4">
-                <FooterIcon label="Communauté" icon={<Network className="h-5 w-5" />} />
-                <FooterIcon label="Partager" icon={<Share2 className="h-5 w-5" />} />
+                <FooterIcon label="Communauté" icon={<Users className="h-5 w-5" />} />
+                <FooterIcon label="Partager" icon={<Target className="h-5 w-5" />} />
               </div>
             </div>
 
