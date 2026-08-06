@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { PersonalizedPathway, LearningModule, LearningTrack } from '@/utils/pathwayEngine';
+import { MODULE_CATALOG, PersonalizedPathway, LearningModule, LearningTrack } from '@/utils/pathwayEngine';
 import { UserModuleProgress } from '@/services/module.api';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -116,6 +116,32 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
             />
           ))}
         </div>
+
+
+        <Card padding="lg">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-primary-600" />
+              <CardTitle>Catalogue des formations</CardTitle>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              Toutes les formations disponibles restent accessibles, meme si elles ne font pas partie du parcours recommande.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {MODULE_CATALOG.map((module) => (
+                <ModuleCard
+                  key={module.id}
+                  module={module}
+                  progress={progressMap.get(module.id)}
+                  onOpen={() => setSelectedModule(module)}
+                  onUpdateModuleProgress={onUpdateModuleProgress}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card padding="lg">
           <CardHeader>

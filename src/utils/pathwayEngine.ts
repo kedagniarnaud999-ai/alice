@@ -190,21 +190,47 @@ class PathwayEngine {
 
   private selectQuickWins(result: ProfileResult): LearningModule[] {
     const primaryInterest = result.primaryInterests[0]?.toLowerCase() || '';
-
-    return MODULE_CATALOG.filter((module) => {
+    const matchedQuickWins = MODULE_CATALOG.filter((module) => {
       const categoryMatch =
         module.category.toLowerCase().includes(primaryInterest) ||
-        primaryInterest.includes(module.category.toLowerCase());
+        primaryInterest.includes(module.category.toLowerCase()) ||
+        module.skills.some((skill) => primaryInterest.includes(skill.toLowerCase()));
 
       return categoryMatch && module.difficulty === 'Debutant' && module.isFree;
-    }).slice(0, 3);
+    });
+
+    const fallbackQuickWins = MODULE_CATALOG.filter(
+      (module) => module.isFree && module.difficulty === 'Debutant'
+    );
+
+    return this.dedupeModules([...matchedQuickWins, ...fallbackQuickWins]).slice(0, 3);
   }
 
   private selectRecommendedTracks(result: ProfileResult): LearningTrack[] {
-    return result.primaryInterests
+    const tracks = result.primaryInterests
       .slice(0, 2)
       .map((interest) => this.buildTrackForInterest(interest))
       .filter((track): track is LearningTrack => track !== null);
+
+    if (tracks.length > 0) {
+      return tracks;
+    }
+
+    return [
+      {
+        id: 'track_socle_employabilite_numerique',
+        title: 'Parcours socle employabilite et competences numeriques',
+        description:
+          'Un parcours de base pour clarifier votre projet, renforcer votre dossier et demarrer avec des competences utiles sur le marche.',
+        modules: MODULE_CATALOG.filter((module) =>
+          ['Employabilite', 'Technologie', 'Gestion'].includes(module.category)
+        ).slice(0, 5),
+        estimatedWeeks: 6,
+        targetSkills: this.extractSkills(
+          MODULE_CATALOG.filter((module) => ['Employabilite', 'Technologie', 'Gestion'].includes(module.category))
+        ),
+      },
+    ];
   }
 
   private buildTrackForInterest(interest: string): LearningTrack | null {
@@ -231,7 +257,23 @@ class PathwayEngine {
       const categoryMatch =
         module.category.toLowerCase().includes(interestLower) ||
         interestLower.includes(module.category.toLowerCase());
-      return categoryMatch;
+      const skillMatch = module.skills.some((skill) =>
+        skill.toLowerCase().includes(interestLower) || interestLower.includes(skill.toLowerCase())
+      );
+
+      return categoryMatch || skillMatch;
+    });
+  }
+
+  private dedupeModules(modules: LearningModule[]): LearningModule[] {
+    const seen = new Set<string>();
+    return modules.filter((module) => {
+      if (seen.has(module.id)) {
+        return false;
+      }
+
+      seen.add(module.id);
+      return true;
     });
   }
 
