@@ -1,5 +1,5 @@
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { ensureSupabaseConfigured, getSupabaseConfigurationError, supabase } from '@/lib/supabase';
 
 export interface User {
   id: string;
@@ -41,64 +41,94 @@ const mapSupabaseUser = (user: SupabaseUser): User => ({
   emailVerified: !!user.email_confirmed_at,
 });
 
+const normalizeAuthError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+
+  if (message.toLowerCase().includes('failed to fetch') || message.toLowerCase().includes('networkerror')) {
+    return new Error(
+      `${getSupabaseConfigurationError()} Si les variables sont deja renseignees, verifiez que l'URL Supabase est correcte et autorisee par le navigateur.`
+    );
+  }
+
+  return error instanceof Error ? error : new Error('Une erreur de connexion est survenue.');
+};
+
 export class AuthService {
   async register(data: RegisterData): Promise<RegisterResponse> {
-    const redirectTo = `${window.location.origin}/auth/callback`;
-    const { data: result, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        emailRedirectTo: redirectTo,
-        data: {
-          full_name: data.name,
-          role: 'USER',
+    ensureSupabaseConfigured();
+
+    try {
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const { data: result, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: {
+            full_name: data.name,
+            role: 'USER',
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw normalizeAuthError(error);
+      }
+
+      const isExistingAccount =
+        !!result.user && Array.isArray(result.user.identities) && result.user.identities.length === 0;
+
+      return {
+        user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
+        requiresEmailVerification: true,
+        isExistingAccount,
+        message: isExistingAccount
+          ? 'Cet email semble deja associe a un compte. Connectez-vous ou reinitialisez votre mot de passe si besoin.'
+          : 'Registration successful. Please check your email to verify your account.',
+      };
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
-
-    const isExistingAccount =
-      !!result.user && Array.isArray(result.user.identities) && result.user.identities.length === 0;
-
-    return {
-      user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
-      requiresEmailVerification: true,
-      isExistingAccount,
-      message: isExistingAccount
-        ? 'Cet email semble deja associe a un compte. Connectez-vous ou reinitialisez votre mot de passe si besoin.'
-        : 'Registration successful. Please check your email to verify your account.',
-    };
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const { data: result, error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
+    ensureSupabaseConfigured();
 
-    if (error || !result.user || !result.session) {
-      throw error ?? new Error('Unable to create a Supabase session.');
+    try {
+      const { data: result, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error || !result.user || !result.session) {
+        throw normalizeAuthError(error ?? new Error('Unable to create a Supabase session.'));
+      }
+
+      return {
+        user: mapSupabaseUser(result.user),
+        token: result.session.access_token,
+      };
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
-
-    return {
-      user: mapSupabaseUser(result.user),
-      token: result.session.access_token,
-    };
   }
 
   async loginWithGoogle(): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    ensureSupabaseConfigured();
 
-    if (error) {
-      throw error;
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        throw normalizeAuthError(error);
+      }
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
   }
 
@@ -110,6 +140,7 @@ export class AuthService {
   }
 
   async getCurrentUser(): Promise<User | null> {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.auth.getUser();
     if (error) {
       throw error;
@@ -119,6 +150,7 @@ export class AuthService {
   }
 
   async updateProfile(data: { name?: string; avatar?: string }): Promise<User> {
+    ensureSupabaseConfigured();
     const { data: currentUserData, error: getUserError } = await supabase.auth.getUser();
     if (getUserError || !currentUserData.user) {
       throw getUserError ?? new Error('No authenticated user found.');
@@ -142,6 +174,7 @@ export class AuthService {
   }
 
   async getSession(): Promise<Session | null> {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.auth.getSession();
     if (error) {
       throw error;
@@ -150,6 +183,7 @@ export class AuthService {
   }
 
   async resendSignupConfirmation(email: string): Promise<void> {
+    ensureSupabaseConfigured();
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
@@ -164,6 +198,7 @@ export class AuthService {
   }
 
   async requestPasswordReset(email: string): Promise<void> {
+    ensureSupabaseConfigured();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -174,6 +209,7 @@ export class AuthService {
   }
 
   async sendMagicLink(email: string): Promise<void> {
+    ensureSupabaseConfigured();
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -187,6 +223,7 @@ export class AuthService {
   }
 
   async exchangeCodeForSession(code: string): Promise<User | null> {
+    ensureSupabaseConfigured();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
       throw error;

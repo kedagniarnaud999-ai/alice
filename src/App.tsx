@@ -16,7 +16,7 @@ import { ForgotPassword } from '@/pages/ForgotPassword';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { AuthCallback } from '@/pages/AuthCallback';
 import { ProfileSettings } from '@/pages/ProfileSettings';
-import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
+import { MODULE_CATALOG, pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
 import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
@@ -301,7 +301,8 @@ const WorkspaceApp = () => {
         const existing = current.find((item) => item.moduleId === moduleId);
         const module =
           pathway.quickWins.find((item) => item.id === moduleId) ??
-          pathway.recommendedTracks.flatMap((track) => track.modules).find((item) => item.id === moduleId);
+          pathway.recommendedTracks.flatMap((track) => track.modules).find((item) => item.id === moduleId) ??
+          MODULE_CATALOG.find((item) => item.id === moduleId);
 
         if (!module) {
           return current;
