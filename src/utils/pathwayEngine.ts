@@ -250,6 +250,16 @@ function estimateWeeks(modules: LearningModule[]): number {
   return Math.max(1, Math.round(total));
 }
 
+const DIFFICULTY_LEVEL = { Debutant: 0, Intermediaire: 1, Avance: 2 } as const;
+
+/** Gratuit d'abord, puis du plus simple au plus avancé ; ordre du catalogue à égalité. */
+function byTrackOrder(a: LearningModule, b: LearningModule): number {
+  if (a.isFree !== b.isFree) {
+    return a.isFree ? -1 : 1;
+  }
+  return DIFFICULTY_LEVEL[a.difficulty] - DIFFICULTY_LEVEL[b.difficulty];
+}
+
 class PathwayEngine {
   generatePathway(result: ProfileResult): PersonalizedPathway {
     return {
@@ -312,7 +322,7 @@ class PathwayEngine {
       return null;
     }
     const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
-    const trackModules = modules.slice(0, 5);
+    const trackModules = modules.sort(byTrackOrder).slice(0, 5);
     return {
       id: `track_${domainId}`,
       title: `Parcours ${domain.label}`,
