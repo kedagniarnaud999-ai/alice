@@ -57,6 +57,16 @@ ${result.feasibilityAssessment}
 PROCHAINES ACTIONS
 ${result.nextActions.map((action, i) => `${i + 1}. ${action}`).join('\n')}
 
+FILIERES RECOMMANDEES
+${(result.domains ?? [])
+  .filter((d) => !d.excluded && d.rank > 0)
+  .sort((a, b) => a.rank - b.rank)
+  .map((d) => `${d.rank}. ${d.label} (${d.normalized}%)`)
+  .join('\n')}
+
+ECARTES
+${(result.domains ?? []).filter((d) => d.excluded).map((d) => d.label).join(', ') || 'Aucun'}
+
 ---
 Genere par AliTché - ${new Date().toLocaleDateString('fr-FR')}
     `.trim();

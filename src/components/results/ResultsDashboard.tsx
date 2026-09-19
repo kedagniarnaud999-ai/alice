@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, Compass, Heart, Loader2, MapPin, Sparkles, Target, TrendingUp } from 'lucide-react';
-import { ProfileResult } from '@/types/test';
+import { ArrowRight, CheckCircle2, Compass, Heart, Loader2, MapPin, Sparkles, Target, TrendingUp, XCircle } from 'lucide-react';
+import { ProfileResult, DomainScore } from '@/types/test';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -191,6 +191,10 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           </CardContent>
         </Card>
 
+        {profileResult.domains && profileResult.domains.length > 0 && (
+          <DomainRanking domains={profileResult.domains} />
+        )}
+
         <div className="grid gap-6 md:grid-cols-2">
           <Card padding="lg">
             <CardHeader>
@@ -257,5 +261,83 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
         </div>
       </div>
     </div>
+  );
+};
+
+const barColorFor = (normalized: number): string => {
+  if (normalized >= 60) return 'bg-emerald-500';
+  if (normalized >= 35) return 'bg-sky-500';
+  if (normalized > 0) return 'bg-amber-400';
+  return 'bg-gray-200';
+};
+
+const DomainRanking: React.FC<{ domains: DomainScore[] }> = ({ domains }) => {
+  const ranked = domains.filter((d) => !d.excluded && d.rank > 0);
+  const excluded = domains.filter((d) => d.excluded);
+
+  return (
+    <Card padding="lg">
+      <CardHeader>
+        <div className="mb-2 flex items-center gap-2">
+          <Compass className="h-5 w-5 text-indigo-600" />
+          <CardTitle>Vos filières recommandées</CardTitle>
+        </div>
+        <p className="text-sm text-gray-600">
+          Les domaines fonctionnels classés selon vos réponses, avec les raisons de ce classement.
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {ranked.map((domain) => (
+            <div key={domain.id} className="rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+                    {domain.rank}
+                  </span>
+                  <span className="font-semibold text-gray-900">{domain.label}</span>
+                </div>
+                <span className="text-sm font-medium text-gray-500">{domain.normalized}%</span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className={`h-full ${barColorFor(domain.normalized)}`}
+                  style={{ width: `${domain.normalized}%` }}
+                />
+              </div>
+              {domain.reasons.length > 0 && (
+                <ul className="mt-3 space-y-1">
+                  {domain.reasons.map((reason, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+                      <span>{reason}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {excluded.length > 0 && (
+          <div className="mt-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              Écartés par vous
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {excluded.map((domain) => (
+                <span
+                  key={domain.id}
+                  className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-500 line-through"
+                >
+                  <XCircle className="h-3.5 w-3.5 flex-shrink-0 text-gray-400" />
+                  {domain.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };

@@ -1,272 +1,391 @@
-import { ProfileResult, TestResponse, DimensionScore } from '@/types/test';
-import { orientationQuestions } from '@/data/questions';
+import {
+  ProfileResult,
+  TestResponse,
+  Question,
+  DomainScore,
+  FunctionalDomainId,
+  CareerSituation,
+  AssessmentContext,
+} from '@/types/test';
+import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
+import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 
-interface ScoreMap {
-  [key: string]: number;
+type ScoreMap = Record<string, number>;
+
+const COGNITIVE_KEYS = [
+  'analytical',
+  'structured',
+  'experimental',
+  'pragmatic',
+  'collaborative',
+  'adaptive',
+  'intuitive',
+];
+
+const PASSION_KEYS = [
+  'innovation',
+  'impact',
+  'challenge',
+  'autonomy',
+  'stability',
+  'learning',
+  'recognition',
+  'achievement',
+  'growth',
+];
+
+const TALENT_KEYS = [
+  'analytical_talent',
+  'organizational_talent',
+  'communication_talent',
+  'creative_talent',
+  'interpersonal_talent',
+  'resourcefulness_talent',
+  'technical_talent',
+  'linguistic_talent',
+  'leadership',
+  'problem_solving',
+];
+
+const COGNITIVE_MAP: Record<string, string> = {
+  analytical: 'Analytique',
+  structured: 'Structuré',
+  experimental: 'Expérimental',
+  pragmatic: 'Pragmatique',
+  collaborative: 'Collaboratif',
+  adaptive: 'Adaptatif',
+  intuitive: 'Intuitif',
+};
+
+const PASSION_MAP: Record<string, string> = {
+  innovation: 'Innovateur',
+  impact: 'Orienté Impact',
+  challenge: 'Orienté Défis',
+  autonomy: 'Autonome',
+  stability: 'En quête de Stabilité',
+  learning: 'Apprenant',
+};
+
+const TALENT_MAP: Record<string, string> = {
+  analytical_talent: 'Analyse et résolution de problèmes',
+  organizational_talent: 'Organisation et coordination',
+  communication_talent: 'Communication et pédagogie',
+  creative_talent: 'Créativité et expression',
+  interpersonal_talent: 'Relations interpersonnelles et empathie',
+  resourcefulness_talent: 'Débrouillardise et pragmatisme',
+  technical_talent: 'Compétences techniques et digitales',
+  linguistic_talent: 'Langues et communication',
+  leadership: 'Leadership et influence',
+  problem_solving: 'Résolution de problèmes complexes',
+};
+
+const MOTIVATION_MAP: Record<string, string> = {
+  innovation: 'Innovation et créativité',
+  impact: 'Impact social et contribution',
+  challenge: 'Défis et accomplissement',
+  autonomy: 'Autonomie et liberté',
+  stability: 'Sécurité et stabilité',
+  learning: 'Apprentissage continu',
+  recognition: 'Reconnaissance et validation',
+  achievement: "Atteinte d'objectifs mesurables",
+  growth: 'Développement personnel',
+};
+
+const CAREER_STAGE_LABELS: Record<CareerSituation, string> = {
+  bachelier: "Nouveau bachelier — en recherche d'orientation post-bac",
+  jeune_diplome: 'Jeune diplômé(e) — en insertion professionnelle',
+  reconversion: 'En reconversion professionnelle',
+  professionnel: 'Professionnel(le) en montée en compétences',
+};
+
+function emptyDomainRecord(): Record<FunctionalDomainId, number> {
+  return ALL_DOMAIN_IDS.reduce(
+    (acc, id) => {
+      acc[id] = 0;
+      return acc;
+    },
+    {} as Record<FunctionalDomainId, number>
+  );
+}
+
+function truncate(text: string, max = 72): string {
+  return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
+
+/**
+ * Resolve the career situation chosen at the gate (q_situation). Used both by
+ * the analyzer and by the flow (to drive conditional question visibility).
+ */
+export function getSituation(responses: TestResponse[]): CareerSituation | undefined {
+  const gate = orientationQuestions.find((q) => q.id === 'q_situation');
+  if (!gate) return undefined;
+  for (const response of responses) {
+    if (response.questionId !== gate.id) continue;
+    for (const optionId of response.selectedOptions) {
+      const option = gate.options.find((o) => o.id === optionId);
+      if (option?.sets?.situation) return option.sets.situation;
+    }
+  }
+  return undefined;
+}
+
+/** Read-only context handed to `Question.visibleIf`. Shared with the flow. */
+export function buildAssessmentContext(responses: TestResponse[]): AssessmentContext {
+  const selected = new Set<string>();
+  responses.forEach((r) => r.selectedOptions.forEach((o) => selected.add(`${r.questionId}::${o}`)));
+  return {
+    situation: getSituation(responses),
+    hasSelected: (questionId, optionId) => selected.has(`${questionId}::${optionId}`),
+  };
+}
+
+/** The ordered list of questions actually asked for a given set of responses. */
+export function getVisibleQuestions(responses: TestResponse[]): Question[] {
+  const context = buildAssessmentContext(responses);
+  return orientationQuestions.filter((q) => !q.visibleIf || q.visibleIf(context));
 }
 
 export class TestAnalyzer {
   private responses: TestResponse[];
-  private dimensionScores: Map<string, ScoreMap>;
+  private questionById: Map<string, Question>;
+  private psych: ScoreMap = {};
 
   constructor(responses: TestResponse[]) {
     this.responses = responses;
-    this.dimensionScores = new Map();
+    this.questionById = new Map(orientationQuestions.map((q) => [q.id, q]));
   }
 
   analyze(): ProfileResult {
-    this.calculateScores();
+    const situation = getSituation(this.responses) ?? 'jeune_diplome';
 
-    const profileType = this.determineProfileType();
-    const naturalTalents = this.extractNaturalTalents();
-    const motivationDrivers = this.extractMotivationDrivers();
-    const primaryInterests = this.extractPrimaryInterests();
-    const careerStage = this.determineCareerStage();
-    const feasibilityAssessment = this.assessFeasibility();
-    const nextActions = this.generateNextActions(careerStage, primaryInterests);
+    const rawByDomain = emptyDomainRecord();
+    const maxByDomain = emptyDomainRecord();
+    const excluded = new Set<FunctionalDomainId>();
+    const reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]> =
+      ALL_DOMAIN_IDS.reduce(
+        (acc, id) => {
+          acc[id] = [];
+          return acc;
+        },
+        {} as Record<FunctionalDomainId, { text: string; score: number }[]>
+      );
+
+    this.responses.forEach((response) => {
+      const question = this.questionById.get(response.questionId);
+      if (!question) return;
+
+      // Theoretical best this question could contribute to each domain.
+      const cap = question.type === 'single' ? 1 : question.maxSelections ?? question.options.length;
+      ALL_DOMAIN_IDS.forEach((domainId) => {
+        const achievable = question.options
+          .map((o) => o.domains?.[domainId] ?? 0)
+          .filter((v) => v > 0)
+          .sort((a, b) => b - a)
+          .slice(0, cap)
+          .reduce((sum, v) => sum + v, 0);
+        maxByDomain[domainId] += achievable;
+      });
+
+      response.selectedOptions.forEach((optionId) => {
+        const option = question.options.find((o) => o.id === optionId);
+        if (!option) return;
+
+        Object.entries(option.weights ?? {}).forEach(([key, value]) => {
+          this.psych[key] = (this.psych[key] ?? 0) + (value ?? 0);
+        });
+
+        Object.entries(option.domains ?? {}).forEach(([domainId, value]) => {
+          const id = domainId as FunctionalDomainId;
+          const weight = value ?? 0;
+          rawByDomain[id] += weight;
+          if (weight > 0) reasonMap[id].push({ text: option.text, score: weight });
+        });
+
+        option.excludes?.forEach((id) => excluded.add(id));
+      });
+    });
+
+    const domains = this.buildDomainScores(rawByDomain, maxByDomain, excluded, reasonMap);
+    const topDomainIds = domains.filter((d) => !d.excluded && d.raw > 0).slice(0, 3).map((d) => d.id);
+
+    const primaryInterests = topDomainIds.length
+      ? topDomainIds.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label)
+      : ['à confirmer lors d’un échange'];
 
     return {
-      profileType,
-      profileDescription: this.getProfileDescription(profileType),
-      naturalTalents,
-      motivationDrivers,
+      assessmentVersion: ASSESSMENT_VERSION,
+      situation,
+      profileType: this.determineProfileType(),
+      profileDescription: this.buildProfileDescription(),
+      naturalTalents: this.extractByKeys(TALENT_KEYS, TALENT_MAP, 4),
+      motivationDrivers: this.extractByKeys(PASSION_KEYS, MOTIVATION_MAP, 4),
       primaryInterests,
-      careerStage,
-      feasibilityAssessment,
-      nextActions,
-      dimensionScores: this.formatDimensionScores(),
+      careerStage: CAREER_STAGE_LABELS[situation],
+      feasibilityAssessment: this.assessFeasibility(),
+      nextActions: this.generateNextActions(situation, topDomainIds),
+      domains,
+      topDomainIds,
+      excludedDomainIds: ALL_DOMAIN_IDS.filter((id) => excluded.has(id)),
     };
   }
 
-  private calculateScores() {
-    this.responses.forEach((response) => {
-      const question = orientationQuestions.find(q => q.id === response.questionId);
-      if (!question) return;
-
-      response.selectedOptions.forEach((optionId) => {
-        const option = question.options.find(opt => opt.id === optionId);
-        if (!option) return;
-
-        Object.entries(option.weights).forEach(([key, weight]) => {
-          if (!this.dimensionScores.has(question.dimension)) {
-            this.dimensionScores.set(question.dimension, {});
-          }
-          
-          const dimScores = this.dimensionScores.get(question.dimension)!;
-          dimScores[key] = (dimScores[key] || 0) + weight;
-        });
-      });
+  private buildDomainScores(
+    rawByDomain: Record<FunctionalDomainId, number>,
+    maxByDomain: Record<FunctionalDomainId, number>,
+    excluded: Set<FunctionalDomainId>,
+    reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]>
+  ): DomainScore[] {
+    const scores: DomainScore[] = ALL_DOMAIN_IDS.map((id) => {
+      const raw = rawByDomain[id];
+      const max = maxByDomain[id];
+      const normalized = max > 0 ? Math.round((raw / max) * 100) : 0;
+      const reasons = reasonMap[id]
+        .sort((a, b) => b.score - a.score)
+        .filter((r, index, arr) => arr.findIndex((x) => x.text === r.text) === index)
+        .slice(0, 3)
+        .map((r) => truncate(r.text));
+      return {
+        id,
+        label: FUNCTIONAL_DOMAINS_BY_ID[id].label,
+        raw,
+        maxPossible: max,
+        normalized,
+        rank: 0,
+        reasons,
+        excluded: excluded.has(id),
+      };
     });
+
+    scores
+      .filter((d) => !d.excluded)
+      .sort((a, b) => b.normalized - a.normalized || b.raw - a.raw)
+      .forEach((d, index) => {
+        d.rank = index + 1;
+      });
+
+    return scores.sort((a, b) => Number(a.excluded) - Number(b.excluded) || a.rank - b.rank);
   }
 
-  private getTopScores(dimension: string, limit: number = 3): string[] {
-    const scores = this.dimensionScores.get(dimension) || {};
-    return Object.entries(scores)
-      .sort(([, a], [, b]) => b - a)
+  private topKeys(allowed: string[], limit: number): string[] {
+    return allowed
+      .map((key) => ({ key, value: this.psych[key] ?? 0 }))
+      .filter((entry) => entry.value > 0)
+      .sort((a, b) => b.value - a.value)
       .slice(0, limit)
-      .map(([key]) => key);
+      .map((entry) => entry.key);
+  }
+
+  private extractByKeys(allowed: string[], labels: Record<string, string>, limit: number): string[] {
+    const result = this.topKeys(allowed, limit).map((key) => labels[key] ?? key);
+    return result.length ? result : ['À préciser au fil du parcours'];
   }
 
   private determineProfileType(): string {
-    const cognitiveTop = this.getTopScores('cognitive', 2);
-    const passionTop = this.getTopScores('passion', 1);
-
-    const cognitiveMap: { [key: string]: string } = {
-      analytical: 'Analytique',
-      structured: 'Structuré',
-      experimental: 'Expérimental',
-      pragmatic: 'Pragmatique',
-      collaborative: 'Collaboratif',
-      adaptive: 'Adaptatif',
-      intuitive: 'Intuitif',
-    };
-
-    const passionMap: { [key: string]: string } = {
-      innovation: 'Innovateur',
-      impact: 'Impact',
-      challenge: 'Orienté Défis',
-      autonomy: 'Autonome',
-      stability: 'Stabilité',
-      learning: 'Apprenant',
-    };
-
-    const cognitive1 = cognitiveMap[cognitiveTop[0]] || 'Polyvalent';
-    const passion1 = passionMap[passionTop[0]] || 'Motivé';
-
-    return `${cognitive1} ${passion1}`;
+    const cognitiveKey = this.topKeys(COGNITIVE_KEYS, 1)[0];
+    const passionKey = this.topKeys(PASSION_KEYS, 1)[0];
+    const cognitive = cognitiveKey ? COGNITIVE_MAP[cognitiveKey] : 'Polyvalent';
+    const passion = passionKey ? PASSION_MAP[passionKey] : 'Motivé';
+    return `${cognitive} · ${passion}`;
   }
 
-  private getProfileDescription(profileType: string): string {
-    const descriptions: { [key: string]: string } = {
-      'Analytique Innovateur': 'Vous excellez dans la résolution de problèmes complexes avec une approche créative. Vous aimez décortiquer les systèmes et proposer des solutions nouvelles basées sur la logique et l\'analyse.',
-      'Structuré Stabilité': 'Vous prospérez dans des environnements organisés où les processus sont clairs. Vous apportez de la rigueur et de la fiabilité dans tout ce que vous entreprenez.',
-      'Pragmatique Impact': 'Vous cherchez des solutions concrètes qui font une vraie différence. Vous êtes orienté résultats et aimez voir l\'impact tangible de votre travail.',
-      'Collaboratif Impact': 'Vous réussissez en travaillant avec les autres pour créer du changement positif. Votre force réside dans votre capacité à mobiliser et inspirer.',
-      'Expérimental Innovateur': 'Vous apprenez par l\'action et n\'avez pas peur d\'essayer de nouvelles approches. Vous êtes à l\'aise avec l\'incertitude et l\'exploration.',
+  private buildProfileDescription(): string {
+    const cognitiveKey = this.topKeys(COGNITIVE_KEYS, 1)[0];
+    const passionKey = this.topKeys(PASSION_KEYS, 1)[0];
+
+    const cognitiveText: Record<string, string> = {
+      analytical: 'vous décortiquez les problèmes avec méthode et logique',
+      structured: 'vous prospérez dans des environnements clairs, organisés et fiables',
+      experimental: 'vous apprenez par l’action et l’expérimentation, à l’aise avec l’incertitude',
+      pragmatic: 'vous cherchez des solutions concrètes et un impact tangible',
+      collaborative: 'vous avancez en mobilisant et en vous appuyant sur les autres',
+      adaptive: 'vous vous ajustez rapidement aux situations changeantes',
+      intuitive: 'vous laissez parler votre flair pour trancher vite',
+    };
+    const passionText: Record<string, string> = {
+      innovation: "créer du nouveau",
+      impact: "avoir un impact réel sur les personnes",
+      challenge: "relever des défis et performer",
+      autonomy: "garder votre indépendance de décision",
+      stability: "construire dans la sécurité et la régularité",
+      learning: "apprendre en continu",
+      recognition: "être reconnu pour votre apport",
+      achievement: "atteindre des objectifs mesurables",
+      growth: "progresser personnellement",
     };
 
-    return descriptions[profileType] || 'Vous avez un profil polyvalent qui vous permet de vous adapter à différents contextes professionnels. Vos forces résident dans votre capacité à combiner plusieurs approches pour atteindre vos objectifs.';
+    const part1 = cognitiveKey ? cognitiveText[cognitiveKey] : 'vous combinez plusieurs approches selon le contexte';
+    const part2 = passionKey ? passionText[passionKey] : 'faire avancer vos projets';
+
+    return `Votre profil : ${part1}. Ce qui vous porte le plus, c'est ${part2}. Cette combinaison vous aide à choisir des filières où vous pourrez à la fois bien faire et trouver du sens.`;
   }
 
-  private extractNaturalTalents(): string[] {
-    const talentScores = this.dimensionScores.get('talents') || {};
-    const topTalents = Object.entries(talentScores)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5);
-
-    const talentMap: { [key: string]: string } = {
-      analytical_talent: 'Analyse et résolution de problèmes',
-      organizational_talent: 'Organisation et coordination',
-      communication_talent: 'Communication et pédagogie',
-      creative_talent: 'Créativité et expression',
-      interpersonal_talent: 'Relations interpersonnelles et empathie',
-      resourcefulness_talent: 'Débrouillardise et pragmatisme',
-      technical_talent: 'Compétences techniques et digitales',
-      linguistic_talent: 'Langues et communication',
-      leadership: 'Leadership et influence',
-      problem_solving: 'Résolution de problèmes complexes',
-    };
-
-    return topTalents.map(([key]) => talentMap[key] || key).filter(Boolean).slice(0, 4);
-  }
-
-  private extractMotivationDrivers(): string[] {
-    const passionScores = this.dimensionScores.get('passion') || {};
-    const topMotivations = Object.entries(passionScores)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 4);
-
-    const motivationMap: { [key: string]: string } = {
-      innovation: 'Innovation et créativité',
-      impact: 'Impact social et contribution',
-      challenge: 'Défis et accomplissement',
-      autonomy: 'Autonomie et liberté',
-      stability: 'Sécurité et stabilité',
-      learning: 'Apprentissage continu',
-      recognition: 'Reconnaissance et validation',
-      achievement: 'Atteinte d\'objectifs mesurables',
-      collaboration: 'Travail d\'équipe',
-      growth: 'Développement personnel',
-    };
-
-    return topMotivations.map(([key]) => motivationMap[key] || key).filter(Boolean);
-  }
-
-  private extractPrimaryInterests(): string[] {
-    const interestScores = this.dimensionScores.get('interests') || {};
-    const topInterests = Object.entries(interestScores)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 4);
-
-    const interestMap: { [key: string]: string } = {
-      tech: 'Technologie & Digital',
-      business: 'Business & Entrepreneuriat',
-      education: 'Éducation & Formation',
-      health: 'Santé & Bien-être',
-      creative: 'Créativité & Design',
-      management: 'Gestion & Administration',
-      digital: 'Transformation digitale',
-      commercial: 'Commerce & Vente',
-      social_impact: 'Impact social',
-      entrepreneurship: 'Entrepreneuriat',
-    };
-
-    return topInterests.map(([key]) => interestMap[key] || key).filter(Boolean);
-  }
-
-  private determineCareerStage(): string {
-    const positioningScores = this.dimensionScores.get('positioning') || {};
-    
-    const stages = [
-      { key: 'stage_graduate', label: 'Jeune diplômé en insertion' },
-      { key: 'stage_upskilling', label: 'Professionnel en montée en compétences' },
-      { key: 'stage_reconversion', label: 'Professionnel en reconversion' },
-      { key: 'stage_jobseeker', label: 'Chercheur d\'emploi actif' },
-      { key: 'stage_repositioning', label: 'Professionnel en repositionnement' },
-    ];
-
-    let maxScore = 0;
-    let stage = stages[0].label;
-
-    stages.forEach(({ key, label }) => {
-      if (positioningScores[key] > maxScore) {
-        maxScore = positioningScores[key];
-        stage = label;
-      }
-    });
-
-    return stage;
+  private selectedOptionIds(questionId: string): string[] {
+    return this.responses.find((r) => r.questionId === questionId)?.selectedOptions ?? [];
   }
 
   private assessFeasibility(): string {
-    const realityScores = this.dimensionScores.get('reality') || {};
-    
-    const timeAvailable = realityScores['time_full'] || realityScores['time_high'] || 
-                          realityScores['time_medium'] || realityScores['time_low'] || 0;
-    
-    const hasComputer = realityScores['resource_computer'] || 0;
-    const hasInternet = realityScores['resource_internet'] || 0;
+    const time = this.selectedOptionIds('q_time')[0];
+    const resources = new Set(this.selectedOptionIds('q_resources'));
+    const blocker = this.selectedOptionIds('q_constraint')[0];
 
-    let feasibility = '';
+    const hasComputer = resources.has('r_computer');
+    const hasInternet = resources.has('r_internet');
+    const needsOffline = resources.has('r_offline');
 
-    if (timeAvailable >= 3 && hasComputer >= 2 && hasInternet >= 2) {
-      feasibility = 'Excellent : Vous avez les ressources nécessaires pour un parcours d\'apprentissage intensif. Vous pouvez viser des formations complètes et des projets ambitieux.';
-    } else if (timeAvailable >= 2 && (hasComputer >= 1 || hasInternet >= 1)) {
-      feasibility = 'Bon : Avec vos ressources actuelles, privilégiez des modules courts et flexibles. L\'apprentissage mobile peut être une bonne option.';
+    let verdict: string;
+    if (time === 'time_high' && hasComputer && hasInternet) {
+      verdict =
+        "Excellent : vous réunissez le temps et les outils pour un parcours intensif. Vous pouvez viser une formation complète, avec projets et certification.";
+    } else if ((time === 'time_high' || time === 'time_medium') && (hasComputer || hasInternet)) {
+      verdict =
+        "Bon : avec un peu d'organisation, des modules courts et réguliers vous mèneront loin. Privilégiez la constance à l'intensité.";
     } else {
-      feasibility = 'Réaliste : Vos contraintes actuelles nécessitent une approche progressive. Commencez par des micro-formations accessibles et des ressources gratuites.';
+      verdict =
+        "Réaliste : vos contraintes appellent une approche progressive. Commencez par des micro-formations gratuites, mobile-friendly et, si besoin, téléchargeables hors-ligne.";
     }
 
-    const mainConstraint = this.getTopScores('reality', 1).find(key => key.startsWith('constraint_'));
-    if (mainConstraint === 'constraint_time') {
-      feasibility += ' Optimisez votre temps avec des sessions courtes quotidiennes (15-30min).';
-    } else if (mainConstraint === 'constraint_money') {
-      feasibility += ' Concentrez-vous d\'abord sur les ressources gratuites de qualité.';
-    } else if (mainConstraint === 'constraint_direction') {
-      feasibility += ' Un parcours guidé étape par étape sera idéal pour vous.';
+    if (needsOffline) {
+      verdict += ' Ciblez en priorité les contenus disponibles hors-ligne.';
     }
 
-    return feasibility;
+    const blockerAdvice: Record<string, string> = {
+      constraint_time: ' Optimisez avec des sessions courtes de 15–30 minutes par jour.',
+      constraint_money: ' Concentrez-vous d’abord sur les ressources gratuites et les dispositifs de bourses.',
+      constraint_direction: ' Le classement de domaines ci-dessous est votre boussole : avancez étape par étape.',
+      constraint_equipment: ' Cherchez des modules légers, utilisables sur smartphone ou en point d’accès.',
+      constraint_confidence: ' Démarrez par une micro-réalisation concrète pour consolider la confiance.',
+    };
+    if (blocker && blockerAdvice[blocker]) {
+      verdict += blockerAdvice[blocker];
+    }
+
+    return verdict.trim();
   }
 
-  private generateNextActions(stage: string, interests: string[]): string[] {
+  private generateNextActions(situation: CareerSituation, topDomainIds: FunctionalDomainId[]): string[] {
     const actions: string[] = [];
+    const topId = topDomainIds[0];
+    const domain = topId ? FUNCTIONAL_DOMAINS_BY_ID[topId] : undefined;
+    const topLabel = domain?.label ?? 'votre domaine prioritaire';
+    const occupation = domain?.occupations[0];
 
-    if (stage.includes('diplômé')) {
-      actions.push('Complétez votre profil avec vos compétences et projets');
-      actions.push('Suivez le module "Construire son CV pour le marché africain"');
-      actions.push(`Explorez la piste : ${interests[0] || 'Technologie & Digital'}`);
-    } else if (stage.includes('reconversion')) {
-      actions.push('Identifiez vos compétences transférables');
-      actions.push(`Démarrez le parcours découverte : ${interests[0] || 'Business'}`);
-      actions.push('Rejoignez la communauté de professionnels en transition');
-    } else if (stage.includes('compétences')) {
-      actions.push('Évaluez votre niveau actuel dans votre domaine');
-      actions.push('Définissez une compétence-clé à développer en priorité');
-      actions.push('Choisissez une certification reconnue sur votre marché');
-    } else {
-      actions.push('Lancez votre parcours personnalisé');
-      actions.push(`Focus domaine : ${interests[0] || 'Développement professionnel'}`);
-      actions.push('Préparez votre stratégie de recherche d\'opportunités');
+    const opener: Record<CareerSituation, string> = {
+      bachelier: `Ciblez les filières post-bac menant à « ${topLabel} » et vérifiez leurs conditions d'admission.`,
+      jeune_diplome: `Alignez CV et LinkedIn sur « ${topLabel} » et postulez aux offres et stages de ce domaine.`,
+      reconversion: `Validez « ${topLabel} » par un projet-test avant toute rupture, en vous appuyant sur vos compétences transférables.`,
+      professionnel: `Choisissez une certification montante en « ${topLabel} » pour accélérer votre évolution interne.`,
+    };
+    actions.push(opener[situation]);
+
+    if (occupation) {
+      actions.push(`Explorez le parcours « ${topLabel} » — métier type de référence : ${occupation}.`);
     }
+
+    actions.push(
+      'Ouvrez le module « Construire un CV percutant pour l’Afrique » pour traduire ce profil en candidature crédible.'
+    );
+    actions.push('Fixez un objectif à 30 jours : un module terminé et un échange avec un professionnel du domaine.');
 
     return actions;
-  }
-
-  private formatDimensionScores(): DimensionScore[] {
-    const result: DimensionScore[] = [];
-
-    this.dimensionScores.forEach((scores, dimension) => {
-      const sortedScores = Object.entries(scores).sort(([, a], [, b]) => b - a);
-      const dominant = sortedScores.slice(0, 3).map(([key]) => key);
-      
-      result.push({
-        dimension: dimension as any,
-        scores: new Map(Object.entries(scores)),
-        dominant,
-      });
-    });
-
-    return result;
   }
 }

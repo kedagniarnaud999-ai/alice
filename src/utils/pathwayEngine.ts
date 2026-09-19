@@ -1,4 +1,5 @@
-import { ProfileResult } from '@/types/test';
+import { ProfileResult, FunctionalDomainId, CareerSituation } from '@/types/test';
+import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 
 export interface LearningModule {
   id: string;
@@ -10,6 +11,8 @@ export interface LearningModule {
   skills: string[];
   format: 'Video' | 'Projet' | 'Lecture' | 'Interactif';
   isFree: boolean;
+  /** Functional domains this module develops. Absent = cross-cutting (employability). */
+  domains?: FunctionalDomainId[];
 }
 
 export interface LearningTrack {
@@ -70,6 +73,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['HTML', 'CSS', 'JavaScript', 'Web Development'],
     format: 'Video',
     isFree: true,
+    domains: ['ict'],
   },
   {
     id: 'mod_digital_marketing',
@@ -81,6 +85,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Marketing Digital', 'Reseaux Sociaux', 'Content Marketing', 'SEO'],
     format: 'Video',
     isFree: true,
+    domains: ['commerce_marketing'],
   },
   {
     id: 'mod_excel',
@@ -92,6 +97,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Excel', 'Analyse de donnees', 'Productivite'],
     format: 'Interactif',
     isFree: true,
+    domains: ['administration', 'finance'],
   },
   {
     id: 'mod_design_thinking',
@@ -103,6 +109,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Design Thinking', 'Innovation', 'Problem Solving', 'Creativite'],
     format: 'Projet',
     isFree: false,
+    domains: ['commerce_marketing', 'administration'],
   },
   {
     id: 'mod_communication',
@@ -114,6 +121,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Communication', 'Presentation', 'Ecoute Active'],
     format: 'Video',
     isFree: true,
+    domains: ['education', 'tourisme', 'commerce_marketing'],
   },
   {
     id: 'mod_entrepreneurship',
@@ -125,6 +133,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Entrepreneuriat', 'Business Plan', 'Pitch', 'Gestion'],
     format: 'Projet',
     isFree: false,
+    domains: ['commerce_marketing', 'administration'],
   },
   {
     id: 'mod_data_analysis',
@@ -136,6 +145,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Python', 'Pandas', 'Data Analysis', 'Visualisation'],
     format: 'Projet',
     isFree: true,
+    domains: ['ict', 'finance'],
   },
   {
     id: 'mod_project_mgmt',
@@ -147,6 +157,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Gestion de Projet', 'Agile', 'Scrum', 'Organisation'],
     format: 'Video',
     isFree: false,
+    domains: ['administration', 'logistique'],
   },
   {
     id: 'mod_ui_design',
@@ -158,6 +169,7 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['UI Design', 'Figma', 'Design', 'Prototypage'],
     format: 'Projet',
     isFree: true,
+    domains: ['ict', 'commerce_marketing'],
   },
   {
     id: 'mod_teaching',
@@ -169,70 +181,125 @@ export const MODULE_CATALOG: LearningModule[] = [
     skills: ['Pedagogie', 'Formation', 'Animation', 'Evaluation'],
     format: 'Video',
     isFree: true,
+    domains: ['education'],
+  },
+  {
+    id: 'mod_intro_ingenierie',
+    title: 'Lecture de plan et bases du genie',
+    description: 'Decouvrez les fondamentaux techniques : lecture de plans, outils et normes',
+    duration: '4 semaines',
+    difficulty: 'Debutant',
+    category: 'Technique',
+    skills: ['Lecture de plan', 'Dessin technique', 'Normes', 'Calcul de base'],
+    format: 'Projet',
+    isFree: true,
+    domains: ['ingenierie', 'logistique'],
+  },
+  {
+    id: 'mod_agribusiness',
+    title: "Introduction a l'agribusiness",
+    description: "Du champ au marche : bases de production vegetale et valorisation agricole",
+    duration: '5 semaines',
+    difficulty: 'Debutant',
+    category: 'Agriculture',
+    skills: ['Production vegetale', 'Elevage', 'Agroalimentaire', 'Gestion agricole'],
+    format: 'Projet',
+    isFree: true,
+    domains: ['agriculture'],
+  },
+  {
+    id: 'mod_soins_base',
+    title: 'Fondamentaux du soin et de l’accompagnement',
+    description: "Hygiene, bientraitance et premiers gestes pour les metiers de la santé et du social",
+    duration: '3 semaines',
+    difficulty: 'Debutant',
+    category: 'Sante',
+    skills: ['Soins de base', 'Hygiene', 'Bientraitance', 'Accompagnement'],
+    format: 'Video',
+    isFree: true,
+    domains: ['sante_social'],
   },
 ];
 
+function uniqueModules(modules: LearningModule[]): LearningModule[] {
+  const seen = new Set<string>();
+  return modules.filter((module) => {
+    if (seen.has(module.id)) return false;
+    seen.add(module.id);
+    return true;
+  });
+}
+
 class PathwayEngine {
   generatePathway(result: ProfileResult): PersonalizedPathway {
-    const quickWins = this.selectQuickWins(result);
-    const tracks = this.selectRecommendedTracks(result);
-    const goals = this.generateLongTermGoals(result);
-    const milestones = this.generateMilestones();
-
     return {
       profileType: result.profileType,
-      recommendedTracks: tracks,
-      quickWins,
-      longTermGoals: goals,
-      milestones,
+      recommendedTracks: this.selectRecommendedTracks(result),
+      quickWins: this.selectQuickWins(result),
+      longTermGoals: this.generateLongTermGoals(result),
+      milestones: this.generateMilestones(),
     };
   }
 
   private selectQuickWins(result: ProfileResult): LearningModule[] {
-    const primaryInterest = result.primaryInterests[0]?.toLowerCase() || '';
+    const wanted = new Set<FunctionalDomainId>(result.topDomainIds);
 
-    return MODULE_CATALOG.filter((module) => {
-      const categoryMatch =
-        module.category.toLowerCase().includes(primaryInterest) ||
-        primaryInterest.includes(module.category.toLowerCase());
+    const domainPicks = MODULE_CATALOG.filter(
+      (module) =>
+        module.isFree &&
+        module.difficulty === 'Debutant' &&
+        (module.domains ?? []).some((domain) => wanted.has(domain))
+    );
+    const employability = MODULE_CATALOG.filter(
+      (module) => module.category === 'Employabilite' && module.isFree
+    );
 
-      return categoryMatch && module.difficulty === 'Debutant' && module.isFree;
-    }).slice(0, 3);
+    return uniqueModules([...domainPicks, ...employability]).slice(0, 3);
   }
 
   private selectRecommendedTracks(result: ProfileResult): LearningTrack[] {
-    return result.primaryInterests
-      .slice(0, 2)
-      .map((interest) => this.buildTrackForInterest(interest))
+    const tracks = result.topDomainIds
+      .map((domainId) => this.buildTrackForDomain(domainId))
       .filter((track): track is LearningTrack => track !== null);
+
+    if (tracks.length > 0) {
+      return tracks;
+    }
+
+    const employabilityModules = MODULE_CATALOG.filter(
+      (module) => module.category === 'Employabilite' && module.isFree
+    );
+    if (employabilityModules.length === 0) {
+      return [];
+    }
+    return [
+      {
+        id: 'track_employabilite',
+        title: 'Parcours Employabilité',
+        description: 'Consolidez les bases qui ouvrent toutes les portes : CV, LinkedIn et posture professionnelle.',
+        modules: employabilityModules,
+        estimatedWeeks: 3,
+        targetSkills: this.extractSkills(employabilityModules),
+      },
+    ];
   }
 
-  private buildTrackForInterest(interest: string): LearningTrack | null {
-    const modules = this.getModulesForInterest(interest);
-
+  private buildTrackForDomain(domainId: FunctionalDomainId): LearningTrack | null {
+    const modules = MODULE_CATALOG.filter((module) =>
+      (module.domains ?? []).includes(domainId)
+    );
     if (modules.length === 0) {
       return null;
     }
-
+    const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
     return {
-      id: `track_${interest.toLowerCase().replace(/\s+/g, '_')}`,
-      title: `Parcours ${interest}`,
-      description: `Developpez vos competences en ${interest} de maniere progressive et structuree.`,
+      id: `track_${domainId}`,
+      title: `Parcours ${domain.label}`,
+      description: `${domain.tagline}. Developpez vos competences de maniere progressive et structuree.`,
       modules: modules.slice(0, 5),
       estimatedWeeks: 8,
       targetSkills: this.extractSkills(modules),
     };
-  }
-
-  private getModulesForInterest(interest: string): LearningModule[] {
-    const interestLower = interest.toLowerCase();
-
-    return MODULE_CATALOG.filter((module) => {
-      const categoryMatch =
-        module.category.toLowerCase().includes(interestLower) ||
-        interestLower.includes(module.category.toLowerCase());
-      return categoryMatch;
-    });
   }
 
   private extractSkills(modules: LearningModule[]): string[] {
@@ -244,37 +311,29 @@ class PathwayEngine {
   }
 
   private generateLongTermGoals(result: ProfileResult): string[] {
-    const careerStage = result.careerStage.toLowerCase();
-
-    if (careerStage.includes('diplome')) {
-      return [
+    const goals: Record<CareerSituation, string[]> = {
+      bachelier: [
+        "Choisir et integrer une filiere alignee sur votre domaine prioritaire",
+        'Batir un premier portfolio de projets simples',
+        'Developper un reseau dans le domaine vise',
+      ],
+      jeune_diplome: [
         "Decrocher votre premier emploi dans votre domaine d'interet",
         'Constituer un portfolio professionnel solide',
         'Developper un reseau professionnel actif',
-      ];
-    }
-
-    if (careerStage.includes('reconversion')) {
-      return [
+      ],
+      reconversion: [
         'Acquerir les competences-cles de votre nouveau domaine',
         'Valider votre transition avec un projet concret',
-        'Positionner votre experience passee comme atout',
-      ];
-    }
-
-    if (careerStage.includes('competence')) {
-      return [
+        "Positionner votre experience passee comme atout",
+      ],
+      professionnel: [
         'Obtenir une certification reconnue dans votre domaine',
         'Elargir votre expertise technique ou manageriale',
         'Acceder a des responsabilites superieures',
-      ];
-    }
-
-    return [
-      'Clarifier votre projet professionnel',
-      'Developper des competences recherchees sur le marche',
-      'Ameliorer votre employabilite et votre positionnement',
-    ];
+      ],
+    };
+    return goals[result.situation];
   }
 
   private generateMilestones(): Milestone[] {
