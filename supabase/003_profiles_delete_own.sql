@@ -6,3 +6,9 @@ on public.profiles
 for delete
 to authenticated
 using (auth.uid() = user_id);
+
+-- Contrôle sans effet de bord : doit rendre 4 lignes, dont « profiles_delete_own » en cmd = d.
+select polname, polcmd::text
+from pg_policy
+where polrelid = 'public.profiles'::regclass
+order by polname;
