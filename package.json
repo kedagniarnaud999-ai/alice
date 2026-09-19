@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "verify": "vite build --ssr src/checks/pathway.check.ts --outDir .verify --logLevel warn && node .verify/pathway.check.js",
     "preview": "vite preview",
     "vercel-build": "npm run build"
   },

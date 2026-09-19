@@ -39,6 +39,7 @@ dist/
 build/
 target/
 out/
+.verify/
 
 # IDE
 .vscode/
