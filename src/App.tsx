@@ -60,7 +60,7 @@ const PublicHome = () => {
   return (
     <HomePage
       isAuthenticated={isAuthenticated}
-      hasCompletedTest={Boolean(storageManager.loadProfileResult())}
+      hasCompletedTest={storageManager.hasCompletedTest()}
       onStartTest={() => navigate(isAuthenticated ? '/app' : '/trial')}
       onViewResults={() => navigate('/app')}
       onLogin={() => navigate('/login')}
