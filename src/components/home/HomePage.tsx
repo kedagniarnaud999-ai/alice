@@ -74,7 +74,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               </>
             ) : (
               <>
-                <Button onClick={onLogin} variant="ghost" size="sm" className="hidden rounded-full text-[#004494] sm:inline-flex">
+                <Button onClick={onLogin} variant="ghost" size="sm" className="rounded-full text-[#004494]">
                   <LogIn className="mr-2 h-4 w-4" />
                   Connexion
                 </Button>

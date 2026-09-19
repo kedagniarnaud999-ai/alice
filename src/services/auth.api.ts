@@ -121,7 +121,7 @@ export class AuthService {
   async updateProfile(data: { name?: string; avatar?: string }): Promise<User> {
     const { data: currentUserData, error: getUserError } = await supabase.auth.getUser();
     if (getUserError || !currentUserData.user) {
-      throw getUserError ?? new Error('No authenticated user found.');
+      throw getUserError ?? new Error('Aucun compte connecté : reconnectez-vous pour mettre à jour votre profil.');
     }
 
     const nextMetadata = {

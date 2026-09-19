@@ -51,18 +51,16 @@ function App() {
   );
 }
 
+// Volontairement sans écran de chargement : LoadingScreen est un plein écran z-50, et attendre
+// la résolution de la session rendait tout le site public inutilisable dès que Supabase traînait.
 const PublicHome = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <LoadingScreen message="Chargement..." />;
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
     <HomePage
       isAuthenticated={isAuthenticated}
-      hasCompletedTest={false}
+      hasCompletedTest={Boolean(storageManager.loadProfileResult())}
       onStartTest={() => navigate(isAuthenticated ? '/app' : '/trial')}
       onViewResults={() => navigate('/app')}
       onLogin={() => navigate('/login')}

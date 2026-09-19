@@ -9,6 +9,8 @@ import {
 import { checkSupabaseHealth, type SupabaseHealth } from '@/lib/supabaseHealth';
 import { isMissingSession } from '@/utils/authErrors';
 
+const SESSION_RESTORE_GRACE_MS = 8000;
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -38,19 +40,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     const initAuth = async () => {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        if (isMounted) {
-          setUser(currentUser);
-        }
-      } catch (error) {
+      const restore = authService.getCurrentUser().catch((error) => {
         if (!isMissingSession(error)) {
           console.error('Failed to restore the Supabase session:', error);
         }
+        return null;
+      });
+
+      // `getUser` est un appel réseau sans délai maximal : sans période de grâce, un Supabase
+      // qui traîne laisse `loading` à true et ProtectedRoute figé en plein écran.
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const gracePeriod = new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), SESSION_RESTORE_GRACE_MS);
+      });
+
+      try {
+        const currentUser = await Promise.race([restore, gracePeriod]);
         if (isMounted) {
-          setUser(null);
+          setUser(currentUser);
         }
       } finally {
+        clearTimeout(timer);
         if (isMounted) {
           setLoading(false);
         }
