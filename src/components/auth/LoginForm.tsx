@@ -73,7 +73,7 @@ export const LoginForm: React.FC = () => {
       toast.success(
         <div className="flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
-          <span>Connexion reussie.</span>
+          <span>Connexion réussie.</span>
         </div>
       );
       navigate('/app');
@@ -125,7 +125,7 @@ export const LoginForm: React.FC = () => {
                 text="Les nouveaux visiteurs commencent d'abord par un essai rapide, sans friction inutile."
               />
               <SideNote
-                title="Mot de passe oublie ?"
+                title="Mot de passe oublié ?"
                 text="Vous pouvez réinitialiser votre accès sans refaire tout votre parcours."
               />
             </div>
@@ -138,7 +138,7 @@ export const LoginForm: React.FC = () => {
               className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
             >
               <ArrowLeft className="h-4 w-4" />
-              Retour a l'accueil
+              Retour à l'accueil
             </button>
 
             <div className="mb-8">
@@ -199,7 +199,7 @@ export const LoginForm: React.FC = () => {
                   href={`/forgot-password${currentEmail ? `?email=${encodeURIComponent(currentEmail)}` : ''}`}
                   className="text-sm font-medium text-primary-600 hover:text-primary-700"
                 >
-                  Mot de passe oublie ?
+                  Mot de passe oublié ?
                 </a>
               </div>
 

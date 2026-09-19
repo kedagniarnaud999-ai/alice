@@ -101,7 +101,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
 
         <div className="space-y-6">
           <div>
-            <h2 className="mb-2 text-2xl font-bold text-gray-900">Parcours recommandes</h2>
+            <h2 className="mb-2 text-2xl font-bold text-gray-900">Parcours recommandés</h2>
             <p className="text-gray-600">
               Des parcours structurés pour développer vos compétences progressivement.
             </p>
@@ -307,7 +307,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
             <p className="text-gray-600">{track.description}</p>
           </div>
           <Badge variant="primary" size="lg">
-            {track.estimatedWeeks} semaines
+            {track.estimatedWeeks} {track.estimatedWeeks > 1 ? 'semaines' : 'semaine'}
           </Badge>
         </div>
 
