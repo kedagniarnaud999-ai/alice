@@ -230,6 +230,26 @@ function uniqueModules(modules: LearningModule[]): LearningModule[] {
   });
 }
 
+/**
+ * Charge nominale d'un apprenant sur une semaine. Sert à convertir en semaines
+ * les modules dont la durée est exprimée en heures ; les modules déjà exprimés
+ * en semaines sont comptés tels quels.
+ */
+const WEEKLY_STUDY_HOURS = 5;
+
+function durationInWeeks(duration: string): number {
+  const hours = Number.parseFloat(duration.replace(',', '.'));
+  if (!Number.isFinite(hours)) {
+    return 0;
+  }
+  return /semaine/i.test(duration) ? hours : hours / WEEKLY_STUDY_HOURS;
+}
+
+function estimateWeeks(modules: LearningModule[]): number {
+  const total = modules.reduce((sum, module) => sum + durationInWeeks(module.duration), 0);
+  return Math.max(1, Math.round(total));
+}
+
 class PathwayEngine {
   generatePathway(result: ProfileResult): PersonalizedPathway {
     return {
@@ -278,7 +298,7 @@ class PathwayEngine {
         title: 'Parcours Employabilité',
         description: 'Consolidez les bases qui ouvrent toutes les portes : CV, LinkedIn et posture professionnelle.',
         modules: employabilityModules,
-        estimatedWeeks: 3,
+        estimatedWeeks: estimateWeeks(employabilityModules),
         targetSkills: this.extractSkills(employabilityModules),
       },
     ];
@@ -292,13 +312,14 @@ class PathwayEngine {
       return null;
     }
     const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
+    const trackModules = modules.slice(0, 5);
     return {
       id: `track_${domainId}`,
       title: `Parcours ${domain.label}`,
       description: `${domain.tagline}. Développez vos compétences de manière progressive et structurée.`,
-      modules: modules.slice(0, 5),
-      estimatedWeeks: 8,
-      targetSkills: this.extractSkills(modules),
+      modules: trackModules,
+      estimatedWeeks: estimateWeeks(trackModules),
+      targetSkills: this.extractSkills(trackModules),
     };
   }
 
