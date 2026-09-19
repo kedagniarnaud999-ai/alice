@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { describeAuthError } from '@/utils/authErrors';
 
 export const ResetPassword: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -59,8 +60,9 @@ export const ResetPassword: React.FC = () => {
     });
 
     if (error) {
+      const described = describeAuthError(error);
       setStatus('error');
-      setMessage(error.message || 'Le lien de réinitialisation est invalide ou a expiré');
+      setMessage(`${described.title} ${described.details}`);
       return;
     }
 

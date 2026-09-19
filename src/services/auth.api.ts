@@ -204,10 +204,6 @@ export class AuthService {
     return () => subscription.unsubscribe();
   }
 
-  isAuthenticated(): boolean {
-    return false;
-  }
-
   private buildPendingUser(data: RegisterData): User {
     return {
       id: '',

@@ -4,12 +4,20 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import App from './App.tsx';
 import { AuthProvider } from './contexts/AuthContext';
+import { ConfigErrorScreen } from '@/components/ConfigErrorScreen';
+import { ServiceStatusBanner } from '@/components/ServiceStatusBanner';
+import { isSupabaseConfigured } from '@/config/env';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+const Root = () => {
+  if (!isSupabaseConfigured) {
+    return <ConfigErrorScreen />;
+  }
+
+  return (
     <BrowserRouter>
       <AuthProvider>
+        <ServiceStatusBanner />
         <App />
         <Toaster
           position="top-right"
@@ -27,7 +35,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               },
             },
             error: {
-              duration: 5000,
+              duration: 8000,
               iconTheme: {
                 primary: '#ef4444',
                 secondary: '#fff',
@@ -37,5 +45,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         />
       </AuthProvider>
     </BrowserRouter>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Root />
   </React.StrictMode>,
 );

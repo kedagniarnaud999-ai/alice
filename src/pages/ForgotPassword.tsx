@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, Mail } from 'lucide-react';
 import { authService } from '@/services/auth.api';
+import { describeAuthError } from '@/utils/authErrors';
 
 export const ForgotPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -19,9 +20,10 @@ export const ForgotPassword: React.FC = () => {
       await authService.requestPasswordReset(email);
       setStatus('success');
       setMessage('Un email de reinitialisation a ete envoye.');
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const described = describeAuthError(error);
       setStatus('error');
-      setMessage(error?.message || "Une erreur s'est produite. Veuillez reessayer.");
+      setMessage(`${described.title} ${described.details}`);
     }
   };
 

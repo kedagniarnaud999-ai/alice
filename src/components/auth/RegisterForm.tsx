@@ -8,6 +8,8 @@ import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle, LockKeyhole, Sparkles, XCircle } from 'lucide-react';
 import { BrandMark } from '@/components/brand/BrandMark';
+import { AuthAlert } from '@/components/auth/AuthAlert';
+import { describeAuthError, type AuthErrorDescription } from '@/utils/authErrors';
 
 const registerSchema = z
   .object({
@@ -33,6 +35,7 @@ export const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState<AuthErrorDescription | null>(null);
   const prefilledEmail = searchParams.get('email') ?? '';
   const fromTrial = searchParams.get('from') === 'trial';
 
@@ -60,6 +63,7 @@ export const RegisterForm: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
+    setAuthError(null);
 
     try {
       const result = await registerUser({
@@ -85,13 +89,17 @@ export const RegisterForm: React.FC = () => {
         }`
       );
     } catch (err: any) {
-      const message = err?.message || "Echec de l'inscription. Veuillez reessayer.";
-      toast.error(
-        <div className="flex items-center gap-2">
-          <XCircle className="h-4 w-4" />
-          <span>{message}</span>
-        </div>
-      );
+      const described = describeAuthError(err);
+      setAuthError(described);
+
+      if (!described.isServiceIssue) {
+        toast.error(
+          <div className="flex items-center gap-2">
+            <XCircle className="h-4 w-4" />
+            <span>{described.title}</span>
+          </div>
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -146,6 +154,8 @@ export const RegisterForm: React.FC = () => {
               <h2 className="text-3xl font-bold tracking-tight text-slate-900">Creer mon compte</h2>
               <p className="mt-3 max-w-xl leading-7 text-slate-600">{subtitle}</p>
             </div>
+
+            <AuthAlert error={authError} />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>

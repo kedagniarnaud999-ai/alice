@@ -6,6 +6,7 @@ import {
   type RegisterResponse,
   type User,
 } from '@/services/auth.api';
+import { checkSupabaseHealth, type SupabaseHealth } from '@/lib/supabaseHealth';
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +17,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
+  serviceHealth: SupabaseHealth | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,9 +25,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [serviceHealth, setServiceHealth] = useState<SupabaseHealth | null>(null);
 
   useEffect(() => {
     let isMounted = true;
+
+    checkSupabaseHealth().then((health) => {
+      if (isMounted) {
+        setServiceHealth(health);
+      }
+    });
 
     const initAuth = async () => {
       try {
@@ -94,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         refreshUser,
         isAuthenticated: !!user,
+        serviceHealth,
       }}
     >
       {children}
