@@ -115,9 +115,15 @@ export function buildTrackForOccupation(occupation: CrossOccupation): LearningTr
     .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0) || a[0].localeCompare(b[0]))
     .map(([domainId]) => domainId as FunctionalDomainId);
 
+  const wanted = new Set(occupation.skills);
+  const relevance = (module: LearningModule): number =>
+    module.skills.reduce((count, skill) => count + (wanted.has(skill) ? 1 : 0), 0);
+
   const pools = coreIds
     .map((domainId) =>
-      MODULE_CATALOG.filter((module) => (module.domains ?? []).includes(domainId)).sort(byTrackOrder)
+      MODULE_CATALOG.filter((module) => (module.domains ?? []).includes(domainId)).sort(
+        (a, b) => relevance(b) - relevance(a) || byTrackOrder(a, b)
+      )
     )
     .filter((pool) => pool.length > 0);
 

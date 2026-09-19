@@ -5,12 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ExportMenu } from './ExportMenu';
+import { OccupationResults } from './OccupationResults';
 import { profileService } from '@/services/profile.api';
 import { storageManager } from '@/utils/storageManager';
 
 interface ResultsDashboardProps {
   result?: ProfileResult;
-  onStartPathway: () => void;
+  /** Sans fiche, le parcours se construit sur les domaines ; avec, il se taille pour le métier. */
+  onStartPathway: (occupationId?: string) => void;
   primaryActionLabel?: string;
   helperText?: string;
   hideExportMenu?: boolean;
@@ -70,7 +72,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="text-center">
           <p className="mb-4 text-gray-600">Aucun profil trouvé</p>
-          <Button onClick={onStartPathway}>Commencer le test</Button>
+          <Button onClick={() => onStartPathway()}>Commencer le test</Button>
         </div>
       </div>
     );
@@ -105,7 +107,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
                   poursuivre votre progression avec un espace personnel.
                 </p>
               </div>
-              <Button onClick={onStartPathway} size="lg" className="shrink-0">
+              <Button onClick={() => onStartPathway()} size="lg" className="shrink-0">
                 {primaryActionLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -195,6 +197,12 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           <DomainRanking domains={profileResult.domains} />
         )}
 
+        <OccupationResults
+          result={profileResult}
+          onSelect={(occupationId) => onStartPathway(occupationId)}
+          selectLabel={guestMode ? 'Retenir ce métier et créer mon compte' : undefined}
+        />
+
         <div className="grid gap-6 md:grid-cols-2">
           <Card padding="lg">
             <CardHeader>
@@ -244,7 +252,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
               ))}
             </div>
 
-            <Button onClick={onStartPathway} size="lg" className="group w-full sm:w-auto">
+            <Button onClick={() => onStartPathway()} size="lg" className="group w-full sm:w-auto">
               {primaryActionLabel}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>

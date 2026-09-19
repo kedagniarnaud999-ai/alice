@@ -121,6 +121,8 @@ export interface ProfileResult {
   functionSignals: Record<FunctionRoleId, number>;
   topDomainIds: FunctionalDomainId[];
   excludedDomainIds: FunctionalDomainId[];
+  /** Fiche croisée choisie par le candidat : le parcours se taille alors pour elle. */
+  selectedOccupationId?: string;
 }
 
 export interface TestState {

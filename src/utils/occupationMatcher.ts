@@ -43,6 +43,8 @@ export interface OccupationMatch {
   sectorFit: number;
   /** Terrain d'application le plus porteur pour ce profil. */
   bestSector: { id: FunctionalDomainId; label: string; score: number } | null;
+  /** Domaines exigés par la fiche et score du candidat sur chacun : le « pourquoi » de la fiche. */
+  cores: { id: FunctionalDomainId; label: string; score: number }[];
   /** Domaines exigés encore fragiles : ce sont eux qui dictent les modules du parcours. */
   coreGaps: { id: FunctionalDomainId; label: string; score: number }[];
 }
@@ -122,6 +124,11 @@ export function matchOccupations(input: OccupationMatchInput): OccupationRanking
         functionFit: Math.round(functionFit),
         sectorFit: Math.round(sectorFit),
         bestSector,
+        cores: coreEntries.map((entry) => ({
+          id: entry.id,
+          label: FUNCTIONAL_DOMAINS_BY_ID[entry.id].label,
+          score: Math.round(entry.value),
+        })),
         coreGaps: coreEntries
           .filter((entry) => entry.value < GAP_THRESHOLD)
           .map((entry) => ({ id: entry.id, label: FUNCTIONAL_DOMAINS_BY_ID[entry.id].label, score: entry.value }))

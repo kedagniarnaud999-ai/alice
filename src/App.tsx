@@ -17,6 +17,7 @@ import { ResetPassword } from '@/pages/ResetPassword';
 import { AuthCallback } from '@/pages/AuthCallback';
 import { ProfileSettings } from '@/pages/ProfileSettings';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
+import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
@@ -237,13 +238,18 @@ const WorkspaceApp = () => {
     }, 1200);
   };
 
-  const handleStartPathway = () => {
-    if (profileResult) {
-      const generatedPathway = pathwayEngine.generatePathway(profileResult);
-      setPathway(generatedPathway);
-      storageManager.savePathway(generatedPathway);
-      setAppState('pathway');
-    }
+  const handleStartPathway = (occupationId?: string) => {
+    if (!profileResult) return;
+
+    const occupation = occupationId ? OCCUPATIONS_BY_ID[occupationId] : undefined;
+    const chosen = occupation ? { ...profileResult, selectedOccupationId: occupation.id } : profileResult;
+    const generatedPathway = pathwayEngine.generatePathway(chosen, occupation);
+
+    setProfileResult(chosen);
+    setPathway(generatedPathway);
+    storageManager.saveProfileResult(chosen);
+    storageManager.savePathway(generatedPathway);
+    setAppState('pathway');
   };
 
   const handleViewResults = () => {

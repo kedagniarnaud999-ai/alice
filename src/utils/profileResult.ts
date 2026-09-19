@@ -1,5 +1,6 @@
 import { CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
 import { ALL_DOMAIN_IDS } from '@/data/domains';
+import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { ASSESSMENT_VERSION } from '@/data/questions';
 
@@ -12,6 +13,10 @@ const asText = (value: unknown, fallback: string): string =>
 
 const asStringList = (value: unknown): string[] =>
   Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+
+/** Une fiche retirée ou renommée du catalogue ne doit pas survivre à la relecture. */
+const asKnownOccupationId = (value: unknown): string | undefined =>
+  typeof value === 'string' && OCCUPATIONS_BY_ID[value] ? value : undefined;
 
 /**
  * Un profil vient de Supabase ou de localStorage : il peut dater d'une version
@@ -65,6 +70,7 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
     excludedDomainIds: asStringList(candidate.excludedDomainIds).filter(
       (id): id is FunctionalDomainId => KNOWN_DOMAINS.has(id)
     ),
+    selectedOccupationId: asKnownOccupationId(candidate.selectedOccupationId),
   };
 }
 

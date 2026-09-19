@@ -421,6 +421,11 @@ CROSS_OCCUPATIONS.forEach((occupation) => {
     track.modules.every((module) => (module.domains ?? []).some((domain) => coreIds.includes(domain))),
     `${occupation.title} : un module étranger au cœur s'est glissé dans le parcours`
   );
+
+  const covered = new Set(track.modules.flatMap((module) => module.skills));
+  const coveredCount = occupation.skills.filter((skill) => covered.has(skill)).length;
+  check(coveredCount >= 2,
+    `${occupation.title} : son parcours ne couvre que ${coveredCount} compétence(s) sur ${occupation.skills.length}, la fiche de poste ressort intégralement à développer`);
 });
 
 const occupationPathway = pathwayEngine.generatePathway(calm, CROSS_OCCUPATIONS[0]);
@@ -438,6 +443,39 @@ check(
   JSON.parse(JSON.stringify(occupationPathway)).occupationTitle === occupationPathway.occupationTitle,
   'occupationTitle ne survit pas à la sauvegarde locale du parcours'
 );
+
+/**
+ * La carte des métiers n'a pas de variante « vide » : elle montre des fiches
+ * classées, ou explique qu'il n'y en a plus. Le classement doit donc rendre le
+ * catalogue entier, et chaque pastille « pourquoi » un chiffre lisible.
+ */
+const ranking = matchOccupations({
+  situation: calm.situation,
+  domains: calm.domains,
+  functionSignals: calm.functionSignals,
+});
+check(ranking.matches.length + ranking.excluded.length === CROSS_OCCUPATIONS.length,
+  `Le classement ne rend pas le catalogue entier : ${ranking.matches.length} classées + ${ranking.excluded.length} écartées pour ${CROSS_OCCUPATIONS.length} fiches`);
+check(
+  ranking.matches.every(
+    (match) =>
+      match.cores.length >= 2 &&
+      match.cores.every((core) => Number.isFinite(core.score) && core.score >= 0 && core.score <= 100)
+  ),
+  'Une fiche affichée ne peut pas dire sur quels domaines chiffrés elle s’appuie'
+);
+
+const chosenProfile = new TestAnalyzer(walk(1, 0)).analyze();
+const keptChoice = normalizeProfileResult(
+  JSON.parse(JSON.stringify({ ...chosenProfile, selectedOccupationId: CROSS_OCCUPATIONS[0].id }))
+);
+check(keptChoice?.selectedOccupationId === CROSS_OCCUPATIONS[0].id,
+  'Le métier choisi ne survit pas au payload : il disparaîtra à la relecture du profil');
+const staleChoice = normalizeProfileResult(
+  JSON.parse(JSON.stringify({ ...chosenProfile, selectedOccupationId: 'metier_retire_du_catalogue' }))
+);
+check(staleChoice?.selectedOccupationId === undefined,
+  'Une fiche absente du catalogue traverse la relecture : le parcours se bâtirait sur une fiche morte');
 
 /**
  * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient
