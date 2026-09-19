@@ -1,7 +1,8 @@
 import { MODULE_CATALOG, LearningModule } from '@/data/modules';
-import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
+import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
-import { CROSS_OCCUPATIONS } from '@/data/occupations';
+import { CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
+import { OPPORTUNITIES, opportunitiesForOccupation } from '@/data/opportunities';
 import { orientationQuestions } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
 import { matchOccupations } from '@/utils/occupationMatcher';
@@ -476,6 +477,74 @@ const staleChoice = normalizeProfileResult(
 );
 check(staleChoice?.selectedOccupationId === undefined,
   'Une fiche absente du catalogue traverse la relecture : le parcours se bâtirait sur une fiche morte');
+
+/**
+ * Le catalogue d'écoles, de formations et de bourses est appelé à être rempli à la
+ * main, puis par le backend. Une ligne mal reliée ne casse pas l'application : elle
+ * disparaît de l'écran, ou pire, elle affiche une URL qu'aucun humain n'a vérifiée.
+ */
+const opportunityIds = new Set<string>();
+const knownDomainIds = new Set<string>(ALL_DOMAIN_IDS);
+for (const opportunity of OPPORTUNITIES) {
+  check(!opportunityIds.has(opportunity.id), `Doublon d'identifiant d'offre : ${opportunity.id}`);
+  opportunityIds.add(opportunity.id);
+  check(opportunity.label.trim().length > 0, `Une offre est sans libellé : ${opportunity.id}`);
+  const unknownOccupation = opportunity.occupationIds.find((id) => !OCCUPATIONS_BY_ID[id]);
+  check(
+    unknownOccupation === undefined,
+    `${opportunity.id} est reliée à une fiche inconnue : ${unknownOccupation}`
+  );
+  const unknownDomain = opportunity.domainIds.find((id) => !knownDomainIds.has(id));
+  check(unknownDomain === undefined, `${opportunity.id} est reliée à un domaine inconnu : ${unknownDomain}`);
+  check(
+    opportunity.source === 'verifie' || opportunity.url === undefined,
+    `${opportunity.id} publie une URL avant vérification humaine`
+  );
+  check(
+    opportunity.source === 'demo' || Boolean(opportunity.verifiedAt),
+    `${opportunity.id} est présentée comme réelle sans date de vérification`
+  );
+}
+for (const occupation of CROSS_OCCUPATIONS) {
+  check(
+    opportunitiesForOccupation(occupation).length > 0,
+    `Aucune école, formation ni bourse ne remonte sur « ${occupation.title} » : le panneau restera vide`
+  );
+}
+check(
+  CROSS_OCCUPATIONS.some(
+    (occupation) => opportunitiesForOccupation(occupation).length < OPPORTUNITIES.length
+  ),
+  'Toutes les offres remontent sur toutes les fiches : l’appariement domaine/métier ne filtre rien'
+);
+check(
+  CROSS_OCCUPATIONS.every(
+    (occupation) =>
+      opportunitiesForOccupation(occupation, 'bourse').length <=
+      opportunitiesForOccupation(occupation).length
+  ) &&
+    CROSS_OCCUPATIONS.some(
+      (occupation) =>
+        opportunitiesForOccupation(occupation, 'bourse').length <
+        opportunitiesForOccupation(occupation).length
+    ),
+  'Le filtre de famille ne réduit rien sur l’écran'
+);
+const sectorOnlyOffers = CROSS_OCCUPATIONS.flatMap((occupation) => {
+  const coreIds = Object.keys(occupation.core);
+  return opportunitiesForOccupation(occupation)
+    .filter(
+      (opportunity) =>
+        !opportunity.occupationIds.includes(occupation.id) &&
+        !opportunity.domainIds.some((domainId) => coreIds.includes(domainId)) &&
+        opportunity.domainIds.some((domainId) => occupation.sectors.includes(domainId as FunctionalDomainId))
+    )
+    .map((opportunity) => `« ${occupation.title} » ← ${opportunity.label}`);
+});
+check(
+  sectorOnlyOffers.length === 0,
+  `Des offres remontent sur un seul terrain d’application, hors domaines étudiés : ${sectorOnlyOffers[0]}`
+);
 
 /**
  * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient
