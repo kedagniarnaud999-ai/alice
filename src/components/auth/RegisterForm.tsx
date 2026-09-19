@@ -13,11 +13,11 @@ import { describeAuthError, type AuthErrorDescription } from '@/utils/authErrors
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, 'Le nom doit contenir au moins 2 caracteres'),
+    name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
     email: z.string().email('Email invalide'),
     password: z
       .string()
-      .min(8, 'Le mot de passe doit contenir au moins 8 caracteres')
+      .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
       .regex(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
       .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
       .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
@@ -41,10 +41,10 @@ export const RegisterForm: React.FC = () => {
 
   const subtitle = useMemo(() => {
     if (fromTrial) {
-      return "Votre premier resultat est pret. Creez maintenant votre compte pour le retrouver et poursuivre votre progression.";
+      return "Votre premier résultat est prêt. Créez maintenant votre compte pour le retrouver et poursuivre votre progression.";
     }
 
-    return "Creez votre espace AliTché pour sauvegarder votre profil, vos modules et vos prochaines etapes.";
+    return "Créez votre espace AliTché pour sauvegarder votre profil, vos modules et vos prochaines étapes.";
   }, [fromTrial]);
 
   const {
@@ -77,8 +77,8 @@ export const RegisterForm: React.FC = () => {
           <CheckCircle className="h-4 w-4" />
           <span>
             {result.isExistingAccount
-              ? 'Email deja connu. Consultez les options proposees.'
-              : 'Compte cree avec succes.'}
+              ? 'Email déjà connu. Consultez les options proposées.'
+              : 'Compte créé avec succès.'}
           </span>
         </div>
       );
@@ -122,17 +122,17 @@ export const RegisterForm: React.FC = () => {
               </div>
 
               <h1 className="mt-10 text-4xl font-bold leading-tight">
-                Donnez une suite a votre elan.
+                Donnez une suite à votre élan.
               </h1>
               <p className="mt-4 max-w-md text-lg leading-8 text-blue-50/90">
-                Creez votre espace pour conserver vos resultats, reprendre vos modules et ne pas
-                repartir de zero a chaque visite.
+                Créez votre espace pour conserver vos résultats, reprendre vos modules et ne pas
+                repartir de zéro à chaque visite.
               </p>
             </div>
 
             <div className="space-y-4">
-              <ValueChip text="Votre profil reste recuperable" />
-              <ValueChip text="Vos prochaines etapes sont sauvegardees" />
+              <ValueChip text="Votre profil reste récupérable" />
+              <ValueChip text="Vos prochaines étapes sont sauvegardées" />
               <ValueChip text="Votre progression devient suivable dans le temps" />
             </div>
           </div>
@@ -227,18 +227,18 @@ export const RegisterForm: React.FC = () => {
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                Minimum 8 caracteres avec au moins une majuscule, une minuscule et un chiffre.
+                Minimum 8 caractères avec au moins une majuscule, une minuscule et un chiffre.
               </div>
 
               <Button type="submit" disabled={loading} className="w-full rounded-2xl py-3 text-base">
                 <LockKeyhole className="mr-2 h-4 w-4" />
-                {loading ? 'Creation du compte...' : 'Sauvegarder mon parcours'}
+                {loading ? 'Création du compte...' : 'Sauvegarder mon parcours'}
               </Button>
             </form>
 
             <div className="mt-8 rounded-3xl border border-primary-100 bg-primary-50/70 p-4">
               <p className="text-sm leading-7 text-slate-700">
-                Vous avez deja un compte ? La connexion est volontairement separee pour garder ce
+                Vous avez déjà un compte ? La connexion est volontairement séparée pour garder ce
                 parcours plus simple.
               </p>
               <div className="mt-3">

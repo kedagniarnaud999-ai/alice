@@ -13,7 +13,7 @@ export const VerifyEmailSent: React.FC = () => {
   const handleResend = async () => {
     if (!email) {
       setStatus('error');
-      setFeedback("Impossible de renvoyer l'email sans adresse associee.");
+      setFeedback("Impossible de renvoyer l'email sans adresse associée.");
       return;
     }
 
@@ -23,7 +23,7 @@ export const VerifyEmailSent: React.FC = () => {
     try {
       await authService.resendSignupConfirmation(email);
       setStatus('success');
-      setFeedback('Un nouveau mail de confirmation a ete envoye.');
+      setFeedback('Un nouveau mail de confirmation a été envoyé.');
     } catch (error: any) {
       setStatus('error');
       setFeedback(error?.message || "Le renvoi du mail n'a pas abouti.");
@@ -39,13 +39,13 @@ export const VerifyEmailSent: React.FC = () => {
           </div>
 
           <h2 className="mb-2 text-2xl font-bold text-gray-900">
-            {isExistingAccount ? 'Compte deja detecte' : 'Verifiez votre email'}
+            {isExistingAccount ? 'Compte déjà détecté' : 'Vérifiez votre email'}
           </h2>
 
           <p className="mb-6 text-gray-600">
             {isExistingAccount
-              ? "Cet email semble deja associe a un compte. Selon la configuration de Supabase, un nouvel email de confirmation n'est pas toujours renvoye automatiquement."
-              : "Un lien de confirmation a ete prepare pour finaliser votre inscription. Cliquez dessus pour activer votre compte puis revenez dans l'application."}
+              ? "Cet email semble déjà associé à un compte. Selon la configuration de Supabase, un nouvel email de confirmation n'est pas toujours renvoyé automatiquement."
+              : "Un lien de confirmation a été préparé pour finaliser votre inscription. Cliquez dessus pour activer votre compte puis revenez dans l'application."}
           </p>
 
           {email && (
@@ -70,19 +70,19 @@ export const VerifyEmailSent: React.FC = () => {
             <div className="space-y-3 text-left">
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
                 Essayez d'abord la connexion. Si vous ne retrouvez plus votre mot de passe, lancez
-                une reinitialisation.
+                une réinitialisation.
               </div>
               <a
                 href={`/login${email ? `?email=${encodeURIComponent(email)}` : ''}`}
                 className="block rounded-lg bg-primary-600 px-4 py-3 text-center font-medium text-white transition hover:bg-primary-700"
               >
-                Aller a la connexion
+                Aller à la connexion
               </a>
               <a
                 href={`/forgot-password${email ? `?email=${encodeURIComponent(email)}` : ''}`}
                 className="block rounded-lg border border-gray-300 px-4 py-3 text-center font-medium text-gray-700 transition hover:bg-gray-50"
               >
-                Reinitialiser mon mot de passe
+                Réinitialiser mon mot de passe
               </a>
             </div>
           ) : (

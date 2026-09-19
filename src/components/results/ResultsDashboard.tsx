@@ -69,7 +69,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="text-center">
-          <p className="mb-4 text-gray-600">Aucun profil trouve</p>
+          <p className="mb-4 text-gray-600">Aucun profil trouvé</p>
           <Button onClick={onStartPathway}>Commencer le test</Button>
         </div>
       </div>
@@ -154,7 +154,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
                 <Heart className="h-5 w-5 text-rose-600" />
                 <CardTitle>Ce qui vous motive</CardTitle>
               </div>
-              <p className="text-sm text-gray-600">Vos sources d'energie et d'engagement</p>
+              <p className="text-sm text-gray-600">Vos sources d'énergie et d'engagement</p>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">

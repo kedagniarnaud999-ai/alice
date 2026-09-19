@@ -62,9 +62,9 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
               <ArrowLeft className="mr-2 h-4 w-4" />
               Retour au tableau de bord
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">Votre parcours personnalise</h1>
+            <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">Votre parcours personnalisé</h1>
             <p className="mt-2 max-w-2xl text-lg text-gray-600">
-              Un chemin d'apprentissage adapte a votre profil {pathway.profileType}
+              Un chemin d'apprentissage adapté à votre profil {pathway.profileType}
             </p>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
           <div>
             <h2 className="mb-2 text-2xl font-bold text-gray-900">Parcours recommandes</h2>
             <p className="text-gray-600">
-              Des parcours structures pour developper vos competences progressivement.
+              Des parcours structurés pour développer vos compétences progressivement.
             </p>
           </div>
 
@@ -124,7 +124,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
               <CardTitle>Objectifs long terme</CardTitle>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Gardez ces objectifs en tete tout au long de votre parcours.
+              Gardez ces objectifs en tête tout au long de votre parcours.
             </p>
           </CardHeader>
           <CardContent>
@@ -151,7 +151,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
               <CardTitle>Jalons de progression</CardTitle>
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              Suivez votre avancement avec ces etapes cles.
+              Suivez votre avancement avec ces étapes clés.
             </p>
           </CardHeader>
           <CardContent>
@@ -241,7 +241,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
       <div className="mb-4 space-y-2">
         <div className="flex justify-between text-xs text-gray-500">
-          <span>{isCompleted ? 'Termine' : isStarted ? 'En cours' : 'Non commence'}</span>
+          <span>{isCompleted ? 'Terminé' : isStarted ? 'En cours' : 'Non commencé'}</span>
           <span>{currentProgress}%</span>
         </div>
         <div className="h-2 w-full rounded-full bg-gray-200">
@@ -267,7 +267,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           </Button>
         ) : (
           <Button size="sm" variant="outline" className="w-full" onClick={onOpen}>
-            Ouvrir les etapes
+            Ouvrir les étapes
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         )}
@@ -368,10 +368,10 @@ const TrackCard: React.FC<TrackCardProps> = ({
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-xs text-gray-500">
                       {status === 'completed'
-                        ? 'Termine'
+                        ? 'Terminé'
                         : status === 'in_progress'
                           ? `En cours - ${progress?.progress ?? 0}%`
-                          : 'Non commence'}
+                          : 'Non commencé'}
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {status === 'not_started' && (
@@ -387,7 +387,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
                         </Button>
                       )}
                       <Button size="sm" onClick={() => onOpenModule(module)}>
-                        Voir les etapes
+                        Voir les étapes
                       </Button>
                     </div>
                   </div>
@@ -476,7 +476,7 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                       onUpdateModuleProgress(module.id, Math.min(currentProgress + 25, 90), 'in_progress')
                     }
                   >
-                    Marquer une avancee
+                    Marquer une avancée
                   </Button>
                   <Button onClick={() => onUpdateModuleProgress(module.id, 100, 'completed')}>
                     Terminer le module
@@ -486,7 +486,7 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
               {currentProgress >= 100 && (
                 <div className="inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-green-700">
                   <CheckCircle2 className="h-4 w-4" />
-                  Module termine
+                  Module terminé
                 </div>
               )}
             </div>
@@ -495,9 +495,9 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
 
         <Card padding="lg" className="border-0 bg-white shadow-xl shadow-slate-100">
           <CardHeader>
-            <CardTitle>Etapes conseillees</CardTitle>
+            <CardTitle>Étapes conseillées</CardTitle>
             <p className="text-sm text-gray-600">
-              Voici une facon simple d'aborder ce module et de garder une progression concrete.
+              Voici une façon simple d'aborder ce module et de garder une progression concrète.
             </p>
           </CardHeader>
           <CardContent>
@@ -511,7 +511,7 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
                     {index + 1}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Etape {index + 1}</h3>
+                    <h3 className="font-semibold text-gray-900">Étape {index + 1}</h3>
                     <p className="mt-1 text-sm leading-6 text-gray-600">{step}</p>
                   </div>
                 </div>

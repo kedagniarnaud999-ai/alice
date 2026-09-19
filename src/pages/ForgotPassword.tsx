@@ -19,7 +19,7 @@ export const ForgotPassword: React.FC = () => {
     try {
       await authService.requestPasswordReset(email);
       setStatus('success');
-      setMessage('Un email de reinitialisation a ete envoye.');
+      setMessage('Un email de réinitialisation a été envoyé.');
     } catch (error: unknown) {
       const described = describeAuthError(error);
       setStatus('error');
@@ -37,7 +37,7 @@ export const ForgotPassword: React.FC = () => {
             </div>
             <h1 className="mb-2 text-3xl font-bold text-gray-900">Mot de passe oublie ?</h1>
             <p className="text-gray-600">
-              Entrez votre email pour recevoir un lien de reinitialisation
+              Entrez votre email pour recevoir un lien de réinitialisation
             </p>
           </div>
 
@@ -46,10 +46,10 @@ export const ForgotPassword: React.FC = () => {
               <div className="mb-6 flex justify-center">
                 <CheckCircle className="h-16 w-16 text-green-500" />
               </div>
-              <h2 className="mb-2 text-xl font-semibold text-gray-900">Email envoye !</h2>
+              <h2 className="mb-2 text-xl font-semibold text-gray-900">Email envoyé !</h2>
               <p className="mb-6 text-gray-600">{message}</p>
               <p className="mb-4 text-sm text-gray-500">
-                Verifiez votre boite de reception puis suivez le lien envoye par Supabase.
+                Vérifiez votre boîte de réception puis suivez le lien envoyé par Supabase.
               </p>
               {email && (
                 <p className="mb-8 text-xs text-gray-500">

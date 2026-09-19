@@ -68,7 +68,7 @@ export class AuthService {
       requiresEmailVerification: true,
       isExistingAccount,
       message: isExistingAccount
-        ? 'Cet email semble deja associe a un compte. Connectez-vous ou reinitialisez votre mot de passe si besoin.'
+        ? 'Cet email semble déjà associé à un compte. Connectez-vous ou réinitialisez votre mot de passe si besoin.'
         : 'Registration successful. Please check your email to verify your account.',
     };
   }

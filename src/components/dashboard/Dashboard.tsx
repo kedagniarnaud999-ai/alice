@@ -124,20 +124,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <QuickAccessCard
             icon={<User className="h-6 w-6 text-primary-600" />}
             title="Mon profil"
-            description="Voir mes resultats detailles"
+            description="Voir mes résultats détaillés"
             onClick={() => onNavigate('profile')}
           />
           <QuickAccessCard
             icon={<BookOpen className="h-6 w-6 text-primary-600" />}
             title="Mon parcours"
-            description="Acceder a mes formations"
+            description="Accéder à mes formations"
             onClick={() => onNavigate('pathway')}
             disabled={!pathway}
           />
           <QuickAccessCard
             icon={<Home className="h-6 w-6 text-primary-600" />}
             title="Accueil"
-            description="Retour a la page d'accueil"
+            description="Retour à la page d'accueil"
             onClick={() => onNavigate('home')}
           />
         </div>
@@ -160,7 +160,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               size="sm"
               className="w-full"
             >
-              Voir les details
+              Voir les détails
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </Card>
@@ -246,12 +246,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 {isResetting
                   ? 'Reinitialisation...'
                   : showResetConfirm
-                    ? 'Cliquez a nouveau pour confirmer'
-                    : 'Reinitialiser mes donnees'}
+                    ? 'Cliquez à nouveau pour confirmer'
+                    : 'Réinitialiser mes données'}
               </Button>
               {showResetConfirm && (
                 <p className="mt-2 text-xs text-red-600">
-                  Cette action supprimera vos reponses, votre profil et votre progression sauvegardes.
+                  Cette action supprimera vos réponses, votre profil et votre progression sauvegardée.
                 </p>
               )}
             </div>

@@ -39,12 +39,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
               <Feature
                 icon={<Target className="h-6 w-6 text-primary-700" />}
                 title="Repérer vos appuis"
-                description="Les talents et les appuis sur lesquels vous pouvez deja construire."
+                description="Les talents et les appuis sur lesquels vous pouvez déjà construire."
               />
               <Feature
                 icon={<TrendingUp className="h-6 w-6 text-primary-700" />}
                 title="Mieux lire vos moteurs"
-                description="Ce qui vous donne de l'energie et rend un parcours durable."
+                description="Ce qui vous donne de l'énergie et rend un parcours durable."
               />
               <Feature
                 icon={<Sparkles className="h-6 w-6 text-primary-700" />}

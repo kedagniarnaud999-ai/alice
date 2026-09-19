@@ -126,7 +126,7 @@ export const LoginForm: React.FC = () => {
               />
               <SideNote
                 title="Mot de passe oublie ?"
-                text="Vous pouvez reinitialiser votre acces sans refaire tout votre parcours."
+                text="Vous pouvez réinitialiser votre accès sans refaire tout votre parcours."
               />
             </div>
           </div>

@@ -15,7 +15,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ result }) => {
   const handleShare = async () => {
     const shareData = {
       title: 'Mon Profil AliTché',
-      text: `J'ai decouvert mon profil professionnel : ${result.profileType}`,
+      text: `J'ai découvert mon profil professionnel : ${result.profileType}`,
       url: window.location.href,
     };
 
@@ -27,13 +27,13 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ result }) => {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Lien copie dans le presse-papier !');
+      alert('Lien copié dans le presse-papiers !');
     }
   };
 
   const handleDownloadText = () => {
     const content = `
-MON PROFIL ALITCHE
+MON PROFIL ALITCHÉ
 ==================
 
 Profil : ${result.profileType}
