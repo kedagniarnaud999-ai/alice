@@ -21,9 +21,9 @@ export const ServiceStatusBanner: React.FC = () => {
             Le service d&apos;authentification Supabase ne répond pas.
           </p>
           <p className="mt-1">
-            Inscription et connexion seront indisponibles tant que le projet ne sera pas joignable
-            (projet en pause, supprimé ou URL incorrecte).{' '}
-            {serviceHealth.httpStatus ? `Réception HTTP ${serviceHealth.httpStatus}.` : ''}
+            Inscription et connexion restent indisponibles tant que le projet n&apos;est pas
+            joignable (projet en pause, supprimé ou URL incorrecte).{' '}
+            {serviceHealth.httpStatus ? `Le service a renvoyé le code HTTP ${serviceHealth.httpStatus}.` : ''}
           </p>
         </div>
       </div>
