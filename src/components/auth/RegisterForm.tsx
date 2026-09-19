@@ -151,7 +151,7 @@ export const RegisterForm: React.FC = () => {
               <div className="mb-4 inline-flex rounded-3xl bg-primary-50 p-3">
                 <BrandMark className="h-12 w-12" />
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Creer mon compte</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Créer mon compte</h2>
               <p className="mt-3 max-w-xl leading-7 text-slate-600">{subtitle}</p>
             </div>
 

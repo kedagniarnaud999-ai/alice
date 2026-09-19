@@ -76,7 +76,7 @@ export class ModuleService {
   async updateProgress(moduleId: string, progress: number, status?: ModuleProgressStatus): Promise<void> {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) {
-      throw userError ?? new Error('Utilisateur non authentifie.');
+      throw userError ?? new Error('Utilisateur non authentifié.');
     }
 
     const safeProgress = clampProgress(progress);
@@ -121,7 +121,7 @@ export class ModuleService {
   async clearMyProgress(): Promise<void> {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) {
-      throw userError ?? new Error('Utilisateur non authentifie.');
+      throw userError ?? new Error('Utilisateur non authentifié.');
     }
 
     const { error } = await supabase

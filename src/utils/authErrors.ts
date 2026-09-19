@@ -3,6 +3,9 @@ export type AuthErrorKind =
   | 'service_unreachable'
   | 'credentials'
   | 'email_unconfirmed'
+  | 'invalid_email'
+  | 'already_registered'
+  | 'weak_password'
   | 'rate_limited'
   | 'server'
   | 'unknown';
@@ -39,9 +42,30 @@ const MESSAGES: Record<AuthErrorKind, AuthErrorDescription> = {
   email_unconfirmed: {
     kind: 'email_unconfirmed',
     isServiceIssue: false,
-    title: 'Votre adresse email nest pas encore confirmée',
+    title: "Votre adresse email n'est pas encore confirmée",
     details:
       "Consultez votre boîte de réception (et vos spams) pour cliquer sur le lien de confirmation, puis relancez la connexion ou renvoyez l'email.",
+  },
+  invalid_email: {
+    kind: 'invalid_email',
+    isServiceIssue: false,
+    title: "Cette adresse email n'est pas valide",
+    details:
+      "Supabase refuse cette adresse. Vérifiez la saisie (domaine complet, sans espace) et utilisez une adresse que vous consultez vraiment : le lien de confirmation y sera envoyé.",
+  },
+  already_registered: {
+    kind: 'already_registered',
+    isServiceIssue: false,
+    title: 'Un compte existe déjà avec cette adresse',
+    details:
+      "Connectez-vous avec ce compte, ou utilisez « Mot de passe oublié » si vous ne le retrouvez plus.",
+  },
+  weak_password: {
+    kind: 'weak_password',
+    isServiceIssue: false,
+    title: 'Mot de passe trop simple',
+    details:
+      "Supabase refuse ce mot de passe : choisissez au moins 8 caractères avec une majuscule, une minuscule et un chiffre.",
   },
   rate_limited: {
     kind: 'rate_limited',
@@ -114,6 +138,18 @@ const classify = (error: any, rawMessage: string): AuthErrorKind => {
     /invalid login credentials|invalid email or password|user not found|invalid password/i.test(rawMessage)
   ) {
     return 'credentials';
+  }
+
+  if (/already registered|already exists|already been registered/i.test(rawMessage)) {
+    return 'already_registered';
+  }
+
+  if (/password should be|at least \d+ characters|password is not strong enough|not secure enough/i.test(rawMessage)) {
+    return 'weak_password';
+  }
+
+  if (/email address .*is invalid|unable to validate email address|must be a valid email/i.test(rawMessage)) {
+    return 'invalid_email';
   }
 
   if (status && status >= 500) {

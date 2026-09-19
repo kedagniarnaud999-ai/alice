@@ -6,7 +6,7 @@ import type { ProfileResult, TestResponse } from '@/types/test';
 const getCurrentUserId = async () => {
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) {
-    throw error ?? new Error('No authenticated user found.');
+    throw error ?? new Error('Aucun compte connecté : reconnectez-vous pour enregistrer votre profil.');
   }
 
   return data.user.id;
