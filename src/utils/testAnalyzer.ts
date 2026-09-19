@@ -5,12 +5,19 @@ import {
   QuestionOption,
   DomainScore,
   FunctionalDomainId,
+  FunctionRoleId,
   CareerSituation,
   AssessmentContext,
 } from '@/types/test';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
-import { PSYCH_DOMAIN_AFFINITY, PSYCH_TRAIT_LABELS, PSYCH_TRAITS } from '@/data/psychAffinity';
+import {
+  PSYCH_DOMAIN_AFFINITY,
+  PSYCH_ROLE_AFFINITY,
+  PSYCH_TRAIT_LABELS,
+  PSYCH_TRAITS,
+  FUNCTION_ROLE_IDS,
+} from '@/data/psychAffinity';
 
 type ScoreMap = Record<string, number>;
 
@@ -194,6 +201,33 @@ function applyTheoreticalMaxima(
   });
 }
 
+/**
+ * Projection du profil psychologique sur les 6 axes fonctionnels, en 0..100.
+ * Comme pour les domaines, seuls les traits que le test pouvait mesurer entrent
+ * au dénominateur : un candidat n'est pas pénalisé sur une fonction que rien ne
+ * permettait d'observer dans sa branche de questions.
+ */
+export function computeFunctionSignals(traitRatios: ScoreMap): Record<FunctionRoleId, number> {
+  return FUNCTION_ROLE_IDS.reduce(
+    (acc, role) => {
+      let weighted = 0;
+      let measurable = 0;
+
+      PSYCH_TRAITS.forEach((trait) => {
+        const affinity = PSYCH_ROLE_AFFINITY[trait]?.[role] ?? 0;
+        const ratio = traitRatios[trait];
+        if (affinity <= 0 || ratio === undefined) return;
+        measurable += affinity;
+        weighted += affinity * ratio;
+      });
+
+      acc[role] = measurable > 0 ? Math.round((weighted / measurable) * 100) : 0;
+      return acc;
+    },
+    {} as Record<FunctionRoleId, number>
+  );
+}
+
 export class TestAnalyzer {
   private responses: TestResponse[];
   private questionById: Map<string, Question>;
@@ -248,7 +282,9 @@ export class TestAnalyzer {
       });
     });
 
-    const domains = this.buildDomainScores(rawByDomain, maxByDomain, psychMaxByTrait, excluded, reasonMap);
+    const traitRatios = this.computeTraitRatios(psychMaxByTrait);
+    const domains = this.buildDomainScores(rawByDomain, maxByDomain, traitRatios, excluded, reasonMap);
+    const functionSignals = computeFunctionSignals(traitRatios);
     const topDomainIds = domains
       .filter((d) => !d.excluded && d.normalized > 0)
       .slice(0, 3)
@@ -272,6 +308,7 @@ export class TestAnalyzer {
       feasibilityAssessment: this.assessFeasibility(),
       nextActions: this.generateNextActions(situation, topDomainIds),
       domains,
+      functionSignals,
       topDomainIds,
       excludedDomainIds: ALL_DOMAIN_IDS.filter((id) => excluded.has(id)),
     };
@@ -280,12 +317,10 @@ export class TestAnalyzer {
   private buildDomainScores(
     rawByDomain: Record<FunctionalDomainId, number>,
     maxByDomain: Record<FunctionalDomainId, number>,
-    psychMaxByTrait: ScoreMap,
+    traitRatios: ScoreMap,
     excluded: Set<FunctionalDomainId>,
     reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]>
   ): DomainScore[] {
-    const traitRatios = this.computeTraitRatios(psychMaxByTrait);
-
     const scores: DomainScore[] = ALL_DOMAIN_IDS.map((id) => {
       const raw = rawByDomain[id];
       const max = maxByDomain[id];

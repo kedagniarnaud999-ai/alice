@@ -1,4 +1,4 @@
-import { FunctionalDomainId } from '@/types/test';
+import { FunctionalDomainId, FunctionRoleId } from '@/types/test';
 
 /**
  * Affinités entre traits psychologiques (portés par `option.weights`) et domaines
@@ -66,5 +66,41 @@ export const PSYCH_TRAIT_LABELS: Record<string, string> = {
   leadership: 'votre leadership naturel',
   problem_solving: 'votre sens de la résolution de problèmes',
 };
+
+/**
+ * Projection des traits psychologiques sur l'axe fonctionnel. Même échelle que
+ * PSYCH_DOMAIN_AFFINITY : 1 affinité faible, 3 forte. Un seul trait ne suffit
+ * jamais à revendiquer une fonction ; c'est la moyenne pondérée des ratios de
+ * traits effectivement mesurés qui produit le signal.
+ */
+export const PSYCH_ROLE_AFFINITY: Record<string, Partial<Record<FunctionRoleId, number>>> = {
+  organizational_talent: { coordination: 3, analyse: 1 },
+  leadership: { coordination: 3, relation: 1 },
+  analytical_talent: { analyse: 3 },
+  problem_solving: { analyse: 2, terrain: 1 },
+  technical_talent: { technique: 3 },
+  creative_talent: { conception: 3 },
+  communication_talent: { relation: 3, conception: 1 },
+  linguistic_talent: { relation: 2 },
+  interpersonal_talent: { relation: 3, terrain: 1 },
+  resourcefulness_talent: { terrain: 3, technique: 1 },
+  structured: { coordination: 2, analyse: 1 },
+  pragmatic: { terrain: 2, technique: 1 },
+  collaborative: { relation: 2, coordination: 1 },
+  experimental: { conception: 2, terrain: 1 },
+  adaptive: { terrain: 1, relation: 1 },
+  intuitive: { conception: 1 },
+};
+
+export const ROLE_LABELS: Record<FunctionRoleId, string> = {
+  coordination: 'Coordonner et piloter',
+  analyse: 'Analyser et modéliser',
+  technique: 'Construire et réparer',
+  relation: 'Conseiller et convaincre',
+  conception: 'Imaginer et concevoir',
+  terrain: 'Exécuter sur le terrain',
+};
+
+export const FUNCTION_ROLE_IDS: FunctionRoleId[] = Object.keys(ROLE_LABELS) as FunctionRoleId[];
 
 export const PSYCH_TRAITS = Object.keys(PSYCH_DOMAIN_AFFINITY);

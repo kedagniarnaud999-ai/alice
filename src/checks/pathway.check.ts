@@ -1,11 +1,13 @@
 import { MODULE_CATALOG, LearningModule } from '@/data/modules';
 import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
-import { PSYCH_TRAITS } from '@/data/psychAffinity';
+import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
+import { CROSS_OCCUPATIONS } from '@/data/occupations';
 import { orientationQuestions } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
+import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine } from '@/utils/pathwayEngine';
-import type { FunctionalDomainId, Question, TestResponse } from '@/types/test';
+import type { CareerSituation, FunctionRoleId, FunctionalDomainId, Question, QuestionOption, TestResponse } from '@/types/test';
 
 const DIFFICULTY_LEVEL: Record<LearningModule['difficulty'], number> = {
   Debutant: 0,
@@ -26,6 +28,9 @@ const MAX_MODULES_PER_TRACK = 5;
 const QUICK_WIN_COUNT = 3;
 
 const ALL_SITUATIONS = ['s_bachelier', 's_diplome', 's_reconversion', 's_pro'];
+const CAREER_SITUATIONS: CareerSituation[] = ['bachelier', 'jeune_diplome', 'reconversion', 'professionnel'];
+/** Une fiche isolée n'est pas un choix : chaque domaine doit ouvrir plusieurs intersections. */
+const MIN_FICHES_PER_DOMAIN = 4;
 
 function requireQuestion(id: string): Question {
   const question = orientationQuestions.find((entry) => entry.id === id);
@@ -96,6 +101,69 @@ function walkForTrait(trait: string, offset: number): TestResponse[] {
       (a, b) => (b.weights?.[trait] ?? 0) - (a.weights?.[trait] ?? 0)
     )[0];
     return [best.id];
+  });
+}
+
+/**
+ * Réponses calibrées pour cumuler TOUS les domaines exigés par une fiche métier :
+ * à chaque question, on recharge le cœur le plus en retard par rapport à son propre
+ * maximum théorique. Un profil ainsi ciblé doit rendre la fiche accessible — sinon
+ * c'est la fiche qui est morte, ou le questionnaire qui est muet sur ce domaine.
+ */
+function walkForCores(
+  cores: Partial<Record<FunctionalDomainId, number>>,
+  offset: number,
+  forceExclude?: FunctionalDomainId
+): TestResponse[] {
+  const coreIds = Object.keys(cores) as FunctionalDomainId[];
+  const achieved: Partial<Record<FunctionalDomainId, number>> = {};
+  const maxima: Partial<Record<FunctionalDomainId, number>> = {};
+
+  coreIds.forEach((id) => {
+    maxima[id] = Math.max(
+      1,
+      orientationQuestions.reduce((sum, question) => {
+        const cap = question.type === 'single' ? 1 : question.maxSelections ?? question.options.length;
+        return (
+          sum +
+          question.options
+            .map((option) => option.domains?.[id] ?? 0)
+            .sort((a, b) => b - a)
+            .slice(0, cap)
+            .reduce((total, value) => total + value, 0)
+        );
+      }, 0)
+    );
+    achieved[id] = 0;
+  });
+
+  const valueOf = (option: QuestionOption): number =>
+    coreIds.reduce(
+      (sum, id) => sum + ((cores[id] ?? 0) * (option.domains?.[id] ?? 0)) / (1 + (achieved[id] ?? 0)),
+      0
+    );
+
+  return answerEvery(offset, (question) => {
+    if (forceExclude && question.options.some((option) => option.excludes?.includes(forceExclude))) {
+      const option = question.options.find((entry) => entry.excludes?.includes(forceExclude));
+      return option ? [option.id] : [];
+    }
+
+    const candidates = question.options.filter((option) => (option.excludes?.length ?? 0) === 0);
+    if (!candidates.length) return [];
+
+    const strong = candidates.filter((option) => valueOf(option) > 0).sort((a, b) => valueOf(b) - valueOf(a));
+    const pool = strong.length ? strong : [candidates[0]];
+    const cap = question.type === 'single' ? 1 : question.maxSelections ?? pool.length;
+    const chosen = pool.slice(0, cap);
+
+    chosen.forEach((option) =>
+      coreIds.forEach((id) => {
+        achieved[id] = (achieved[id] ?? 0) + (option.domains?.[id] ?? 0) / (maxima[id] ?? 1);
+      })
+    );
+
+    return chosen.map((option) => option.id);
   });
 }
 
@@ -278,6 +346,20 @@ for (let offset = 0; offset < ALL_SITUATIONS.length; offset += 1) {
     `${label} : des champs du parcours se perdent dans le payload enregistré`
   );
   check(
+    FUNCTION_ROLE_IDS.every(
+      (role) =>
+        Number.isInteger(fresh.functionSignals[role]) &&
+        fresh.functionSignals[role] >= 0 &&
+        fresh.functionSignals[role] <= 100 &&
+        stored.functionSignals[role] === fresh.functionSignals[role]
+    ),
+    `${label} : un axe fonctionnel est absent, hors 0..100, ou difforme après relecture du payload`
+  );
+  check(
+    FUNCTION_ROLE_IDS.some((role) => fresh.functionSignals[role] > 0),
+    `${label} : aucun signal fonctionnel calculé, les fiches métiers ne pourront plus être triées`
+  );
+  check(
     !/^[A-Za-z0-9_]+$/.test(stored.careerStage),
     `${label} : career_stage part vers SQL comme une clé machine (« ${stored.careerStage} ») et non un libellé`
   );
@@ -298,6 +380,110 @@ check(
   }) === null,
   'Un profil dont tous les domaines sont inconnus est normalisé au lieu d’être rejeté'
 );
+
+/**
+ * Un métier croisé n'a d'intérêt que s'il est atteignable : une fiche que aucun
+ * profil ne peut faire remonter est du texte mort, et une fiche que le cross
+ * n'ajoute jamais aux domaines prioritaires ne fait que répéter le silo.
+ */
+const occupationIds = new Set<string>();
+CROSS_OCCUPATIONS.forEach((occupation) => {
+  check(!occupationIds.has(occupation.id), `Identifiant de métier dupliqué : ${occupation.id}`);
+  occupationIds.add(occupation.id);
+
+  const coreIds = Object.keys(occupation.core) as FunctionalDomainId[];
+  check(coreIds.length >= 2, `${occupation.id} : ${coreIds.length} domaine(s) de cœur, une intersection s'en exige 2`);
+  check(coreIds.every((id) => DOMAIN_IDS.includes(id)), `${occupation.id} : domaine de cœur hors taxonomie`);
+  check(coreIds.every((id) => (occupation.core[id] ?? 0) >= 1 && (occupation.core[id] ?? 0) <= 3),
+    `${occupation.id} : poids de cœur hors échelle 1..3`);
+  check(occupation.sectors.length > 0 && occupation.sectors.every((id) => DOMAIN_IDS.includes(id)),
+    `${occupation.id} : terrain d'application inconnu ou absent`);
+  check(occupation.functions.length > 0 && occupation.functions.every((role) => FUNCTION_ROLE_IDS.includes(role)),
+    `${occupation.id} : axe fonctionnel inconnu`);
+  check(occupation.situations.length > 0 && occupation.situations.every((s) => CAREER_SITUATIONS.includes(s)),
+    `${occupation.id} : situation éligible hors contrat`);
+  check(occupation.skills.length > 0, `${occupation.id} : aucune compétence à développer`);
+  check(occupation.studyPaths.length > 0, `${occupation.id} : aucune voie de formation`);
+  check(occupation.context.length > 60, `${occupation.id} : contexte trop court pour être lisible`);
+});
+
+DOMAIN_IDS.forEach((domainId) => {
+  const count = CROSS_OCCUPATIONS.filter(
+    (occupation) => (occupation.core[domainId] ?? 0) > 0 || occupation.sectors.includes(domainId)
+  ).length;
+  check(count >= MIN_FICHES_PER_DOMAIN,
+    `${domainId} : ${count} fiche(s) croisée(s) le mentionnent, un choix réel en exige ${MIN_FICHES_PER_DOMAIN}`);
+});
+
+let geometricPenaltySeen = false;
+CROSS_OCCUPATIONS.forEach((occupation, index) => {
+  const result = new TestAnalyzer(walkForCores(occupation.core, index)).analyze();
+  const ranking = matchOccupations(result);
+  const position = ranking.matches.findIndex((match) => match.occupation.id === occupation.id);
+  const match = ranking.matches[position];
+
+  check(position >= 0 && position <= 3,
+    `${occupation.id} : rang ${position + 1} pour un profil pourtant ciblé sur ses cœurs — fiche inatteignable`);
+  check(match?.band === 'accessible',
+    `${occupation.id} : bande « ${match?.band ?? 'absente'} » sur un profil ciblé, donc jamais recommandée`);
+
+  const coreValues = (Object.keys(occupation.core) as FunctionalDomainId[]).map(
+    (id) => result.domains.find((domain) => domain.id === id)?.normalized ?? 0
+  );
+  if (match && match.coreMean < Math.max(...coreValues) - 1) geometricPenaltySeen = true;
+});
+
+check(geometricPenaltySeen,
+  'Aucune fiche ne tombe sous le niveau de son meilleur domaine : la moyenne géométrique ne punit pas un cœur absent, le croisement redevient un silo');
+
+let beyondTopDomainSeen = false;
+let functionAxisMatters = false;
+ALL_SITUATIONS.forEach((_option, offset) => {
+  const result = new TestAnalyzer(walk(1, offset)).analyze();
+  const ranking = matchOccupations(result);
+  const top = ranking.matches[0];
+  if (top && Object.keys(top.occupation.core).some((id) => !result.topDomainIds.includes(id as FunctionalDomainId))) {
+    beyondTopDomainSeen = true;
+  }
+
+  const blankSignals = FUNCTION_ROLE_IDS.reduce(
+    (acc, role) => {
+      acc[role] = 0;
+      return acc;
+    },
+    {} as Record<FunctionRoleId, number>
+  );
+  const erasedOrder = matchOccupations({ ...result, functionSignals: blankSignals }).matches
+    .map((match) => match.occupation.id)
+    .join('|');
+  if (erasedOrder !== ranking.matches.map((match) => match.occupation.id).join('|')) functionAxisMatters = true;
+});
+check(beyondTopDomainSeen,
+  'Le premier métier proposé ne repose que sur des domaines déjà prioritaires : le catalogue croisé n’ouvre aucune voie nouvelle');
+
+DOMAIN_IDS.forEach((domainId) => {
+  const sample = CROSS_OCCUPATIONS.find((occupation) => (occupation.core[domainId] ?? 0) > 0);
+  if (!sample) return;
+
+  const result = new TestAnalyzer(walkForCores(sample.core, 0, domainId)).analyze();
+  const ranking = matchOccupations(result);
+  check(result.excludedDomainIds.includes(domainId),
+    `${domainId} : exclu dans q_exclude mais absent de excludedDomainIds`);
+  check(ranking.matches.every((match) => (match.occupation.core[domainId] ?? 0) === 0),
+    `${domainId} : un métier qui l'exige reste classé après une exclusion explicite`);
+  check(ranking.excluded.some((match) => match.occupation.id === sample.id),
+    `${sample.id} : écarté par l'exclusion de ${domainId} sans figurer parmi les fiches exclues`);
+});
+
+const fixedResponses = walkForCores(CROSS_OCCUPATIONS[0].core, 0);
+check(
+  JSON.stringify(matchOccupations(new TestAnalyzer(fixedResponses).analyze())) ===
+    JSON.stringify(matchOccupations(new TestAnalyzer(fixedResponses).analyze())),
+  'Deux lectures des mêmes réponses classent les métiers différemment : le matcheur n’est pas déterministe'
+);
+
+check(functionAxisMatters,
+  'Effacer les six axes fonctionnels laisse l’ordre des métiers identique pour chaque profil : la projection des fonctions est décorative');
 
 console.log(`Contrôles du parcours — catalogue de ${MODULE_CATALOG.length} modules, ${DOMAIN_IDS.length} domaines, ${gate.options.length} situations`);
 notes.forEach((note) => console.log(`  ${note}`));

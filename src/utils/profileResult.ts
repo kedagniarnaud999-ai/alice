@@ -1,5 +1,6 @@
-import { CareerSituation, DomainScore, FunctionalDomainId, ProfileResult } from '@/types/test';
+import { CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
 import { ALL_DOMAIN_IDS } from '@/data/domains';
+import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { ASSESSMENT_VERSION } from '@/data/questions';
 
 const SITUATIONS: CareerSituation[] = ['bachelier', 'jeune_diplome', 'reconversion', 'professionnel'];
@@ -59,6 +60,7 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
     feasibilityAssessment: asText(candidate.feasibilityAssessment, 'À évaluer avec un conseiller.'),
     nextActions: asStringList(candidate.nextActions),
     domains,
+    functionSignals: asFunctionSignals(candidate.functionSignals),
     topDomainIds: topDomainIds.length ? topDomainIds : domains.filter((d) => d.rank <= 3 && !d.excluded).map((d) => d.id),
     excludedDomainIds: asStringList(candidate.excludedDomainIds).filter(
       (id): id is FunctionalDomainId => KNOWN_DOMAINS.has(id)
@@ -91,4 +93,20 @@ function asRawDomains(value: unknown): DomainScore[] | null {
     }));
 
   return domains.length ? domains : null;
+}
+
+/**
+ * Le matcheur de métiers exige les six axes fonctionnels : une carte incomplète
+ * se lit comme « aucun signal sur cet axe », jamais comme une absence de clé.
+ */
+function asFunctionSignals(value: unknown): Record<FunctionRoleId, number> {
+  const source = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+  return FUNCTION_ROLE_IDS.reduce(
+    (acc, role) => {
+      const raw = Number(source[role]);
+      acc[role] = Number.isFinite(raw) ? Math.max(0, Math.min(100, Math.round(raw))) : 0;
+      return acc;
+    },
+    {} as Record<FunctionRoleId, number>
+  );
 }

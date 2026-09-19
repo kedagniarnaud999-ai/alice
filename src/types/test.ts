@@ -25,6 +25,19 @@ export type FunctionalDomainId =
   | 'agriculture'
   | 'logistique';
 
+/**
+ * Ce que la personne veut faire au quotidien, indépendamment du secteur. Un métier
+ * croisé se définit par ses domaines ET par cet axe : « coordonner » en numérique ou
+ * en agriculture n'est pas le même poste, et « construire » non plus.
+ */
+export type FunctionRoleId =
+  | 'coordination'
+  | 'analyse'
+  | 'technique'
+  | 'relation'
+  | 'conception'
+  | 'terrain';
+
 export interface QuestionOption {
   id: string;
   text: string;
@@ -97,6 +110,8 @@ export interface ProfileResult {
   feasibilityAssessment: string;
   nextActions: string[];
   domains: DomainScore[];
+  /** Intensité 0..100 de chaque axe fonctionnel, projetée depuis les traits psychologiques. */
+  functionSignals: Record<FunctionRoleId, number>;
   topDomainIds: FunctionalDomainId[];
   excludedDomainIds: FunctionalDomainId[];
 }
