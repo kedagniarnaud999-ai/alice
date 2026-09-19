@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { MODULE_CATALOG, type LearningModule } from '@/utils/pathwayEngine';
+import { MODULE_CATALOG, type LearningModule } from '@/data/modules';
 
 export type ModuleProgressStatus = 'not_started' | 'in_progress' | 'completed';
 

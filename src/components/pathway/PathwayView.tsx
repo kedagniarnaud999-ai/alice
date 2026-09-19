@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { PersonalizedPathway, LearningModule, LearningTrack } from '@/utils/pathwayEngine';
+import { PersonalizedPathway, LearningTrack } from '@/utils/pathwayEngine';
+import { type LearningModule } from '@/data/modules';
 import { UserModuleProgress } from '@/services/module.api';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
