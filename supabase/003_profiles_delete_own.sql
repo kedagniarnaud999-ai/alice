@@ -1,0 +1,8 @@
+-- « Effacer mes données » supprime la ligne de `profiles` : sans politique DELETE, RLS ne retire
+-- aucune ligne et ne renvoie aucune erreur, donc l'opération paraît réussir alors que le profil survit.
+drop policy if exists "profiles_delete_own" on public.profiles;
+create policy "profiles_delete_own"
+on public.profiles
+for delete
+to authenticated
+using (auth.uid() = user_id);

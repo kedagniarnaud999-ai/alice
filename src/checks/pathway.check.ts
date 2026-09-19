@@ -3,6 +3,7 @@ import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { PSYCH_TRAITS } from '@/data/psychAffinity';
 import { orientationQuestions } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
+import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine } from '@/utils/pathwayEngine';
 import type { FunctionalDomainId, Question, TestResponse } from '@/types/test';
 
@@ -251,6 +252,52 @@ onlyVisibleTo('q_transferable', ['s_reconversion']);
 onlyVisibleTo('q_cognitive', ALL_SITUATIONS);
 onlyVisibleTo('q_interest_fields', ALL_SITUATIONS);
 onlyVisibleTo('q_constraint', ALL_SITUATIONS);
+
+/**
+ * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient
+ * par `normalizeProfileResult`. Un champ qui ne survit pas à ce voyage ne casse
+ * rien au moment de l'écriture, il vide seulement l'écran de parcours à la relecture.
+ */
+for (let offset = 0; offset < ALL_SITUATIONS.length; offset += 1) {
+  const label = `situation ${ALL_SITUATIONS[offset]}`;
+  const fresh = new TestAnalyzer(walk(1, offset)).analyze();
+  const stored = normalizeProfileResult(JSON.parse(JSON.stringify(fresh)));
+
+  check(stored !== null, `${label} : un profil tout juste calculé est refusé par le normaliseur`);
+  if (!stored) continue;
+
+  check(
+    JSON.stringify(normalizeProfileResult(JSON.parse(JSON.stringify(stored)))) === JSON.stringify(stored),
+    `${label} : l'aller-retour de lecture déforme le profil enregistré`
+  );
+  check(
+    stored.situation === fresh.situation &&
+      stored.topDomainIds.join(',') === fresh.topDomainIds.join(',') &&
+      stored.domains.length === fresh.domains.length &&
+      stored.nextActions.length === fresh.nextActions.length,
+    `${label} : des champs du parcours se perdent dans le payload enregistré`
+  );
+  check(
+    !/^[A-Za-z0-9_]+$/.test(stored.careerStage),
+    `${label} : career_stage part vers SQL comme une clé machine (« ${stored.careerStage} ») et non un libellé`
+  );
+}
+
+check(
+  normalizeProfileResult({
+    ...JSON.parse(JSON.stringify(new TestAnalyzer(walk(1, 0)).analyze())),
+    assessmentVersion: undefined,
+  }) === null,
+  'Un profil sans version de test est accepté : les comptes antérieurs à la refonte ressuscitent'
+);
+check(
+  normalizeProfileResult({
+    assessmentVersion: 2,
+    situation: 'bachelier',
+    domains: [{ id: 'domaine_inexistant', score: 50, normalized: 50, rank: 1, reasons: [] }],
+  }) === null,
+  'Un profil dont tous les domaines sont inconnus est normalisé au lieu d’être rejeté'
+);
 
 console.log(`Contrôles du parcours — catalogue de ${MODULE_CATALOG.length} modules, ${DOMAIN_IDS.length} domaines, ${gate.options.length} situations`);
 notes.forEach((note) => console.log(`  ${note}`));
