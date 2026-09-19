@@ -7,6 +7,10 @@ import { orientationQuestions } from '@/data/questions';
 
 interface WelcomeScreenProps {
   onStart: () => void;
+  /** Invité seulement : rejoindre un compte existant. Absent dans l'espace de travail. */
+  onLogin?: () => void;
+  /** Invité seulement : revenir au site public. */
+  onHome?: () => void;
 }
 
 /** Socle commun posé à tout le monde. */
@@ -15,7 +19,7 @@ const BASE_QUESTION_COUNT = orientationQuestions.filter((question) => !question.
 /** Le maximum, lorsque les questions liées à la situation s'ajoutent. */
 const MAX_QUESTION_COUNT = orientationQuestions.length;
 
-export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
+export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onLogin, onHome }) => {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#edf6ff,_#ffffff_40%,_#f8fafc_100%)] px-4 py-12">
       <div className="mx-auto w-full max-w-5xl">
@@ -89,6 +93,29 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             À l’issue du parcours, vous pourrez sauvegarder vos résultats et poursuivre votre
             progression.
           </p>
+
+          {(onLogin || onHome) && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+              {onHome && (
+                <button
+                  type="button"
+                  onClick={onHome}
+                  className="font-medium text-slate-500 transition-colors hover:text-slate-900"
+                >
+                  Retour à l'accueil
+                </button>
+              )}
+              {onLogin && (
+                <button
+                  type="button"
+                  onClick={onLogin}
+                  className="font-medium text-primary-700 underline-offset-4 hover:underline"
+                >
+                  Déjà un compte ? Se connecter
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

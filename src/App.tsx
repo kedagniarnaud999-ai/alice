@@ -97,7 +97,13 @@ const TrialExperience = () => {
   };
 
   if (trialState === 'welcome') {
-    return <WelcomeScreen onStart={() => setTrialState('test')} />;
+    return (
+      <WelcomeScreen
+        onStart={() => setTrialState('test')}
+        onLogin={() => navigate('/login')}
+        onHome={() => navigate('/')}
+      />
+    );
   }
 
   if (trialState === 'test') {
