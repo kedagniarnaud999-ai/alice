@@ -7,6 +7,7 @@ import {
   type User,
 } from '@/services/auth.api';
 import { checkSupabaseHealth, type SupabaseHealth } from '@/lib/supabaseHealth';
+import { isMissingSession } from '@/utils/authErrors';
 
 interface AuthContextType {
   user: User | null;
@@ -43,7 +44,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(currentUser);
         }
       } catch (error) {
-        console.error('Failed to restore the Supabase session:', error);
+        if (!isMissingSession(error)) {
+          console.error('Failed to restore the Supabase session:', error);
+        }
         if (isMounted) {
           setUser(null);
         }

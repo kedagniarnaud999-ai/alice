@@ -136,3 +136,13 @@ export const describeAuthError = (error: unknown): AuthErrorDescription => {
     isServiceIssue: message.isServiceIssue,
   };
 };
+
+/** Un visiteur non connecté n'est pas une panne : `getUser` lève cette erreur à chaque navigation anonyme. */
+export const isMissingSession = (error: unknown): boolean => {
+  const candidate = error as { name?: string; code?: string; message?: string } | null;
+  return (
+    candidate?.name === 'AuthSessionMissingError' ||
+    candidate?.code === 'auth_session_missing' ||
+    /auth session missing/i.test(candidate?.message ?? '')
+  );
+};
