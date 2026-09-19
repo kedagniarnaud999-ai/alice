@@ -45,30 +45,30 @@ ${result.naturalTalents.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 MOTIVATIONS
 ${result.motivationDrivers.map((m, i) => `${i + 1}. ${m}`).join('\n')}
 
-CENTRES D'INTERET
+CENTRES D'INTÉRÊT
 ${result.primaryInterests.map((interest, idx) => `${idx + 1}. ${interest}`).join('\n')}
 
-POSITIONNEMENT CARRIERE
+POSITIONNEMENT CARRIÈRE
 ${result.careerStage}
 
-FAISABILITE
+FAISABILITÉ
 ${result.feasibilityAssessment}
 
 PROCHAINES ACTIONS
 ${result.nextActions.map((action, i) => `${i + 1}. ${action}`).join('\n')}
 
-FILIERES RECOMMANDEES
+FILIÈRES RECOMMANDÉES
 ${(result.domains ?? [])
   .filter((d) => !d.excluded && d.rank > 0)
   .sort((a, b) => a.rank - b.rank)
   .map((d) => `${d.rank}. ${d.label} (${d.normalized}%)`)
   .join('\n')}
 
-ECARTES
+ÉCARTÉS
 ${(result.domains ?? []).filter((d) => d.excluded).map((d) => d.label).join(', ') || 'Aucun'}
 
 ---
-Genere par AliTché - ${new Date().toLocaleDateString('fr-FR')}
+Généré par AliTché - ${new Date().toLocaleDateString('fr-FR')}
     `.trim();
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -100,7 +100,7 @@ Genere par AliTché - ${new Date().toLocaleDateString('fr-FR')}
         className="flex items-center gap-2"
       >
         <Download className="h-4 w-4" />
-        Telecharger
+        Télécharger
       </Button>
       <Button
         onClick={handleShare}

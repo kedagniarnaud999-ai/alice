@@ -172,7 +172,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
           <CardHeader>
             <div className="mb-2 flex items-center gap-2">
               <Compass className="h-5 w-5 text-blue-600" />
-              <CardTitle>Vos centres d'interet principaux</CardTitle>
+              <CardTitle>Vos centres d'intérêt principaux</CardTitle>
             </div>
             <p className="text-sm text-gray-600">Les domaines qui vous attirent naturellement</p>
           </CardHeader>

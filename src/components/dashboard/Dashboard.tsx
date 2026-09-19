@@ -173,7 +173,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div>
                 <h3 className="mb-1 font-bold text-gray-900">Progression du parcours</h3>
                 <p className="text-2xl font-bold text-green-600">
-                  {pathway ? `${pathway.recommendedTracks.length} piste(s)` : 'A generer'}
+                  {pathway ? `${pathway.recommendedTracks.length} piste(s)` : 'À générer'}
                 </p>
               </div>
             </div>
@@ -211,7 +211,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <Card padding="lg">
           <h3 className="mb-4 flex items-center gap-2 font-bold text-gray-900">
             <Settings className="h-5 w-5" />
-            Parametres
+            Paramètres
           </h3>
           <div className="space-y-4">
             <div>
@@ -225,7 +225,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
             <div>
-              <h4 className="mb-2 font-semibold text-gray-900">Vos interets</h4>
+              <h4 className="mb-2 font-semibold text-gray-900">Vos intérêts</h4>
               <div className="flex flex-wrap gap-2">
                 {profileResult.primaryInterests.slice(0, 3).map((interest, index) => (
                   <Badge key={index} variant="accent" size="sm">
