@@ -67,9 +67,18 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
               <ArrowLeft className="mr-2 h-4 w-4" />
               Retour au tableau de bord
             </Button>
-            <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">Votre parcours personnalisé</h1>
+            {pathway.occupationTitle && (
+              <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-primary-700">
+                Métier visé
+              </p>
+            )}
+            <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
+              {pathway.occupationTitle ?? 'Votre parcours personnalisé'}
+            </h1>
             <p className="mt-2 max-w-2xl text-lg text-gray-600">
-              Un chemin d'apprentissage adapté à votre profil {pathway.profileType}
+              {pathway.occupationTitle
+                ? 'Les modules qui vous préparent à ce métier d’abord, puis les pistes par domaine pour l’élargir.'
+                : `Un chemin d'apprentissage adapté à votre profil ${pathway.profileType}`}
             </p>
           </div>
         </div>

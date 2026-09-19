@@ -1,6 +1,7 @@
 import { ProfileResult, FunctionalDomainId, CareerSituation } from '@/types/test';
 import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { LearningModule, MODULE_CATALOG } from '@/data/modules';
+import { CrossOccupation } from '@/data/occupations';
 
 export interface LearningTrack {
   id: string;
@@ -13,6 +14,8 @@ export interface LearningTrack {
 
 export interface PersonalizedPathway {
   profileType: string;
+  /** Intitulé du métier visé quand le parcours a été taillé pour une fiche croisée. */
+  occupationTitle?: string;
   recommendedTracks: LearningTrack[];
   quickWins: LearningModule[];
   longTermGoals: string[];
@@ -27,6 +30,8 @@ export interface Milestone {
   criteria: string[];
 }
 
+/** Nombre de modules d'un parcours : assez pour progresser, pas assez pour décourager. */
+const TRACK_MODULE_COUNT = 5;
 
 function uniqueModules(modules: LearningModule[]): LearningModule[] {
   const seen = new Set<string>();
@@ -67,11 +72,99 @@ function byTrackOrder(a: LearningModule, b: LearningModule): number {
   return DIFFICULTY_LEVEL[a.difficulty] - DIFFICULTY_LEVEL[b.difficulty];
 }
 
+function extractSkills(modules: LearningModule[]): string[] {
+  const skills = new Set<string>();
+  modules.forEach((module) => {
+    module.skills.forEach((skill) => skills.add(skill));
+  });
+  return Array.from(skills).slice(0, 8);
+}
+
+export function buildTrackForDomain(domainId: FunctionalDomainId): LearningTrack | null {
+  const modules = MODULE_CATALOG.filter((module) =>
+    (module.domains ?? []).includes(domainId)
+  );
+  if (modules.length === 0) {
+    return null;
+  }
+  const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
+  const trackModules = modules.sort(byTrackOrder).slice(0, TRACK_MODULE_COUNT);
+  return {
+    id: `track_${domainId}`,
+    title: `Parcours ${domain.label}`,
+    description: `${domain.tagline}. Développez vos compétences de manière progressive et structurée.`,
+    modules: trackModules,
+    estimatedWeeks: estimateWeeks(trackModules),
+    targetSkills: extractSkills(trackModules),
+  };
+}
+
+/**
+ * Parcours taillé pour un métier à l'intersection de plusieurs domaines.
+ *
+ * L'union des pools s'impose : aucun module ne porte deux domaines à la fois,
+ * donc l'intersection serait vide. Mais tronquer le pool concaténé remplirait
+ * le parcours avec le domaine le mieux fourni — la jambe secondaire, celle qui
+ * fait l'intersection, resterait à quai. Les pools sont donc arrosés à tour de
+ * rôle, le plus exigé d'abord, puis la sélection est triée pour rendre au
+ * parcours sa progression gratuite → payante, simple → avancée.
+ */
+export function buildTrackForOccupation(occupation: CrossOccupation): LearningTrack | null {
+  const coreIds = Object.entries(occupation.core)
+    .filter(([, weight]) => (weight ?? 0) > 0)
+    .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0) || a[0].localeCompare(b[0]))
+    .map(([domainId]) => domainId as FunctionalDomainId);
+
+  const pools = coreIds
+    .map((domainId) =>
+      MODULE_CATALOG.filter((module) => (module.domains ?? []).includes(domainId)).sort(byTrackOrder)
+    )
+    .filter((pool) => pool.length > 0);
+
+  const picked: LearningModule[] = [];
+  const cursors = pools.map(() => 0);
+
+  while (picked.length < TRACK_MODULE_COUNT) {
+    let advanced = false;
+    pools.forEach((pool, index) => {
+      if (picked.length >= TRACK_MODULE_COUNT) return;
+      while (cursors[index] < pool.length && picked.includes(pool[cursors[index]])) {
+        cursors[index] += 1;
+      }
+      if (cursors[index] < pool.length) {
+        picked.push(pool[cursors[index]]);
+        cursors[index] += 1;
+        advanced = true;
+      }
+    });
+    if (!advanced) break;
+  }
+
+  if (picked.length === 0) {
+    return null;
+  }
+
+  const modules = picked.sort(byTrackOrder);
+  const coreLabels = coreIds.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label).join(' et ');
+  return {
+    id: `occupation_${occupation.id}`,
+    title: occupation.title,
+    description: `${occupation.context} Le parcours couvre ${coreLabels}.`,
+    modules,
+    estimatedWeeks: estimateWeeks(modules),
+    targetSkills: extractSkills(modules),
+  };
+}
+
 class PathwayEngine {
-  generatePathway(result: ProfileResult): PersonalizedPathway {
+  generatePathway(result: ProfileResult, occupation?: CrossOccupation): PersonalizedPathway {
+    const occupationTrack = occupation ? buildTrackForOccupation(occupation) : null;
+    const tracks = this.selectRecommendedTracks(result);
+
     return {
       profileType: result.profileType,
-      recommendedTracks: this.selectRecommendedTracks(result),
+      occupationTitle: occupationTrack?.title,
+      recommendedTracks: occupationTrack ? [occupationTrack, ...tracks] : tracks,
       quickWins: this.selectQuickWins(result),
       longTermGoals: this.generateLongTermGoals(result),
       milestones: this.generateMilestones(),
@@ -96,7 +189,7 @@ class PathwayEngine {
 
   private selectRecommendedTracks(result: ProfileResult): LearningTrack[] {
     const tracks = result.topDomainIds
-      .map((domainId) => this.buildTrackForDomain(domainId))
+      .map((domainId) => buildTrackForDomain(domainId))
       .filter((track): track is LearningTrack => track !== null);
 
     if (tracks.length > 0) {
@@ -116,36 +209,9 @@ class PathwayEngine {
         description: 'Consolidez les bases qui ouvrent toutes les portes : CV, LinkedIn et posture professionnelle.',
         modules: employabilityModules,
         estimatedWeeks: estimateWeeks(employabilityModules),
-        targetSkills: this.extractSkills(employabilityModules),
+        targetSkills: extractSkills(employabilityModules),
       },
     ];
-  }
-
-  private buildTrackForDomain(domainId: FunctionalDomainId): LearningTrack | null {
-    const modules = MODULE_CATALOG.filter((module) =>
-      (module.domains ?? []).includes(domainId)
-    );
-    if (modules.length === 0) {
-      return null;
-    }
-    const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
-    const trackModules = modules.sort(byTrackOrder).slice(0, 5);
-    return {
-      id: `track_${domainId}`,
-      title: `Parcours ${domain.label}`,
-      description: `${domain.tagline}. Développez vos compétences de manière progressive et structurée.`,
-      modules: trackModules,
-      estimatedWeeks: estimateWeeks(trackModules),
-      targetSkills: this.extractSkills(trackModules),
-    };
-  }
-
-  private extractSkills(modules: LearningModule[]): string[] {
-    const skills = new Set<string>();
-    modules.forEach((module) => {
-      module.skills.forEach((skill) => skills.add(skill));
-    });
-    return Array.from(skills).slice(0, 8);
   }
 
   private generateLongTermGoals(result: ProfileResult): string[] {

@@ -6,7 +6,8 @@ import { orientationQuestions } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
-import { pathwayEngine } from '@/utils/pathwayEngine';
+import { pathwayEngine, buildTrackForOccupation } from '@/utils/pathwayEngine';
+import type { LearningTrack } from '@/utils/pathwayEngine';
 import type { CareerSituation, FunctionRoleId, FunctionalDomainId, Question, QuestionOption, TestResponse } from '@/types/test';
 
 const DIFFICULTY_LEVEL: Record<LearningModule['difficulty'], number> = {
@@ -49,6 +50,32 @@ function expectedWeeks(modules: LearningModule[]): number {
 
 function domainIdOfTrack(trackId: string): FunctionalDomainId {
   return trackId.replace('track_', '') as FunctionalDomainId;
+}
+
+/**
+ * Contrat commun de toute piste, qu'elle vienne d'un domaine ou d'un métier
+ * croisé : taille tenable, durée calculée et non décrétée, compétences nommées,
+ * progression gratuite → payante puis simple → avancée.
+ */
+function checkTrackContract(track: LearningTrack, label: string): void {
+  const name = `${label} / ${track.title}`;
+
+  check(track.modules.length >= MIN_MODULES_PER_TRACK && track.modules.length <= MAX_MODULES_PER_TRACK,
+    `${name} : ${track.modules.length} modules`);
+  check(track.estimatedWeeks === expectedWeeks(track.modules),
+    `${name} : ${track.estimatedWeeks} semaine(s) au lieu des ${expectedWeeks(track.modules)} calculées`);
+  check(track.targetSkills.length > 0, `${name} : aucune compétence visée`);
+
+  for (let i = 1; i < track.modules.length; i += 1) {
+    const before = track.modules[i - 1];
+    const after = track.modules[i];
+    if (before.isFree !== after.isFree) {
+      check(before.isFree, `${name} : ${after.id} (payant) est placé avant ${before.id}`);
+    } else {
+      check(DIFFICULTY_LEVEL[before.difficulty] <= DIFFICULTY_LEVEL[after.difficulty],
+        `${name} : progression inversée à ${after.id}`);
+    }
+  }
 }
 
 function answerEvery(
@@ -244,27 +271,12 @@ gate.options.forEach((situationOption, offset) => {
     `${label} : ${pathway.recommendedTracks.length} parcours pour ${result.topDomainIds.length} domaines prioritaires`);
 
   pathway.recommendedTracks.forEach((track) => {
-    check(track.modules.length >= MIN_MODULES_PER_TRACK && track.modules.length <= MAX_MODULES_PER_TRACK,
-      `${label} / ${track.title} : ${track.modules.length} modules`);
-    check(track.estimatedWeeks === expectedWeeks(track.modules),
-      `${label} / ${track.title} : ${track.estimatedWeeks} semaine(s) au lieu des ${expectedWeeks(track.modules)} calculées`);
-    check(track.targetSkills.length > 0, `${label} / ${track.title} : aucune compétence visée`);
+    checkTrackContract(track, label);
 
     track.modules.forEach((module) => {
       check((module.domains ?? []).includes(domainIdOfTrack(track.id)),
         `${label} / ${track.title} : ${module.id} n'appartient pas à ce domaine`);
     });
-
-    for (let i = 1; i < track.modules.length; i += 1) {
-      const before = track.modules[i - 1];
-      const after = track.modules[i];
-      if (before.isFree !== after.isFree) {
-        check(before.isFree, `${label} / ${track.title} : ${after.id} (payant) est placé avant ${before.id}`);
-      } else {
-        check(DIFFICULTY_LEVEL[before.difficulty] <= DIFFICULTY_LEVEL[after.difficulty],
-          `${label} / ${track.title} : progression inversée à ${after.id}`);
-      }
-    }
   });
 
   const topDomain = result.domains.find((domain) => domain.id === domainIdOfTrack(pathway.recommendedTracks[0]?.id ?? ''));
@@ -387,6 +399,45 @@ CROSS_OCCUPATIONS.forEach((occupation, index) => {
   }
 });
 check(!starvedLeg, `Le questionnaire ne sait pas porter deux domaines en même temps — ${starvedLeg}`);
+
+/**
+ * Parcours taillé pour un métier croisé. Bâtie sur l'union des pools, la piste
+ * peut se refermer sur le domaine le mieux fourni : la seconde jambe disparaît
+ * alors du parcours, alors que l'écran affiche un métier d'intersection.
+ */
+CROSS_OCCUPATIONS.forEach((occupation) => {
+  const track = buildTrackForOccupation(occupation);
+  check(track !== null, `${occupation.title} : aucun module trouvé, le métier reste sans parcours`);
+  if (!track) return;
+
+  checkTrackContract(track, occupation.id);
+
+  const coreIds = Object.keys(occupation.core) as FunctionalDomainId[];
+  coreIds.forEach((domainId) => {
+    const share = track.modules.filter((module) => (module.domains ?? []).includes(domainId)).length;
+    check(share > 0, `${occupation.title} : ${domainId} n'apporte aucun module, la jambe est hors parcours`);
+  });
+  check(
+    track.modules.every((module) => (module.domains ?? []).some((domain) => coreIds.includes(domain))),
+    `${occupation.title} : un module étranger au cœur s'est glissé dans le parcours`
+  );
+});
+
+const occupationPathway = pathwayEngine.generatePathway(calm, CROSS_OCCUPATIONS[0]);
+const plainPathway = pathwayEngine.generatePathway(calm);
+check(occupationPathway.occupationTitle === CROSS_OCCUPATIONS[0].title,
+  'Le parcours taillé pour un métier ne rend pas son intitulé : la page reste générique');
+check(occupationPathway.recommendedTracks[0]?.id === `occupation_${CROSS_OCCUPATIONS[0].id}`,
+  'La piste du métier visé n’ouvre pas le parcours');
+check(
+  occupationPathway.recommendedTracks.slice(1).map((track) => track.id).join(',') ===
+    plainPathway.recommendedTracks.map((track) => track.id).join(','),
+  'Poser une fiche métier efface les pistes par domaine au lieu de s’y ajouter'
+);
+check(
+  JSON.parse(JSON.stringify(occupationPathway)).occupationTitle === occupationPathway.occupationTitle,
+  'occupationTitle ne survit pas à la sauvegarde locale du parcours'
+);
 
 /**
  * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient
