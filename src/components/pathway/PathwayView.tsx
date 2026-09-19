@@ -1,6 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { PersonalizedPathway, LearningTrack } from '@/utils/pathwayEngine';
-import { type LearningModule } from '@/data/modules';
+import {
+  MODULE_DIFFICULTY_LABELS,
+  MODULE_FORMAT_LABELS,
+  type LearningModule,
+} from '@/data/modules';
 import { UserModuleProgress } from '@/services/module.api';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -221,7 +225,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     <div className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
       <div className="mb-3 flex items-start justify-between">
         <Badge variant="primary" size="sm">
-          {module.difficulty}
+          {MODULE_DIFFICULTY_LABELS[module.difficulty]}
         </Badge>
         {module.isFree ? (
           <Unlock className="h-4 w-4 text-green-600" />
@@ -353,7 +357,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
                           <Clock className="h-3 w-3" />
                           {module.duration}
                         </span>
-                        <span>{module.format}</span>
+                        <span>{MODULE_FORMAT_LABELS[module.format]}</span>
                       </div>
                     </button>
                     {module.isFree ? (
@@ -422,7 +426,7 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
   const currentProgress = progress?.progress ?? 0;
   const steps = [
     `Comprendre les objectifs du module "${module.title}"`,
-    `Suivre le contenu principal en format ${module.format.toLowerCase()}`,
+    `Suivre le contenu principal en format ${MODULE_FORMAT_LABELS[module.format].toLowerCase()}`,
     `Pratiquer ou appliquer les notions apprises`,
     `Faire un point sur ce que vous avez retenu et les prochaines actions`,
   ];
@@ -438,13 +442,13 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
         <Card padding="lg" className="border-0 bg-white shadow-xl shadow-slate-100">
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <Badge variant="primary" size="sm">
-              {module.difficulty}
+              {MODULE_DIFFICULTY_LABELS[module.difficulty]}
             </Badge>
             <Badge variant={module.isFree ? 'success' : 'warning'} size="sm">
               {module.isFree ? 'Gratuit' : 'Premium'}
             </Badge>
             <Badge variant="default" size="sm">
-              {module.format}
+              {MODULE_FORMAT_LABELS[module.format]}
             </Badge>
           </div>
 

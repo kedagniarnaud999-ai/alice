@@ -1,18 +1,38 @@
 import { FunctionalDomainId } from '@/types/test';
 
+export type ModuleDifficulty = 'Debutant' | 'Intermediaire' | 'Avance';
+export type ModuleFormat = 'Video' | 'Projet' | 'Lecture' | 'Interactif';
+
 export interface LearningModule {
   id: string;
   title: string;
   description: string;
   duration: string;
-  difficulty: 'Debutant' | 'Intermediaire' | 'Avance';
+  difficulty: ModuleDifficulty;
   category: string;
   skills: string[];
-  format: 'Video' | 'Projet' | 'Lecture' | 'Interactif';
+  format: ModuleFormat;
   isFree: boolean;
   /** Functional domains this module develops. Absent = cross-cutting (employability). */
   domains?: FunctionalDomainId[];
 }
+
+/**
+ * Les clés de données restent non accentuées : le moteur de parcours les compare et la
+ * progression déjà enregistrée en dépend. Ces tables ne servent qu'à l'affichage.
+ */
+export const MODULE_DIFFICULTY_LABELS: Record<ModuleDifficulty, string> = {
+  Debutant: 'Débutant',
+  Intermediaire: 'Intermédiaire',
+  Avance: 'Avancé',
+};
+
+export const MODULE_FORMAT_LABELS: Record<ModuleFormat, string> = {
+  Video: 'Vidéo',
+  Projet: 'Projet',
+  Lecture: 'Lecture',
+  Interactif: 'Interactif',
+};
 
 /**
  * Catalogue des modules d'apprentissage mobilisés par le moteur de parcours.
