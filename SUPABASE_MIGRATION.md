@@ -36,7 +36,7 @@ Si tu choisis un autre nom, mets-le dans `VITE_SUPABASE_AVATAR_BUCKET`.
 
 ## 4. Variables d'environnement frontend
 
-Copie [env.example](/C:/Users/hp/Documents/Playground/alice/env.example) vers `.env.local` et renseigne :
+Copie `.env.example` vers `.env.local` et renseigne :
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
