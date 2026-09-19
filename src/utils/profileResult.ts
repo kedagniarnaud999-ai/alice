@@ -1,4 +1,4 @@
-import { CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
+import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
 import { ALL_DOMAIN_IDS } from '@/data/domains';
 import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
@@ -66,6 +66,7 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
     nextActions: asStringList(candidate.nextActions),
     domains,
     functionSignals: asFunctionSignals(candidate.functionSignals),
+    capacity: asCapacity(candidate.capacity),
     topDomainIds: topDomainIds.length ? topDomainIds : domains.filter((d) => d.rank <= 3 && !d.excluded).map((d) => d.id),
     excludedDomainIds: asStringList(candidate.excludedDomainIds).filter(
       (id): id is FunctionalDomainId => KNOWN_DOMAINS.has(id)
@@ -99,6 +100,17 @@ function asRawDomains(value: unknown): DomainScore[] | null {
     }));
 
   return domains.length ? domains : null;
+}
+
+/**
+ * Le recul de bande doit se rejouer à l'identique à la relecture : un payload muet
+ * vaut « rien ne freine », et des motifs sans recul n'ont plus rien à expliquer.
+ */
+function asCapacity(value: unknown): CapacitySignals {
+  const source = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+  const raw = Number(source.bandDeduction);
+  const bandDeduction = Number.isFinite(raw) ? Math.max(0, Math.min(2, Math.round(raw))) : 0;
+  return { bandDeduction, reasons: bandDeduction > 0 ? asStringList(source.reasons) : [] };
 }
 
 /**

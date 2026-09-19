@@ -105,6 +105,20 @@ export interface DomainScore {
   excluded: boolean;
 }
 
+/**
+ * Ce que le candidat peut vraiment mobiliser maintenant, calculé depuis les
+ * questions de contraintes. Il ne touche aucun score de domaine — un profil
+ * solide reste solide — mais recule la bande des fiches métier : « accessible ce
+ * trimestre » et « accessible dans deux ans » ne se conseillent pas de la même
+ * façon.
+ */
+export interface CapacitySignals {
+  /** Nombre de crans dont chaque fiche recule : 0, 1 ou 2. */
+  bandDeduction: number;
+  /** Les causes, en mots montrés au candidat. Vide quand rien ne freine. */
+  reasons: string[];
+}
+
 export interface ProfileResult {
   assessmentVersion: number;
   situation: CareerSituation;
@@ -119,6 +133,8 @@ export interface ProfileResult {
   domains: DomainScore[];
   /** Intensité 0..100 de chaque axe fonctionnel, projetée depuis les traits psychologiques. */
   functionSignals: Record<FunctionRoleId, number>;
+  /** Temps et matériel déclarés : reculent la bande des fiches métier, jamais les scores. */
+  capacity: CapacitySignals;
   topDomainIds: FunctionalDomainId[];
   excludedDomainIds: FunctionalDomainId[];
   /** Fiche croisée choisie par le candidat : le parcours se taille alors pour elle. */

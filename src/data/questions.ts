@@ -6,13 +6,13 @@ import { Question } from '@/types/test';
  *   2. psych       → compressed psychological profile (drives the narrative)
  *   3. interests   → functional-domain affinity + hard exclusions (GoStudy-style)
  *   4. aptitude    → self-assessed ability, a lighter corroborating signal
- *   5. constraints → time / resources / blocker (drives feasibility)
+ *   5. constraints → time / resources / blocker (drives feasibility + band recession)
  *
  * `orientationQuestions` is the full, ordered list (including the conditional
  * branching questions). The analyzer looks answers up by id; the flow decides
  * visibility through `visibleIf`.
  */
-export const ASSESSMENT_VERSION = 2;
+export const ASSESSMENT_VERSION = 3;
 
 export const orientationQuestions: Question[] = [
   // ─────────────────────────────── 1. SITUATION ───────────────────────────────

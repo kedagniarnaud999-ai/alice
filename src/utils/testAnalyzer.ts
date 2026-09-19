@@ -8,6 +8,7 @@ import {
   FunctionRoleId,
   CareerSituation,
   AssessmentContext,
+  CapacitySignals,
 } from '@/types/test';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
@@ -347,6 +348,7 @@ export class TestAnalyzer {
       nextActions: this.generateNextActions(situation, topDomainIds),
       domains,
       functionSignals,
+      capacity: this.assessCapacity(),
       topDomainIds,
       excludedDomainIds: ALL_DOMAIN_IDS.filter((id) => excluded.has(id)),
     };
@@ -496,6 +498,34 @@ export class TestAnalyzer {
 
   private selectedOptionIds(questionId: string): string[] {
     return this.responses.find((r) => r.questionId === questionId)?.selectedOptions ?? [];
+  }
+
+  /**
+   * Le recul de bande punit la disponibilité, jamais la compétence : les scores de
+   * domaine ne bougent pas d'un point. `q_resources` étant facultative, une réponse
+   * vide reste « inconnu » — sinon on ferait reculer celui qui a sauté la question
+   * plus sûrement que celui qui n'a rien.
+   */
+  private assessCapacity(): CapacitySignals {
+    const time = this.selectedOptionIds('q_time')[0];
+    const resources = this.selectedOptionIds('q_resources');
+    const reasons: string[] = [];
+    let deduction = 0;
+
+    if (time === 'time_none') {
+      deduction += 2;
+      reasons.push('moins de 2 h par semaine pour l’instant');
+    } else if (time === 'time_low') {
+      deduction += 1;
+      reasons.push('2 à 5 h par semaine');
+    }
+
+    if (resources.length > 0 && !resources.includes('r_computer') && !resources.includes('r_internet')) {
+      deduction += 1;
+      reasons.push('pas d’ordinateur ni de connexion régulière');
+    }
+
+    return { bandDeduction: Math.min(2, deduction), reasons };
   }
 
   private assessFeasibility(): string {

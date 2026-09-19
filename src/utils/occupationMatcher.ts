@@ -1,5 +1,5 @@
 import { CrossOccupation, CROSS_OCCUPATIONS } from '@/data/occupations';
-import { CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId } from '@/types/test';
+import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId } from '@/types/test';
 import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 
 /**
@@ -27,16 +27,23 @@ const GAP_THRESHOLD = 45;
 
 export type OccupationBand = 'accessible' | 'prochain_pas' | 'eloigne';
 
+/** Du plus proche au plus loin : c'est l'échelle sur laquelle recule la disponibilité. */
+const BAND_ORDER: OccupationBand[] = ['accessible', 'prochain_pas', 'eloigne'];
+
 export interface OccupationMatchInput {
   situation: CareerSituation;
   domains: DomainScore[];
   functionSignals: Record<FunctionRoleId, number>;
+  /** Temps et matériel disponibles : reculent la bande sans changer aucun score. */
+  capacity: CapacitySignals;
 }
 
 export interface OccupationMatch {
   occupation: CrossOccupation;
   score: number;
   band: OccupationBand;
+  /** La bande a reculé à cause du temps ou du matériel, pas du profil : la fiche doit le dire. */
+  demoted: boolean;
   /** Evidence des domaines exigés (moyenne géométrique en points de domaine) : c'est elle qui fixe la bande. */
   coreMean: number;
   functionFit: number;
@@ -54,12 +61,13 @@ export interface OccupationRanking {
   matches: OccupationMatch[];
   /** Fiches emportées par une exclusion explicite : à afficher comme telles, jamais notées. */
   excluded: OccupationMatch[];
+  /** Le profil tiendrait une fiche « accessible » sans le recul de disponibilité. */
+  capacityBlocked: boolean;
 }
 
-function bandOf(coreMean: number): OccupationBand {
-  if (coreMean >= BAND_ACCESSIBLE) return 'accessible';
-  if (coreMean >= BAND_NEXT_STEP) return 'prochain_pas';
-  return 'eloigne';
+function bandOf(coreMean: number, deduction = 0): OccupationBand {
+  const base = coreMean >= BAND_ACCESSIBLE ? 0 : coreMean >= BAND_NEXT_STEP ? 1 : BAND_ORDER.length - 1;
+  return BAND_ORDER[Math.min(BAND_ORDER.length - 1, base + deduction)];
 }
 
 /**
@@ -119,7 +127,9 @@ export function matchOccupations(input: OccupationMatchInput): OccupationRanking
       match: {
         occupation,
         score: hardVeto ? 0 : Math.min(100, Math.round(raw)),
-        band: hardVeto ? 'eloigne' : bandOf(coreMean),
+        band: hardVeto ? 'eloigne' : bandOf(coreMean, input.capacity.bandDeduction),
+        demoted:
+          !hardVeto && bandOf(coreMean, input.capacity.bandDeduction) !== bandOf(coreMean),
         coreMean: Math.round(coreMean),
         functionFit: Math.round(functionFit),
         sectorFit: Math.round(sectorFit),
@@ -141,8 +151,17 @@ export function matchOccupations(input: OccupationMatchInput): OccupationRanking
   const compare = (a: OccupationMatch, b: OccupationMatch): number =>
     b.score - a.score || b.functionFit - a.functionFit || a.occupation.id.localeCompare(b.occupation.id);
 
+  const matches = ranked.filter((entry) => !entry.vetoed).map((entry) => entry.match).sort(compare);
+  const excluded = ranked.filter((entry) => entry.vetoed).map((entry) => entry.match).sort(compare);
+
   return {
-    matches: ranked.filter((entry) => !entry.vetoed).map((entry) => entry.match).sort(compare),
-    excluded: ranked.filter((entry) => entry.vetoed).map((entry) => entry.match).sort(compare),
+    matches,
+    excluded,
+    // Une fiche aurait été « accessible » sans le recul : l'écran doit le nommer
+    // au lieu de laisser lire un « prochain pas » comme un manque de compétence.
+    capacityBlocked:
+      input.capacity.bandDeduction > 0 &&
+      !matches.some((match) => match.band === 'accessible') &&
+      matches.some((match) => match.coreMean >= BAND_ACCESSIBLE),
   };
 }

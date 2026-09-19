@@ -3,7 +3,7 @@ import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { OPPORTUNITIES, opportunitiesForOccupation } from '@/data/opportunities';
-import { orientationQuestions } from '@/data/questions';
+import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
@@ -237,7 +237,8 @@ gate.options.forEach((situationOption, offset) => {
   const pathway = pathwayEngine.generatePathway(result);
   const label = situationOption.id;
 
-  check(result.assessmentVersion === 2, `${label} : profil produit par une version obsolète du test`);
+  check(result.assessmentVersion === ASSESSMENT_VERSION,
+    `${label} : le profil ne porte pas la version courante du test (${result.assessmentVersion} ≠ ${ASSESSMENT_VERSION})`);
   check(result.topDomainIds.length > 0, `${label} : aucun domaine prioritaire`);
   check(result.topDomainIds.every((domainId) => DOMAIN_IDS.includes(domainId)), `${label} : domaine prioritaire inconnu`);
   check(result.excludedDomainIds.every((domainId) => !result.topDomainIds.includes(domainId)),
@@ -454,6 +455,7 @@ const ranking = matchOccupations({
   situation: calm.situation,
   domains: calm.domains,
   functionSignals: calm.functionSignals,
+  capacity: calm.capacity,
 });
 check(ranking.matches.length + ranking.excluded.length === CROSS_OCCUPATIONS.length,
   `Le classement ne rend pas le catalogue entier : ${ranking.matches.length} classées + ${ranking.excluded.length} écartées pour ${CROSS_OCCUPATIONS.length} fiches`);
@@ -545,6 +547,85 @@ check(
   sectorOnlyOffers.length === 0,
   `Des offres remontent sur un seul terrain d’application, hors domaines étudiés : ${sectorOnlyOffers[0]}`
 );
+
+/**
+ * Les contraintes de temps et de matériel ne discutent pas le profil : elles
+ * décalent la fenêtre. Le classement doit donc descendre, jamais remonter, et les
+ * scores rester inchangés — sinon une réponse sur « combien d’heures par semaine »
+ * écraserait la lecture des domaines.
+ */
+const rankedUnder = (deduction: number) =>
+  matchOccupations({
+    situation: calm.situation,
+    domains: calm.domains,
+    functionSignals: calm.functionSignals,
+    capacity: { bandDeduction: deduction, reasons: deduction > 0 ? ['test'] : [] },
+  }).matches;
+
+const BANDS = ['accessible', 'prochain_pas', 'eloigne'];
+const relaxed = rankedUnder(0);
+const tight = rankedUnder(1);
+const blocked = rankedUnder(2);
+const bandOf = (ranked: typeof relaxed) =>
+  new Map(ranked.map((match) => [match.occupation.id, match.band]));
+const relaxedBands = bandOf(relaxed);
+const tightBands = bandOf(tight);
+const blockedBands = bandOf(blocked);
+
+check(
+  relaxed.some((match) => match.band === 'accessible') && blocked.every((match) => match.band !== 'accessible'),
+  'Un agenda vide de toute heure laisse malgré tout une fiche « dans votre portée »'
+);
+check(
+  relaxed.every(
+    (match) =>
+      BANDS.indexOf(tightBands.get(match.occupation.id)!) >= BANDS.indexOf(match.band) &&
+      BANDS.indexOf(blockedBands.get(match.occupation.id)!) >= BANDS.indexOf(tightBands.get(match.occupation.id)!)
+  ),
+  'Le recul de disponibilité fait parfois monter une fiche'
+);
+check(
+  relaxed.some((match) => tightBands.get(match.occupation.id) !== match.band),
+  'La contrainte de temps est enregistrée mais ne recule rien : les questions de contraintes restent décoratives'
+);
+check(
+  JSON.stringify(blocked.map((match) => `${match.occupation.id}:${match.score}:${match.coreMean}`)) ===
+    JSON.stringify(relaxed.map((match) => `${match.occupation.id}:${match.score}:${match.coreMean}`)),
+  'Le recul de bande a modifié les scores ou leur ordre : la disponibilité punit désormais la compétence'
+);
+check(
+  blocked.every(
+    (match) => match.demoted === (blockedBands.get(match.occupation.id) !== relaxedBands.get(match.occupation.id))
+  ) && relaxed.every((match) => !match.demoted),
+  'Une fiche reculée ne se déclare pas comme telle : le candidat lira une lacune là où il n’y a qu’un agenda'
+);
+
+const noTime = new TestAnalyzer(withAnswer(calmResponses, 'q_time', ['time_none'])).analyze();
+check(noTime.capacity.bandDeduction === 2 && noTime.capacity.reasons.length > 0,
+  'Moins de deux heures par semaine ne change rien au classement affiché');
+const onlyPhone = new TestAnalyzer(
+  withAnswer(withAnswer(calmResponses, 'q_resources', ['r_mobile']), 'q_time', ['time_medium'])
+).analyze();
+check(onlyPhone.capacity.bandDeduction === 1 &&
+    onlyPhone.capacity.reasons.join('|').includes('connexion'),
+  'Sans ordinateur ni connexion, la fiche ne recule pas');
+const skippedResources = new TestAnalyzer(
+  withAnswer(
+    calmResponses.filter((response) => response.questionId !== 'q_resources'),
+    'q_time',
+    ['time_high']
+  )
+).analyze();
+check(skippedResources.capacity.bandDeduction === 0,
+  'Sauter la question facultative des ressources est lu comme « rien n’est disponible »');
+
+const storedCapacity = normalizeProfileResult(
+  JSON.parse(JSON.stringify({ ...calm, capacity: { bandDeduction: 1, reasons: ['2 à 5 h par semaine'] } }))
+);
+check(storedCapacity?.capacity.bandDeduction === 1 && storedCapacity?.capacity.reasons.length === 1,
+  'Le recul de disponibilité ne survit pas au payload : la fiche remonterait à la relecture');
+check(normalizeProfileResult({ ...calm, assessmentVersion: 2 }) === null,
+  'Un profil antérieur à la version courante traverse encore la lecture : il sera affiché avec un calcul périmé');
 
 /**
  * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient

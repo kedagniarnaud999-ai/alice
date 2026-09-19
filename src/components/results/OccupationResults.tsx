@@ -35,6 +35,10 @@ const KIND_ICON: Record<OpportunityKind, React.ComponentType<{ className?: strin
   bourse: Award,
 };
 
+/** « a », « a et b », « a, b et c » — la liste des motifs se lit comme une phrase. */
+const enumerate = (items: string[]): string =>
+  items.length < 2 ? items[0] : `${items.slice(0, -1).join(', ')} et ${items[items.length - 1]}`;
+
 const DELIVERY_LABEL: Record<NonNullable<Opportunity['delivery']>, string> = {
   presentiel: 'en présentiel',
   distanciel: 'à distance',
@@ -62,6 +66,10 @@ const INTRO: Record<OccupationBand, string> = {
     'Vos domaines prioritaires ne se recoupent pas encore assez pour un métier à deux jambes. Le plus proche est celui-ci.',
 };
 
+/** Le profil tient une fiche ; seul le temps ou le matériel la fait descendre d'un cran. */
+const INTRO_BLOCKED =
+  'Votre profil tient au moins un métier d’intersection. S’il apparaît plus loin, c’est votre disponibilité du moment qui recule la fiche, pas vos compétences.';
+
 interface OccupationResultsProps {
   result: ProfileResult;
   onSelect: (occupationId: string) => void;
@@ -75,12 +83,13 @@ export const OccupationResults: React.FC<OccupationResultsProps> = ({
   selectLabel = 'Choisir ce métier et construire mon parcours',
 }) => {
   const [kindFilter, setKindFilter] = useState<OpportunityKind | 'all'>('all');
-  const { matches, excluded } = useMemo(
+  const { matches, excluded, capacityBlocked } = useMemo(
     () =>
       matchOccupations({
         situation: result.situation,
         domains: result.domains,
         functionSignals: result.functionSignals,
+        capacity: result.capacity,
       }),
     [result]
   );
@@ -101,7 +110,13 @@ export const OccupationResults: React.FC<OccupationResultsProps> = ({
           <Briefcase className="h-5 w-5 text-primary-600" />
           <CardTitle>Les métiers à votre intersection</CardTitle>
         </div>
-        <p className="text-sm text-gray-600">{INTRO[tone]}</p>
+        <p className="text-sm text-gray-600">{capacityBlocked ? INTRO_BLOCKED : INTRO[tone]}</p>
+        {result.capacity.reasons.length > 0 && (
+          <p className="mt-1 text-xs text-gray-500">
+            Ces fiches reculent {result.capacity.bandDeduction > 1 ? 'de deux crans' : 'd’un cran'} selon
+            ce que vous pouvez vraiment mobiliser aujourd’hui : {enumerate(result.capacity.reasons)}.
+          </p>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
             Écoles et financements
