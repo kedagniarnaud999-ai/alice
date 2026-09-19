@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { storageManager } from '@/utils/storageManager';
+import { normalizeProfileResult } from '@/utils/profileResult';
 import type { ProfileResult, TestResponse } from '@/types/test';
 
 const getCurrentUserId = async () => {
@@ -55,10 +56,17 @@ export class ProfileService {
       if (localProfile) {
         return localProfile;
       }
-      throw new Error('Profile not found');
+      throw new Error('Aucun profil enregistré pour le moment.');
     }
 
-    return data.payload as ProfileResult;
+    const normalized = normalizeProfileResult(data.payload);
+    if (!normalized) {
+      throw new Error(
+        'Votre profil enregistré date d’une version antérieure du test. Reprenez le questionnaire pour obtenir un parcours à jour.'
+      );
+    }
+
+    return normalized;
   }
 
   async saveTestResponses(responses: TestResponse[]): Promise<void> {

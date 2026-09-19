@@ -209,6 +209,7 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
         )}
 
         <QuestionCard
+          key={currentQuestion.id}
           question={currentQuestion}
           onAnswer={handleAnswer}
           currentAnswer={currentResponse?.selectedOptions}

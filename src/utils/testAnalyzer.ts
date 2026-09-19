@@ -2,6 +2,7 @@ import {
   ProfileResult,
   TestResponse,
   Question,
+  QuestionOption,
   DomainScore,
   FunctionalDomainId,
   CareerSituation,
@@ -9,8 +10,17 @@ import {
 } from '@/types/test';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
+import { PSYCH_DOMAIN_AFFINITY, PSYCH_TRAIT_LABELS, PSYCH_TRAITS } from '@/data/psychAffinity';
 
 type ScoreMap = Record<string, number>;
+
+/**
+ * Part respective du signal fonctionnel (intérêts, aptitudes) et du signal
+ * psychologique dans le score final d'un domaine. Le psychologique corrobore,
+ * il ne décrète pas une filière.
+ */
+const FUNCTIONAL_SHARE = 0.7;
+const PSYCH_SHARE = 0.3;
 
 const COGNITIVE_KEYS = [
   'analytical',
@@ -64,6 +74,9 @@ const PASSION_MAP: Record<string, string> = {
   autonomy: 'Autonome',
   stability: 'En quête de Stabilité',
   learning: 'Apprenant',
+  recognition: 'En quête de Reconnaissance',
+  achievement: 'Orienté Résultats',
+  growth: 'En Progression',
 };
 
 const TALENT_MAP: Record<string, string> = {
@@ -139,10 +152,46 @@ export function buildAssessmentContext(responses: TestResponse[]): AssessmentCon
   };
 }
 
-/** The ordered list of questions actually asked for a given set of responses. */
+/** Questions effectivement posées, branche conditionnelle incluse. */
 export function getVisibleQuestions(responses: TestResponse[]): Question[] {
   const context = buildAssessmentContext(responses);
   return orientationQuestions.filter((q) => !q.visibleIf || q.visibleIf(context));
+}
+
+/**
+ * Cumule, dans `target`, le maximum théoriquement atteignable pour chaque clé
+ * (`domains` d'une option ou `weights` d'une option) sur les questions proposées.
+ * Le dénominateur doit ignorer les réponses réelles : sinon un candidat qui ne
+ * répond qu'à une seule question est crédité de 100 %.
+ */
+function applyTheoreticalMaxima(
+  target: ScoreMap,
+  questions: Question[],
+  read: (option: QuestionOption) => Record<string, number | undefined> | undefined
+): void {
+  const keys = new Set<string>();
+  questions.forEach((question) =>
+    question.options.forEach((option) => {
+      Object.keys(read(option) ?? {}).forEach((key) => keys.add(key));
+    })
+  );
+
+  questions.forEach((question) => {
+    const cap = question.type === 'single' ? 1 : question.maxSelections ?? question.options.length;
+
+    keys.forEach((key) => {
+      const achievable = question.options
+        .map((option) => read(option)?.[key] ?? 0)
+        .filter((value) => value > 0)
+        .sort((a, b) => b - a)
+        .slice(0, cap)
+        .reduce((sum, value) => sum + value, 0);
+
+      if (achievable > 0) {
+        target[key] = (target[key] ?? 0) + achievable;
+      }
+    });
+  });
 }
 
 export class TestAnalyzer {
@@ -156,10 +205,12 @@ export class TestAnalyzer {
   }
 
   analyze(): ProfileResult {
-    const situation = getSituation(this.responses) ?? 'jeune_diplome';
+    const declaredSituation = getSituation(this.responses);
+    const situation: CareerSituation = declaredSituation ?? 'jeune_diplome';
 
     const rawByDomain = emptyDomainRecord();
     const maxByDomain = emptyDomainRecord();
+    const psychMaxByTrait: ScoreMap = {};
     const excluded = new Set<FunctionalDomainId>();
     const reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]> =
       ALL_DOMAIN_IDS.reduce(
@@ -170,21 +221,13 @@ export class TestAnalyzer {
         {} as Record<FunctionalDomainId, { text: string; score: number }[]>
       );
 
+    const visibleQuestions = getVisibleQuestions(this.responses);
+    applyTheoreticalMaxima(maxByDomain, visibleQuestions, (option) => option.domains);
+    applyTheoreticalMaxima(psychMaxByTrait, visibleQuestions, (option) => option.weights);
+
     this.responses.forEach((response) => {
       const question = this.questionById.get(response.questionId);
       if (!question) return;
-
-      // Theoretical best this question could contribute to each domain.
-      const cap = question.type === 'single' ? 1 : question.maxSelections ?? question.options.length;
-      ALL_DOMAIN_IDS.forEach((domainId) => {
-        const achievable = question.options
-          .map((o) => o.domains?.[domainId] ?? 0)
-          .filter((v) => v > 0)
-          .sort((a, b) => b - a)
-          .slice(0, cap)
-          .reduce((sum, v) => sum + v, 0);
-        maxByDomain[domainId] += achievable;
-      });
 
       response.selectedOptions.forEach((optionId) => {
         const option = question.options.find((o) => o.id === optionId);
@@ -205,8 +248,11 @@ export class TestAnalyzer {
       });
     });
 
-    const domains = this.buildDomainScores(rawByDomain, maxByDomain, excluded, reasonMap);
-    const topDomainIds = domains.filter((d) => !d.excluded && d.raw > 0).slice(0, 3).map((d) => d.id);
+    const domains = this.buildDomainScores(rawByDomain, maxByDomain, psychMaxByTrait, excluded, reasonMap);
+    const topDomainIds = domains
+      .filter((d) => !d.excluded && d.normalized > 0)
+      .slice(0, 3)
+      .map((d) => d.id);
 
     const primaryInterests = topDomainIds.length
       ? topDomainIds.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label)
@@ -220,7 +266,9 @@ export class TestAnalyzer {
       naturalTalents: this.extractByKeys(TALENT_KEYS, TALENT_MAP, 4),
       motivationDrivers: this.extractByKeys(PASSION_KEYS, MOTIVATION_MAP, 4),
       primaryInterests,
-      careerStage: CAREER_STAGE_LABELS[situation],
+      careerStage: declaredSituation
+        ? CAREER_STAGE_LABELS[declaredSituation]
+        : 'Situation à préciser — répondez à la première question du test pour affiner votre parcours.',
       feasibilityAssessment: this.assessFeasibility(),
       nextActions: this.generateNextActions(situation, topDomainIds),
       domains,
@@ -232,14 +280,20 @@ export class TestAnalyzer {
   private buildDomainScores(
     rawByDomain: Record<FunctionalDomainId, number>,
     maxByDomain: Record<FunctionalDomainId, number>,
+    psychMaxByTrait: ScoreMap,
     excluded: Set<FunctionalDomainId>,
     reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]>
   ): DomainScore[] {
+    const traitRatios = this.computeTraitRatios(psychMaxByTrait);
+
     const scores: DomainScore[] = ALL_DOMAIN_IDS.map((id) => {
       const raw = rawByDomain[id];
       const max = maxByDomain[id];
-      const normalized = max > 0 ? Math.round((raw / max) * 100) : 0;
-      const reasons = reasonMap[id]
+      const functional = max > 0 ? raw / max : 0;
+      const psych = this.psychContribution(id, traitRatios);
+      const fused = max > 0 ? FUNCTIONAL_SHARE * functional + PSYCH_SHARE * psych.score : psych.score;
+      const normalized = Math.round(fused * 100);
+      const functionalReasons = reasonMap[id]
         .sort((a, b) => b.score - a.score)
         .filter((r, index, arr) => arr.findIndex((x) => x.text === r.text) === index)
         .slice(0, 3)
@@ -251,7 +305,7 @@ export class TestAnalyzer {
         maxPossible: max,
         normalized,
         rank: 0,
-        reasons,
+        reasons: [...functionalReasons.slice(0, 2), ...psych.reasons].slice(0, 3),
         excluded: excluded.has(id),
       };
     });
@@ -264,6 +318,54 @@ export class TestAnalyzer {
       });
 
     return scores.sort((a, b) => Number(a.excluded) - Number(b.excluded) || a.rank - b.rank);
+  }
+
+  /** Score obtenu / maximum théorique, par trait effectivement mesurable. */
+  private computeTraitRatios(psychMaxByTrait: ScoreMap): ScoreMap {
+    const ratios: ScoreMap = {};
+    Object.keys(psychMaxByTrait).forEach((trait) => {
+      ratios[trait] = Math.min(1, (this.psych[trait] ?? 0) / psychMaxByTrait[trait]);
+    });
+    return ratios;
+  }
+
+  /**
+   * Affinité du profil psychologique à un domaine, ramenée à 0..1. Seuls les
+   * traits que le test pouvait mesurer entrent au dénominateur, pour qu'un
+   * domaine ne soit pas pénalisé parce qu'aucune question n'y menait.
+   */
+  private psychContribution(
+    domainId: FunctionalDomainId,
+    traitRatios: ScoreMap
+  ): { score: number; reasons: string[] } {
+    let weighted = 0;
+    let measurable = 0;
+    const contributions: { label: string; value: number }[] = [];
+
+    PSYCH_TRAITS.forEach((trait) => {
+      const affinity = PSYCH_DOMAIN_AFFINITY[trait]?.[domainId] ?? 0;
+      const ratio = traitRatios[trait];
+      if (affinity <= 0 || ratio === undefined) return;
+
+      measurable += affinity;
+      weighted += affinity * ratio;
+      if (ratio > 0) {
+        contributions.push({ label: PSYCH_TRAIT_LABELS[trait] ?? trait, value: affinity * ratio });
+      }
+    });
+
+    if (measurable === 0) return { score: 0, reasons: [] };
+
+    const score = weighted / measurable;
+    const reasons =
+      score >= 0.45
+        ? contributions
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 1)
+            .map((entry) => `${truncate(entry.label, 48)} — cohérent avec ce domaine`)
+        : [];
+
+    return { score, reasons };
   }
 
   private topKeys(allowed: string[], limit: number): string[] {

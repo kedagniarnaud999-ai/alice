@@ -3,10 +3,17 @@ import { Clock, Lock, Sparkles, Target, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { BrandMark } from '@/components/brand/BrandMark';
+import { orientationQuestions } from '@/data/questions';
 
 interface WelcomeScreenProps {
   onStart: () => void;
 }
+
+/** Socle commun posé à tout le monde. */
+const BASE_QUESTION_COUNT = orientationQuestions.filter((question) => !question.visibleIf).length;
+
+/** Le maximum, lorsque les questions liées à la situation s'ajoutent. */
+const MAX_QUESTION_COUNT = orientationQuestions.length;
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   return (
@@ -55,7 +62,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
           <Card padding="lg" className="border border-primary-100 bg-gradient-to-br from-primary-50 to-sky-50 shadow-xl shadow-slate-200/40">
             <h3 className="text-xl font-semibold text-slate-900">Avant de commencer</h3>
             <ul className="mt-5 space-y-4 text-slate-700">
-              <Checklist text="23 questions rapides et concrètes" />
+              <Checklist text={`${BASE_QUESTION_COUNT} à ${MAX_QUESTION_COUNT} questions selon votre situation, toutes concrètes`} />
               <Checklist text="Aucune bonne ou mauvaise réponse, restez simplement honnête" />
               <Checklist text="Un résultat personnalisé à la fin du parcours" />
               <Checklist text="La possibilité de poursuivre ensuite avec votre espace personnel" />

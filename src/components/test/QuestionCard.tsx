@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Question, QuestionOption } from '@/types/test';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -18,10 +18,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   disabled = false,
 }) => {
   const [selected, setSelected] = useState<string[]>(currentAnswer ?? []);
+  const [limitReached, setLimitReached] = useState(false);
 
-  useEffect(() => {
-    setSelected(currentAnswer ?? []);
-  }, [currentAnswer, question.id]);
+  const maxSelections = question.maxSelections ?? question.options.length;
 
   const handleOptionChange = (optionId: string) => {
     if (disabled) {
@@ -29,23 +28,23 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     }
 
     if (question.type === 'single') {
+      setLimitReached(false);
       setSelected([optionId]);
       return;
     }
 
-    const maxSelections = question.maxSelections ?? question.options.length;
+    if (selected.includes(optionId)) {
+      setSelected(selected.filter((id) => id !== optionId));
+      setLimitReached(false);
+      return;
+    }
 
-    setSelected((previous) => {
-      if (previous.includes(optionId)) {
-        return previous.filter((id) => id !== optionId);
-      }
+    if (selected.length >= maxSelections) {
+      setLimitReached(true);
+      return;
+    }
 
-      if (previous.length >= maxSelections) {
-        return [...previous.slice(1), optionId];
-      }
-
-      return [...previous, optionId];
-    });
+    setSelected([...selected, optionId]);
   };
 
   const canSubmit = selected.length > 0;
@@ -69,8 +68,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           </h2>
           {question.type === 'multiple' && question.maxSelections && (
             <p className="mt-2 text-sm text-gray-500">
-              Sélectionnez jusqu'à {question.maxSelections} réponse{question.maxSelections > 1 ? 's' : ''}
-              {selected.length > 0 && ` (${selected.length}/${question.maxSelections} sélectionnée${selected.length > 1 ? 's' : ''})`}
+              Sélectionnez jusqu'à {question.maxSelections} réponse
+              {question.maxSelections > 1 ? 's' : ''} ({selected.length}/{question.maxSelections} sélectionnée
+              {selected.length > 1 ? 's' : ''})
+            </p>
+          )}
+          {limitReached && (
+            <p className="mt-1 text-sm text-amber-700" role="status">
+              Vous avez déjà choisi {maxSelections} réponses. Décochez-en une pour en ajouter.
             </p>
           )}
         </div>

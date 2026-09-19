@@ -1,6 +1,8 @@
 import { TestResponse, ProfileResult } from '@/types/test';
 import { PersonalizedPathway } from './pathwayEngine';
 import { UserModuleProgress } from '@/services/module.api';
+import { normalizeProfileResult } from './profileResult';
+import { ASSESSMENT_VERSION } from '@/data/questions';
 
 const STORAGE_KEYS = {
   TEST_RESPONSES: 'alice_test_responses',
@@ -23,6 +25,7 @@ class StorageManager {
       localStorage.setItem(STORAGE_KEYS.TEST_PROGRESS, JSON.stringify({
         currentIndex,
         responses,
+        assessmentVersion: ASSESSMENT_VERSION,
         savedAt: new Date().toISOString(),
       }));
     } catch (error) {
@@ -35,9 +38,15 @@ class StorageManager {
       const saved = localStorage.getItem(STORAGE_KEYS.TEST_PROGRESS);
       if (saved) {
         const data = JSON.parse(saved);
+
+        if (data.assessmentVersion !== ASSESSMENT_VERSION) {
+          this.clearTestProgress();
+          return null;
+        }
+
         return {
-          currentIndex: data.currentIndex,
-          responses: data.responses,
+          currentIndex: Number.isFinite(data.currentIndex) ? data.currentIndex : 0,
+          responses: Array.isArray(data.responses) ? data.responses : [],
         };
       }
     } catch (error) {
@@ -70,7 +79,7 @@ class StorageManager {
       const saved = localStorage.getItem(STORAGE_KEYS.PROFILE_RESULT);
       if (saved) {
         const data = JSON.parse(saved);
-        return data.result;
+        return normalizeProfileResult(data.result);
       }
     } catch (error) {
       console.error('Error loading profile result:', error);
@@ -82,6 +91,7 @@ class StorageManager {
     try {
       localStorage.setItem(STORAGE_KEYS.PATHWAY, JSON.stringify({
         pathway,
+        assessmentVersion: ASSESSMENT_VERSION,
         savedAt: new Date().toISOString(),
       }));
     } catch (error) {
@@ -121,6 +131,9 @@ class StorageManager {
       const saved = localStorage.getItem(STORAGE_KEYS.PATHWAY);
       if (saved) {
         const data = JSON.parse(saved);
+        if (data.assessmentVersion !== ASSESSMENT_VERSION) {
+          return null;
+        }
         return data.pathway;
       }
     } catch (error) {
