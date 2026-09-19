@@ -202,12 +202,15 @@ function applyTheoreticalMaxima(
 }
 
 /**
- * Projection du profil psychologique sur les 6 axes fonctionnels, en 0..100.
- * Comme pour les domaines, seuls les traits que le test pouvait mesurer entrent
- * au dénominateur : un candidat n'est pas pénalisé sur une fonction que rien ne
- * permettait d'observer dans sa branche de questions.
+ * Quand le candidat dit ce qu'il veut faire, sa déclaration passe avant ce que ses
+ * traits laissent deviner — mais l'implicite garde un poids : un seul « oui » ne
+ * doit pas effacer un profil psychologique cohérent.
  */
-export function computeFunctionSignals(traitRatios: ScoreMap): Record<FunctionRoleId, number> {
+const DIRECT_FUNCTION_SHARE = 0.6;
+const INFERRED_FUNCTION_SHARE = 0.4;
+
+/** Projection des traits psychologiques sur les six axes fonctionnels, en 0..100. */
+function projectTraitRoles(traitRatios: ScoreMap): Record<FunctionRoleId, number> {
   return FUNCTION_ROLE_IDS.reduce(
     (acc, role) => {
       let weighted = 0;
@@ -228,10 +231,39 @@ export function computeFunctionSignals(traitRatios: ScoreMap): Record<FunctionRo
   );
 }
 
+/**
+ * Intensité de chaque axe fonctionnel, en 0..100. Comme pour les domaines, seuls
+ * les axes que la branche de questions du candidat permettait de déclarer entrent
+ * au dénominateur. Une déclaration descend sous la projection quand elle dit
+ * « je ne veux plus de ça » : un refus ne peut pas se lire comme une force.
+ */
+export function computeFunctionSignals(
+  direct: ScoreMap,
+  directMax: ScoreMap,
+  traitRatios: ScoreMap
+): Record<FunctionRoleId, number> {
+  const inferred = projectTraitRoles(traitRatios);
+
+  return FUNCTION_ROLE_IDS.reduce(
+    (acc, role) => {
+      const cap = directMax[role] ?? 0;
+      if (cap <= 0) {
+        acc[role] = inferred[role];
+        return acc;
+      }
+      const declared = Math.max(0, Math.min(100, Math.round(((direct[role] ?? 0) / cap) * 100)));
+      acc[role] = Math.round(DIRECT_FUNCTION_SHARE * declared + INFERRED_FUNCTION_SHARE * inferred[role]);
+      return acc;
+    },
+    {} as Record<FunctionRoleId, number>
+  );
+}
+
 export class TestAnalyzer {
   private responses: TestResponse[];
   private questionById: Map<string, Question>;
   private psych: ScoreMap = {};
+  private declaredFunctions: ScoreMap = {};
 
   constructor(responses: TestResponse[]) {
     this.responses = responses;
@@ -245,6 +277,7 @@ export class TestAnalyzer {
     const rawByDomain = emptyDomainRecord();
     const maxByDomain = emptyDomainRecord();
     const psychMaxByTrait: ScoreMap = {};
+    const declaredMaxByRole: ScoreMap = {};
     const excluded = new Set<FunctionalDomainId>();
     const reasonMap: Record<FunctionalDomainId, { text: string; score: number }[]> =
       ALL_DOMAIN_IDS.reduce(
@@ -258,6 +291,7 @@ export class TestAnalyzer {
     const visibleQuestions = getVisibleQuestions(this.responses);
     applyTheoreticalMaxima(maxByDomain, visibleQuestions, (option) => option.domains);
     applyTheoreticalMaxima(psychMaxByTrait, visibleQuestions, (option) => option.weights);
+    applyTheoreticalMaxima(declaredMaxByRole, visibleQuestions, (option) => option.functions);
 
     this.responses.forEach((response) => {
       const question = this.questionById.get(response.questionId);
@@ -269,6 +303,10 @@ export class TestAnalyzer {
 
         Object.entries(option.weights ?? {}).forEach(([key, value]) => {
           this.psych[key] = (this.psych[key] ?? 0) + (value ?? 0);
+        });
+
+        Object.entries(option.functions ?? {}).forEach(([role, value]) => {
+          this.declaredFunctions[role] = (this.declaredFunctions[role] ?? 0) + (value ?? 0);
         });
 
         Object.entries(option.domains ?? {}).forEach(([domainId, value]) => {
@@ -284,7 +322,7 @@ export class TestAnalyzer {
 
     const traitRatios = this.computeTraitRatios(psychMaxByTrait);
     const domains = this.buildDomainScores(rawByDomain, maxByDomain, traitRatios, excluded, reasonMap);
-    const functionSignals = computeFunctionSignals(traitRatios);
+    const functionSignals = computeFunctionSignals(this.declaredFunctions, declaredMaxByRole, traitRatios);
     const topDomainIds = domains
       .filter((d) => !d.excluded && d.normalized > 0)
       .slice(0, 3)

@@ -48,6 +48,13 @@ export interface QuestionOption {
   weights?: Record<string, number>;
   /** Contribution of this option to each functional domain score. */
   domains?: Partial<Record<FunctionalDomainId, number>>;
+  /**
+   * Déclaration directe d'une fonction (« je veux piloter des projets »), à
+   * l'opposé des traits psychologiques que le test déduit : ici le candidat dit
+   * ce qu'il veut faire. Une valeur négative est un refus — la mission est
+   * éliminée, pas seulement peu marquée.
+   */
+  functions?: Partial<Record<FunctionRoleId, number>>;
   /** Hard exclusion: selecting this option removes the domain from the ranking. */
   excludes?: FunctionalDomainId[];
   /** Side-effects applied to the collected responses (e.g. the situation gate). */

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { BrandMark } from '@/components/brand/BrandMark';
 import { orientationQuestions } from '@/data/questions';
+import { getVisibleQuestions } from '@/utils/testAnalyzer';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -13,11 +14,24 @@ interface WelcomeScreenProps {
   onHome?: () => void;
 }
 
-/** Socle commun posé à tout le monde. */
-const BASE_QUESTION_COUNT = orientationQuestions.filter((question) => !question.visibleIf).length;
+const SITUATION_GATE = orientationQuestions.find((question) => question.id === 'q_situation');
 
-/** Le maximum, lorsque les questions liées à la situation s'ajoutent. */
-const MAX_QUESTION_COUNT = orientationQuestions.length;
+/**
+ * Le décompte promis est celui qu'un candidat voit vraiment : la taille du
+ * catalogue compte les branches qui ne se posent jamais, et le nombre de
+ * questions inconditionnelles ignore celles qui s'ajoutent selon la situation.
+ */
+const BRANCH_COUNTS = SITUATION_GATE
+  ? SITUATION_GATE.options
+      .filter((option) => option.sets?.situation)
+      .map(
+        (option) =>
+          getVisibleQuestions([{ questionId: SITUATION_GATE.id, selectedOptions: [option.id] }]).length
+      )
+  : [orientationQuestions.length];
+
+const MIN_QUESTION_COUNT = Math.min(...BRANCH_COUNTS);
+const MAX_QUESTION_COUNT = Math.max(...BRANCH_COUNTS);
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onLogin, onHome }) => {
   return (
@@ -66,7 +80,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onLogin, 
           <Card padding="lg" className="border border-primary-100 bg-gradient-to-br from-primary-50 to-sky-50 shadow-xl shadow-slate-200/40">
             <h3 className="text-xl font-semibold text-slate-900">Avant de commencer</h3>
             <ul className="mt-5 space-y-4 text-slate-700">
-              <Checklist text={`${BASE_QUESTION_COUNT} à ${MAX_QUESTION_COUNT} questions selon votre situation, toutes concrètes`} />
+              <Checklist text={`${MIN_QUESTION_COUNT} à ${MAX_QUESTION_COUNT} questions selon votre situation, toutes concrètes`} />
               <Checklist text="Aucune bonne ou mauvaise réponse, restez simplement honnête" />
               <Checklist text="Un résultat personnalisé à la fin du parcours" />
               <Checklist text="La possibilité de poursuivre ensuite avec votre espace personnel" />

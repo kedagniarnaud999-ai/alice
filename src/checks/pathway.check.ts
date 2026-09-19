@@ -320,6 +320,73 @@ onlyVisibleTo('q_transferable', ['s_reconversion']);
 onlyVisibleTo('q_cognitive', ALL_SITUATIONS);
 onlyVisibleTo('q_interest_fields', ALL_SITUATIONS);
 onlyVisibleTo('q_constraint', ALL_SITUATIONS);
+onlyVisibleTo('q_missions', ALL_SITUATIONS);
+onlyVisibleTo('q_target_sectors', ALL_SITUATIONS);
+onlyVisibleTo('q_missions_refuse', ALL_SITUATIONS);
+
+/**
+ * Un axe qu'aucune question visible ne permet de déclarer retombe sur la seule
+ * projection psychologique : la fiche métier qui l'exige devient injoignable pour
+ * cette branche. Le refus compte autant que le goût — éliminer est la moitié du
+ * dispositif, et sans option négative un « je ne veux plus de ça » reste muet.
+ */
+gate.options.forEach((situationOption) => {
+  const label = situationOption.id;
+  const visibleQuestion = (question: Question): boolean =>
+    visibility.get(question.id)?.has(label) === true;
+
+  const silent = FUNCTION_ROLE_IDS.filter(
+    (role) =>
+      !orientationQuestions.some(
+        (question) => visibleQuestion(question) && question.options.some((option) => (option.functions?.[role] ?? 0) > 0)
+      )
+  );
+  check(silent.length === 0,
+    `${label} : aucune question visible ne laisse déclarer ${silent.join(', ')} — axe réduit à l'implicite`);
+
+  const unfalsifiable = FUNCTION_ROLE_IDS.filter(
+    (role) =>
+      !orientationQuestions.some(
+        (question) => visibleQuestion(question) && question.options.some((option) => (option.functions?.[role] ?? 0) < 0)
+      )
+  );
+  check(unfalsifiable.length === 0,
+    `${label} : aucun refus possible pour ${unfalsifiable.join(', ')} — l'élimination n'existe pas sur cette branche`);
+});
+
+function withAnswer(responses: TestResponse[], questionId: string, optionIds: string[]): TestResponse[] {
+  return [
+    ...responses.filter((response) => response.questionId !== questionId),
+    { questionId, selectedOptions: optionIds },
+  ];
+}
+
+const intersectionCores: Partial<Record<FunctionalDomainId, number>> = { administration: 3, ict: 3 };
+const calmResponses = walkForCores(intersectionCores, 3);
+const calm = new TestAnalyzer(calmResponses).analyze();
+const refused = new TestAnalyzer(withAnswer(calmResponses, 'q_missions_refuse', ['rf_manage'])).analyze();
+check(
+  refused.functionSignals.coordination < calm.functionSignals.coordination,
+  `Refuser le management laisse la coordination à ${refused.functionSignals.coordination} contre ${calm.functionSignals.coordination} : le refus n'est pas entendu`
+);
+check(
+  refused.functionSignals.conception === calm.functionSignals.conception,
+  `Refuser le management déplace aussi la conception (${calm.functionSignals.conception} → ${refused.functionSignals.conception}) : la pénalité fuiterait sur les autres axes`
+);
+
+/** Deux domaines à la fois doit rester exprimable : sinon toute intersection reste sous la bande accessible. */
+let starvedLeg = '';
+CROSS_OCCUPATIONS.forEach((occupation, index) => {
+  if (starvedLeg) return;
+  const result = new TestAnalyzer(walkForCores(occupation.core, index)).analyze();
+  const legs = (Object.keys(occupation.core) as FunctionalDomainId[]).map(
+    (id) => result.domains.find((domain) => domain.id === id)?.normalized ?? 0
+  );
+  if (Math.min(...legs) < 40) {
+    starvedLeg = `${occupation.id} : meilleur profil obtenu [${legs.join(', ')}], une jambe reste sous 40`;
+  }
+});
+check(!starvedLeg, `Le questionnaire ne sait pas porter deux domaines en même temps — ${starvedLeg}`);
 
 /**
  * `profiles.payload` est une colonne JSONB : le profil repart en texte et revient
