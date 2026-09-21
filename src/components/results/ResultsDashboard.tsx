@@ -313,10 +313,10 @@ const DomainRanking: React.FC<{
       <CardHeader>
         <div className="mb-2 flex items-center gap-2">
           <Compass className="h-5 w-5 text-indigo-600" />
-          <CardTitle>Vos filières recommandées</CardTitle>
+          <CardTitle>Vos domaines de carrière recommandés</CardTitle>
         </div>
         <p className="text-sm text-gray-600">
-          Les domaines fonctionnels classés selon vos réponses, avec les raisons de ce classement.
+          Vos domaines de carrière, classés selon vos réponses, avec les raisons de ce classement.
         </p>
       </CardHeader>
       <CardContent>

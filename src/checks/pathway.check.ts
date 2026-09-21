@@ -271,6 +271,9 @@ gate.options.forEach((situationOption, offset) => {
   check(result.topDomainIds.every((domainId) => DOMAIN_IDS.includes(domainId)), `${label} : domaine prioritaire inconnu`);
   check(result.excludedDomainIds.every((domainId) => !result.topDomainIds.includes(domainId)),
     `${label} : un domaine exclu est malgré tout recommandé`);
+  /** « Filière » renvoie à l'universitaire et brouille la décision attendue : l'écran parle de domaine de carrière. */
+  check(!/fili/i.test(result.profileDescription),
+    `${label} : la phrase de profil reparle de filière — ${result.profileDescription}`);
 
   const visible = getVisibleQuestions(responses);
   visible.forEach((question) => {

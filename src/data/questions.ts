@@ -330,7 +330,7 @@ export const orientationQuestions: Question[] = [
     stage: 'interests',
     section: 'Vos centres d’intérêt',
     sectionDescription:
-      'On entre dans le vif : repérer les domaines fonctionnels qui vous attirent, et éliminer ceux qui ne vous concernent pas.',
+      'On entre dans le vif : repérer les domaines de carrière qui vous attirent, et éliminer ceux qui ne vous concernent pas.',
     text: 'Quelles activités vous attirent le plus ? (4 max)',
     type: 'multiple',
     maxSelections: 4,

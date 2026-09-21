@@ -57,7 +57,7 @@ ${result.feasibilityAssessment}
 PROCHAINES ACTIONS
 ${result.nextActions.map((action, i) => `${i + 1}. ${action}`).join('\n')}
 
-FILIÈRES RECOMMANDÉES
+DOMAINES DE CARRIÈRE RECOMMANDÉS
 ${(result.domains ?? [])
   .filter((d) => !d.excluded && d.rank > 0)
   .sort((a, b) => a.rank - b.rank)

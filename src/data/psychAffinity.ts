@@ -3,7 +3,7 @@ import { FunctionalDomainId, FunctionRoleId } from '@/types/test';
 /**
  * Affinités entre traits psychologiques (portés par `option.weights`) et domaines
  * fonctionnels. Le profil psychologique ne suffit jamais à lui seul : il corrobore
- * ou non les intérêts déclarés, et c'est ce mélange qui classe les filières.
+ * ou non les intérêts déclarés, et c'est ce mélange qui classe les domaines de carrière.
  * Échelle 1 (affinité faible) à 3 (affinité forte).
  */
 export const PSYCH_DOMAIN_AFFINITY: Record<string, Partial<Record<FunctionalDomainId, number>>> = {

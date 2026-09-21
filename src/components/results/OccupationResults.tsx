@@ -242,7 +242,7 @@ const OccupationCard: React.FC<{
           </p>
         )}
         <p>
-          <span className="font-medium">Filières :</span> {occupation.studyPaths.join(' · ')}
+          <span className="font-medium">Voies de formation :</span> {occupation.studyPaths.join(' · ')}
         </p>
       </div>
 

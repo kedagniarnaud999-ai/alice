@@ -25,7 +25,7 @@ type ScoreMap = Record<string, number>;
 /**
  * Part respective du signal fonctionnel (intérêts, aptitudes) et du signal
  * psychologique dans le score final d'un domaine. Le psychologique corrobore,
- * il ne décrète pas une filière.
+ * il ne décrète pas un domaine.
  */
 const FUNCTIONAL_SHARE = 0.7;
 const PSYCH_SHARE = 0.3;
@@ -493,7 +493,7 @@ export class TestAnalyzer {
     const part1 = cognitiveKey ? cognitiveText[cognitiveKey] : 'vous combinez plusieurs approches selon le contexte';
     const part2 = passionKey ? passionText[passionKey] : 'faire avancer vos projets';
 
-    return `Votre profil : ${part1}. Ce qui vous porte le plus, c'est ${part2}. Cette combinaison vous aide à choisir des filières où vous pourrez à la fois bien faire et trouver du sens.`;
+    return `Votre profil : ${part1}. Ce qui vous porte le plus, c'est ${part2}. Cette combinaison vous aide à choisir des domaines de carrière où vous pourrez à la fois bien faire et trouver du sens.`;
   }
 
   private selectedOptionIds(questionId: string): string[] {
