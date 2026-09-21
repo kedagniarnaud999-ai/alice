@@ -514,7 +514,10 @@ check(staleChoice?.selectedOccupationId === undefined,
 /**
  * Le catalogue d'écoles, de formations et de bourses est appelé à être rempli à la
  * main, puis par le backend. Une ligne mal reliée ne casse pas l'application : elle
- * disparaît de l'écran, ou pire, elle affiche une URL qu'aucun humain n'a vérifiée.
+ * disparaît de l'écran, ou pire, elle envoie un candidat sur un lien que personne
+ * n'a ouvert. D'où deux interdits : une ligne de démonstration ne publie jamais de
+ * lien — c'est une famille d'écrans, pas une adresse — et tout lien publié porte
+ * la date où il a répondu.
  */
 const opportunityIds = new Set<string>();
 const knownDomainIds = new Set<string>(ALL_DOMAIN_IDS);
@@ -530,12 +533,12 @@ for (const opportunity of OPPORTUNITIES) {
   const unknownDomain = opportunity.domainIds.find((id) => !knownDomainIds.has(id));
   check(unknownDomain === undefined, `${opportunity.id} est reliée à un domaine inconnu : ${unknownDomain}`);
   check(
-    opportunity.source === 'verifie' || opportunity.url === undefined,
-    `${opportunity.id} publie une URL avant vérification humaine`
-  );
-  check(
     opportunity.source === 'demo' || Boolean(opportunity.verifiedAt),
     `${opportunity.id} est présentée comme réelle sans date de vérification`
+  );
+  check(
+    opportunity.source !== 'demo' || opportunity.url === undefined,
+    `${opportunity.id} est une offre de démonstration mais publie un lien`
   );
 }
 for (const occupation of CROSS_OCCUPATIONS) {

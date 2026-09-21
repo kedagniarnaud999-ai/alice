@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Award, BookOpen, Briefcase, Layers, School, TrendingUp } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, Briefcase, ExternalLink, Layers, School, TrendingUp } from 'lucide-react';
 import { ProfileResult } from '@/types/test';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -264,7 +264,19 @@ const OccupationCard: React.FC<{
                 <li key={opportunity.id} className="flex items-start gap-2">
                   <KindIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-600" />
                   <div className="text-sm text-gray-700">
-                    <span className="font-medium">{opportunity.label}</span>
+                    {opportunity.url ? (
+                      <a
+                        href={opportunity.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-start gap-1 font-medium text-primary-700 underline-offset-2 hover:underline"
+                      >
+                        {opportunity.label}
+                        <ExternalLink className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <span className="font-medium">{opportunity.label}</span>
+                    )}
                     <span className="text-xs text-gray-500">
                       {' '}
                       · {KIND_LABEL[opportunity.kind]}

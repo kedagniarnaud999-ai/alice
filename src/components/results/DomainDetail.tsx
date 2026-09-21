@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, Award, BookOpen, ChevronDown, Layers, School } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Award, BookOpen, ChevronDown, ExternalLink, Layers, School } from 'lucide-react';
 import { FunctionalDomainId, ProfileResult } from '@/types/test';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -249,8 +249,9 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
             <CardContent>
               <h2 className="text-lg font-semibold text-gray-900">Se former dans ce domaine</h2>
               <p className="mt-1 text-sm text-gray-600">
-                Cycle diplômant : non renseigné, AliTché ne catalogue pas encore les cursus. Voici les
-                offres reliées au domaine, et ce que vous pouvez faire tout de suite chez nous.
+                Cycle diplômant : les formations listées viennent de l’annuaire transmis à
+                l’équipe, lien de l’école à l’appui. Les modules courts ci-dessous, eux, se
+                suivent directement sur AliTché.
               </p>
 
               <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -349,7 +350,19 @@ const OpportunityList: React.FC<{
         <li key={opportunity.id} className="flex items-start gap-2">
           <KindIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-600" />
           <div className="text-sm text-gray-700">
-            <span className="font-medium">{opportunity.label}</span>
+            {opportunity.url ? (
+              <a
+                href={opportunity.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-start gap-1 font-medium text-primary-700 underline-offset-2 hover:underline"
+              >
+                {opportunity.label}
+                <ExternalLink className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+              </a>
+            ) : (
+              <span className="font-medium">{opportunity.label}</span>
+            )}
             <span className="text-xs text-gray-500">
               {opportunity.delivery
                 ? ` · ${OPPORTUNITY_DELIVERY_LABEL[opportunity.delivery]}`
