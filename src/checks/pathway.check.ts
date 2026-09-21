@@ -2,9 +2,12 @@ import { MODULE_CATALOG, LearningModule } from '@/data/modules';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
-import { OPPORTUNITIES, opportunitiesForOccupation } from '@/data/opportunities';
+import { SPECIALIZATIONS, specializationsForDomain } from '@/data/specializations';
+import { OPPORTUNITIES, opportunitiesForOccupation, opportunitiesForDomain } from '@/data/opportunities';
+import type { OpportunityKind } from '@/data/opportunities';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
+import { domainOccupations, flagshipCandidates, focusFromResult } from '@/utils/domainFocus';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine, buildTrackForOccupation } from '@/utils/pathwayEngine';
@@ -33,6 +36,22 @@ const ALL_SITUATIONS = ['s_bachelier', 's_diplome', 's_reconversion', 's_pro'];
 const CAREER_SITUATIONS: CareerSituation[] = ['bachelier', 'jeune_diplome', 'reconversion', 'professionnel'];
 /** Une fiche isolée n'est pas un choix : chaque domaine doit ouvrir plusieurs intersections. */
 const MIN_FICHES_PER_DOMAIN = 4;
+
+/**
+ * Les spécialités sont écrites par nous, donc le catalogue seul ne garantit pas
+ * qu'elles mènent quelque part : chaque axe doit ouvrir deux fiches croisées
+ * réelles et trois modules réels de son domaine. En dessous, c'est un intitulé
+ * vide — pire, un intitulé qui a l'air d'un diplôme.
+ */
+const MIN_OPENINGS_PER_SPECIALIZATION = 2;
+const MIN_MODULES_PER_SPECIALIZATION = 3;
+const MIN_SPECIALIZATIONS_PER_DOMAIN = 2;
+const MAX_SPECIALIZATIONS_PER_DOMAIN = 4;
+/** Ce qu'un axe rédigé par nous n'a pas le droit d'affirmer : ni titre, ni institution, ni lien. */
+const SPECIALIZATION_FORBIDDEN_TERMS = [
+  'diplôm', 'diplom', 'certification', 'certificat', 'ecole', 'école', 'universit',
+  'bts', 'licence', 'master', 'url', 'http',
+];
 
 function requireQuestion(id: string): Question {
   const question = orientationQuestions.find((entry) => entry.id === id);
@@ -719,6 +738,115 @@ DOMAIN_IDS.forEach((domainId) => {
   ).length;
   check(count >= MIN_FICHES_PER_DOMAIN,
     `${domainId} : ${count} fiche(s) croisée(s) le mentionnent, un choix réel en exige ${MIN_FICHES_PER_DOMAIN}`);
+});
+
+/**
+ * Sol de données de l'entonnoir : les spécialités sont notre plume, les liens
+ * sont la seule chose qui les empêche d'être décoratives.
+ */
+const MODULE_BY_ID = new Map(MODULE_CATALOG.map((module) => [module.id, module]));
+const specializationIds = new Set<string>();
+
+SPECIALIZATIONS.forEach((specialization) => {
+  const { id, domainId } = specialization;
+  check(!specializationIds.has(id), `Identifiant de spécialité dupliqué : ${id}`);
+  specializationIds.add(id);
+  check(DOMAIN_IDS.includes(domainId), `${id} : domaine rattaché hors taxonomie`);
+
+  const text = `${specialization.label} ${specialization.note}`.toLowerCase();
+  check(specialization.label.trim().length > 3, `${id} : libellé trop court pour être choisi`);
+  check(specialization.note.trim().length > 40, `${id} : note trop courte pour expliquer l'axe`);
+  SPECIALIZATION_FORBIDDEN_TERMS.forEach((term) =>
+    check(!text.includes(term), `${id} : mention interdite « ${term} » — un axe écrit par nous ne peut promettre ni titre, ni institution, ni lien`));
+
+  const openings = specialization.occupationIds.map((occupationId) => OCCUPATIONS_BY_ID[occupationId]);
+  check(specialization.occupationIds.length >= MIN_OPENINGS_PER_SPECIALIZATION,
+    `${id} : ${specialization.occupationIds.length} fiche(s) croisée(s), un axe s'appuie sur ${MIN_OPENINGS_PER_SPECIALIZATION} au moins`);
+  check(new Set(specialization.occupationIds).size === specialization.occupationIds.length,
+    `${id} : fiche croisée liée deux fois`);
+  openings.forEach((occupation, index) => {
+    const occupationId = specialization.occupationIds[index];
+    check(Boolean(occupation), `${id} : fiche croisée inconnue ${occupationId}`);
+    if (!occupation) return;
+    check((occupation.core[domainId] ?? 0) > 0 || occupation.sectors.includes(domainId),
+      `${id} : ${occupationId} ne porte pas ${domainId}, l'axe ouvre une autre porte que celle de son domaine`);
+  });
+  check(openings.some((occupation) => (occupation?.core[domainId] ?? 0) > 0),
+    `${id} : aucune de ses fiches n'exige ${domainId} en cœur, l'axe n'est déclinaison de rien`);
+
+  check(specialization.moduleIds.length >= MIN_MODULES_PER_SPECIALIZATION,
+    `${id} : ${specialization.moduleIds.length} module(s), impossible de l'étayer en ${MIN_MODULES_PER_SPECIALIZATION} séances`);
+  check(new Set(specialization.moduleIds).size === specialization.moduleIds.length,
+    `${id} : module lié deux fois`);
+  specialization.moduleIds.forEach((moduleId) => {
+    const module = MODULE_BY_ID.get(moduleId);
+    check(Boolean(module), `${id} : module inconnu ${moduleId}`);
+    check((module?.domains ?? []).includes(domainId),
+      `${id} : ${moduleId} n'est pas un module de ${domainId}, l'axe promet des séances que sa fiche ne montrera pas`);
+  });
+});
+
+DOMAIN_IDS.forEach((domainId) => {
+  const count = specializationsForDomain(domainId).length;
+  check(count >= MIN_SPECIALIZATIONS_PER_DOMAIN && count <= MAX_SPECIALIZATIONS_PER_DOMAIN,
+    `${domainId} : ${count} spécialité(s), un choix tenant sur un écran en exige entre ${MIN_SPECIALIZATIONS_PER_DOMAIN} et ${MAX_SPECIALIZATIONS_PER_DOMAIN}`);
+});
+
+const OFFER_KINDS: OpportunityKind[] = ['etablissement', 'formation', 'bourse'];
+DOMAIN_IDS.forEach((domainId) => {
+  const offers = opportunitiesForDomain(domainId);
+  check(offers.length > 0, `${domainId} : aucune offre reliée, la fiche du domaine serait muette sur où se former`);
+  const missing = OFFER_KINDS.filter((kind) => !offers.some((offer) => offer.kind === kind));
+  if (missing.length > 0) {
+    notes.push(`${domainId} : famille d'offres absente (${missing.join(', ')}) — à combler par une liste fournie, jamais par des lignes inventées`);
+  }
+});
+
+/** Profil calibré sur un seul domaine, à son exigence maximale. */
+function soleCore(domainId: FunctionalDomainId): Partial<Record<FunctionalDomainId, number>> {
+  return { [domainId]: 3 };
+}
+
+/**
+ * Ce que l'entonnoir pré-coche. Un domaine phare jamais fermé par le test, des
+ * débouchés qui ouvrent vraiment ce domaine, une spécialité qui porte sur l'un
+ * d'eux : si l'un de ces liens lâche, le candidat s'engage sur une voie fantôme.
+ */
+const funnel = new TestAnalyzer(walkForCores(soleCore(DOMAIN_IDS[0]), 0)).analyze();
+const candidates = flagshipCandidates(funnel);
+check(candidates.length === DOMAIN_IDS.length, 'flagshipCandidates ampute des domaines restés ouverts');
+check(candidates.every((domain) => !domain.excluded), 'flagshipCandidates propose un domaine que le candidat a fermé');
+check(candidates.every((domain, index) => index === 0 || candidates[index - 1].normalized >= domain.normalized),
+  'flagshipCandidates n’est pas trié du domaine le plus fort au plus faible');
+
+DOMAIN_IDS.forEach((domainId) => {
+  const openings = domainOccupations(domainId);
+  check(openings.length >= MIN_FICHES_PER_DOMAIN,
+    `${domainId} : ${openings.length} fiche(s) résolue(s), le choix de débouchés serait artificiel`);
+  check(openings.every((occupation) => (occupation.core[domainId] ?? 0) > 0 || occupation.sectors.includes(domainId)),
+    `${domainId} : domainOccupations laisse passer une fiche qui ne le porte pas`);
+  check(openings.every((occupation, index) => index === 0 || (openings[index - 1].core[domainId] ?? 0) >= (occupation.core[domainId] ?? 0)),
+    `${domainId} : domainOccupations ne place pas d'abord les fiches qui exigent le domaine`);
+
+  const domainProfile = new TestAnalyzer(walkForCores(soleCore(domainId), 0)).analyze();
+  const draft = focusFromResult(domainProfile, domainId);
+  const allowed = new Set(openings.map((occupation) => occupation.id));
+  check(draft.flagshipDomainId === domainId, `${domainId} : le brouillon de ciblage change de domaine phare`);
+  check(draft.occupationIds.length > 0 && draft.occupationIds.length <= 3,
+    `${domainId} : ${draft.occupationIds.length} débouché(s) pré-coché(s), l'écran de choix n'a rien à montrer`);
+  check(draft.occupationIds.every((occupationId) => allowed.has(occupationId)),
+    `${domainId} : un débouché pré-coché n'ouvre pas ce domaine`);
+  check(
+    draft.specializationIds.every((specializationId) =>
+      (SPECIALIZATIONS.find((entry) => entry.id === specializationId)?.occupationIds ?? []).some((occupationId) =>
+        draft.occupationIds.includes(occupationId)
+      )),
+    `${domainId} : une spécialité pré-cochée ne porte sur aucun des débouchés choisis`
+  );
+  check(
+    draft.specializationIds.every((specializationId) => SPECIALIZATIONS.find((entry) => entry.id === specializationId)?.domainId === domainId),
+    `${domainId} : la spécialité pré-cochée est déclarée dans un autre domaine`
+  );
 });
 
 let geometricPenaltySeen = false;

@@ -99,27 +99,36 @@ export function buildTrackForDomain(domainId: FunctionalDomainId): LearningTrack
   };
 }
 
-/**
- * Parcours taillé pour un métier à l'intersection de plusieurs domaines.
- *
- * L'union des pools s'impose : aucun module ne porte deux domaines à la fois,
- * donc l'intersection serait vide. Mais tronquer le pool concaténé remplirait
- * le parcours avec le domaine le mieux fourni — la jambe secondaire, celle qui
- * fait l'intersection, resterait à quai. Les pools sont donc arrosés à tour de
- * rôle, le plus exigé d'abord, puis la sélection est triée pour rendre au
- * parcours sa progression gratuite → payante, simple → avancée.
- */
-export function buildTrackForOccupation(occupation: CrossOccupation): LearningTrack | null {
-  const coreIds = Object.entries(occupation.core)
+/** Domaines exigés par une fiche, du plus exigé au moins exigé. */
+function coreDomainIds(occupation: CrossOccupation): FunctionalDomainId[] {
+  return Object.entries(occupation.core)
     .filter(([, weight]) => (weight ?? 0) > 0)
     .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0) || a[0].localeCompare(b[0]))
     .map(([domainId]) => domainId as FunctionalDomainId);
+}
 
+/**
+ * Les modules qui habillent une fiche, domaine par domaine.
+ *
+ * L'union des pools s'impose : aucun module ne porte deux domaines à la fois,
+ * donc l'intersection serait vide. Mais tronquer le pool concaténé remplirait la
+ * sélection avec le domaine le mieux fourni — la jambe secondaire, celle qui fait
+ * l'intersection, resterait à quai. Les pools sont donc arrosés à tour de rôle,
+ * le plus exigé d'abord, puis la sélection est triée pour lui rendre la
+ * progression gratuite → payante, simple → avancée.
+ *
+ * Sorti de `buildTrackForOccupation` parce que la fiche d'un domaine de carrière
+ * rejoue exactement ce mécanisme sur un seul domaine.
+ */
+export function modulesForOccupationIn(
+  occupation: CrossOccupation,
+  domainIds: FunctionalDomainId[]
+): LearningModule[] {
   const wanted = new Set(occupation.skills);
   const relevance = (module: LearningModule): number =>
     module.skills.reduce((count, skill) => count + (wanted.has(skill) ? 1 : 0), 0);
 
-  const pools = coreIds
+  const pools = domainIds
     .map((domainId) =>
       MODULE_CATALOG.filter((module) => (module.domains ?? []).includes(domainId)).sort(
         (a, b) => relevance(b) - relevance(a) || byTrackOrder(a, b)
@@ -146,11 +155,20 @@ export function buildTrackForOccupation(occupation: CrossOccupation): LearningTr
     if (!advanced) break;
   }
 
-  if (picked.length === 0) {
+  return picked.sort(byTrackOrder);
+}
+
+/**
+ * Parcours taillé pour un métier à l'intersection de plusieurs domaines.
+ */
+export function buildTrackForOccupation(occupation: CrossOccupation): LearningTrack | null {
+  const coreIds = coreDomainIds(occupation);
+  const modules = modulesForOccupationIn(occupation, coreIds);
+
+  if (modules.length === 0) {
     return null;
   }
 
-  const modules = picked.sort(byTrackOrder);
   const coreLabels = coreIds.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label).join(' et ');
   return {
     id: `occupation_${occupation.id}`,

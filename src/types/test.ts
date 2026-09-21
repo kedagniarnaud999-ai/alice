@@ -119,6 +119,18 @@ export interface CapacitySignals {
   reasons: string[];
 }
 
+/**
+ * Ce que le candidat a choisi dans l'entonnoir après le test : une jambe phare,
+ * les débouchés qui lui parlent, les axes où il veut s'appuyer dessus. Le moteur
+ * de parcours taille alors ses pistes sur ces fiches au lieu de raisonner par
+ * domaine isolé.
+ */
+export interface Targeting {
+  flagshipDomainId: FunctionalDomainId;
+  occupationIds: string[];
+  specializationIds: string[];
+}
+
 export interface ProfileResult {
   assessmentVersion: number;
   situation: CareerSituation;

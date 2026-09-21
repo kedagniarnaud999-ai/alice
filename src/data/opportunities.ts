@@ -271,6 +271,28 @@ export function opportunitiesForOccupation(
     .map(({ opportunity }) => opportunity);
 }
 
+/**
+ * Les chances d'un domaine, sans passer par une fiche métier.
+ *
+ * Indispensable pour les bourses : elles portent `occupationIds: []` parce qu'un
+ * financement ne finance pas un poste, et ne sont donc atteignables que par leur
+ * domaine. Une offre qui balaie dix domaines descend sous une offre ciblée, pour
+ * la même raison que dans `relevanceOf`.
+ */
+export function opportunitiesForDomain(
+  domainId: FunctionalDomainId,
+  kind?: OpportunityKind
+): Opportunity[] {
+  return OPPORTUNITIES.filter(
+    (opportunity) => opportunity.domainIds.includes(domainId) && (!kind || opportunity.kind === kind)
+  ).sort(
+    (a, b) =>
+      a.domainIds.length - b.domainIds.length ||
+      KIND_ORDER[a.kind] - KIND_ORDER[b.kind] ||
+      a.label.localeCompare(b.label)
+  );
+}
+
 /** Le badge « Démo » tant qu'aucune donnée réelle n'est entrée dans le catalogue. */
 export const isDemoOpportunity = (opportunity: Opportunity): boolean =>
   opportunity.source === 'demo';
