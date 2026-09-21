@@ -19,7 +19,7 @@ import { ResetPassword } from '@/pages/ResetPassword';
 import { AuthCallback } from '@/pages/AuthCallback';
 import { ProfileSettings } from '@/pages/ProfileSettings';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
-import { OCCUPATIONS_BY_ID } from '@/data/occupations';
+import { CrossOccupation, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { focusFromResult } from '@/utils/domainFocus';
 import { resolveFocus } from '@/utils/focusSelection';
 import { storageManager } from '@/utils/storageManager';
@@ -153,7 +153,14 @@ const TrialExperience = () => {
         onChange={setFocusDraft}
         onBack={() => setTrialState('domain')}
         confirmLabel="Créer mon compte pour démarrer ce parcours"
-        onConfirm={() => navigate('/register?from=trial')}
+        onConfirm={(draft) => {
+          // L'engagement pris avant le compte doit passer la création : le profil
+          // local part tel quel dans le premier saveProfile après l'inscription.
+          const chosen = { ...profileResult, targeting: draft };
+          setProfileResult(chosen);
+          storageManager.saveProfileResult(chosen);
+          navigate('/register?from=trial');
+        }}
         onBuildOnDomains={() => navigate('/register?from=trial')}
       />
     );
@@ -288,18 +295,34 @@ const WorkspaceApp = () => {
     }, 1200);
   };
 
+  const applyPathway = (source: ProfileResult, occupation?: CrossOccupation) => {
+    const generatedPathway = pathwayEngine.generatePathway(source, occupation);
+
+    setProfileResult(source);
+    setPathway(generatedPathway);
+    storageManager.saveProfileResult(source);
+    storageManager.savePathway(generatedPathway);
+    setAppState('pathway');
+  };
+
   const handleStartPathway = (occupationId?: string) => {
     if (!profileResult) return;
 
     const occupation = occupationId ? OCCUPATIONS_BY_ID[occupationId] : undefined;
-    const chosen = occupation ? { ...profileResult, selectedOccupationId: occupation.id } : profileResult;
-    const generatedPathway = pathwayEngine.generatePathway(chosen, occupation);
+    // Une fiche choisie dans les résultats remplace l'engagement pris dans l'entonnoir :
+    // c'est la dernière intention du candidat, et le rechargement doit la montrer.
+    applyPathway(
+      occupation
+        ? { ...profileResult, selectedOccupationId: occupation.id, targeting: undefined }
+        : profileResult,
+      occupation
+    );
+  };
 
-    setProfileResult(chosen);
-    setPathway(generatedPathway);
-    storageManager.saveProfileResult(chosen);
-    storageManager.savePathway(generatedPathway);
-    setAppState('pathway');
+  /** « Construire sur mes domaines » : renoncer, c'est aussi effacer le ciblage gardé. */
+  const handleBuildOnDomains = () => {
+    if (!profileResult) return;
+    applyPathway({ ...profileResult, targeting: undefined });
   };
 
   const handleViewResults = () => {
@@ -328,9 +351,19 @@ const WorkspaceApp = () => {
       occupations,
       seededModules: modules,
     });
+    const chosen = { ...profileResult, targeting: draft };
 
+    setProfileResult(chosen);
     setPathway(targetedPathway);
+    storageManager.saveProfileResult(chosen);
     storageManager.savePathway(targetedPathway);
+    if (isAuthenticated) {
+      // Le ciblage fait partie du profil, pas seulement du parcours enregistré :
+      // sans cet envoi, un autre appareil rejouerait les pistes par domaine.
+      profileService.saveProfile(chosen).catch((error) => {
+        console.warn('Ciblage gardé en local, la synchronisation à distance a échoué.', error);
+      });
+    }
     setAppState('pathway');
   };
 
@@ -463,7 +496,7 @@ const WorkspaceApp = () => {
           onChange={setFocusDraft}
           onBack={() => setAppState('domain')}
           onConfirm={handleConfirmFocus}
-          onBuildOnDomains={() => handleStartPathway()}
+          onBuildOnDomains={handleBuildOnDomains}
         />
       )}
 

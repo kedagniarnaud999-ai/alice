@@ -151,6 +151,12 @@ export interface ProfileResult {
   excludedDomainIds: FunctionalDomainId[];
   /** Fiche croisée choisie par le candidat : le parcours se taille alors pour elle. */
   selectedOccupationId?: string;
+  /**
+   * L'engagement pris dans l'entonnoir : un domaine phare, ses débouchés retenus,
+   * l'axe où s'appuyer. Optionnel parce que le choix se fait après le test — un
+   * profil sans ciblage reste un profil complet, il repart sur les pistes par domaine.
+   */
+  targeting?: Targeting;
 }
 
 export interface TestState {

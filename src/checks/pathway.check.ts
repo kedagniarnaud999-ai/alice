@@ -19,9 +19,9 @@ import {
 } from '@/utils/focusSelection';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
-import { pathwayEngine, buildTrackForOccupation } from '@/utils/pathwayEngine';
+import { pathwayEngine, buildTrackForOccupation, fromTargeting } from '@/utils/pathwayEngine';
 import type { LearningTrack } from '@/utils/pathwayEngine';
-import type { CareerSituation, FunctionRoleId, FunctionalDomainId, Question, QuestionOption, TestResponse } from '@/types/test';
+import type { CareerSituation, FunctionRoleId, FunctionalDomainId, ProfileResult, Question, QuestionOption, TestResponse } from '@/types/test';
 
 const DIFFICULTY_LEVEL: Record<LearningModule['difficulty'], number> = {
   Debutant: 0,
@@ -977,6 +977,80 @@ DOMAIN_IDS.forEach((domainId) => {
     `${domainId} : une séance de l'axe retenu n'apparaît nulle part dans le parcours ciblé`
   );
 });
+
+/**
+ * Le ciblage traversé par `profiles.payload` : une colonne JSONB écrite à une autre
+ * heure du catalogue. Ce qui revient doit être relu, pas cru — et surtout doit
+ * encore servir, sinon persister un choix ne fait que le rendre invisible.
+ */
+const storedDomainId = DOMAIN_IDS[0];
+const storedProfile = new TestAnalyzer(walkForCores(soleCore(storedDomainId), 0)).analyze();
+const storedDraft = focusFromResult(storedProfile, storedDomainId);
+const storedPayload = (targeting: unknown): ProfileResult | null =>
+  normalizeProfileResult(JSON.parse(JSON.stringify({ ...storedProfile, targeting })));
+
+const rereadTargeting = storedPayload(storedDraft)?.targeting;
+check(
+  JSON.stringify(rereadTargeting) === JSON.stringify(storedDraft),
+  `${storedDomainId} : le ciblage ne survit pas au payload, le parcours se refait par domaine à chaque relecture`
+);
+check(
+  JSON.stringify(normalizeProfileResult(JSON.parse(JSON.stringify(storedPayload(storedDraft))))?.targeting) ===
+    JSON.stringify(storedDraft),
+  `${storedDomainId} : la deuxième relecture déforme le ciblage enregistré`
+);
+
+check(
+  storedPayload({
+    ...storedDraft,
+    occupationIds: [...storedDraft.occupationIds, 'metier_retire_du_catalogue'],
+  })?.targeting?.occupationIds.join(',') === storedDraft.occupationIds.join(','),
+  'Une fiche retirée du catalogue survit au ciblage enregistré'
+);
+check(
+  storedPayload({
+    flagshipDomainId: 'domaine_inexistant',
+    occupationIds: storedDraft.occupationIds,
+    specializationIds: storedDraft.specializationIds,
+  })?.targeting === undefined,
+  'Un domaine phare inconnu traverse la relecture au lieu d’annuler le ciblage'
+);
+check(
+  normalizeProfileResult(
+    JSON.parse(JSON.stringify({
+      ...storedProfile,
+      excludedDomainIds: [storedDomainId],
+      targeting: storedDraft,
+    }))
+  )?.targeting === undefined,
+  'Un ciblage dont le domaine phare a été écarté depuis reste accepté'
+);
+check(
+  (storedPayload({
+    flagshipDomainId: storedDomainId,
+    occupationIds: domainOccupations(storedDomainId).slice(0, MAX_TARGETED_OPENINGS + 1).map((occupation) => occupation.id),
+    specializationIds: storedDraft.specializationIds,
+  })?.targeting?.occupationIds.length ?? 0) <= MAX_TARGETED_OPENINGS,
+  'Un ciblage enregistré au-delà de la borne se relit tel quel'
+);
+
+check(
+  JSON.stringify(pathwayEngine.generatePathway({ ...storedProfile, targeting: storedDraft })) ===
+    JSON.stringify(pathwayEngine.generateTargetedPathway(storedProfile, fromTargeting(storedDraft))),
+  'Le parcours reconstruit depuis le profil diffère du parcours construit depuis le même ciblage'
+);
+check(
+  JSON.stringify(pathwayEngine.generatePathway({ ...storedProfile, targeting: storedDraft })) !==
+    JSON.stringify(pathwayEngine.generatePathway(storedProfile)),
+  'Un ciblage gardé ne change rien au parcours reconstruit : il est écrit pour rien'
+);
+const laterFiche = CROSS_OCCUPATIONS.find((occupation) => !storedDraft.occupationIds.includes(occupation.id));
+check(
+  laterFiche === undefined ||
+    JSON.stringify(pathwayEngine.generatePathway({ ...storedProfile, targeting: storedDraft }, laterFiche)) ===
+      JSON.stringify(pathwayEngine.generatePathway(storedProfile, laterFiche)),
+  'Le ciblage gardé passe devant la fiche choisie après lui'
+);
 
 let geometricPenaltySeen = false;
 CROSS_OCCUPATIONS.forEach((occupation, index) => {

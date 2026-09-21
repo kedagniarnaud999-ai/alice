@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, Compass, Heart, Loader2, MapPin, Sparkles, Target, TrendingUp, XCircle } from 'lucide-react';
 import { ProfileResult, DomainScore, FunctionalDomainId } from '@/types/test';
+import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -25,13 +26,17 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   result: initialResult,
   onStartPathway,
   onOpenDomain,
-  primaryActionLabel = 'Démarrer mon parcours personnalisé',
+  primaryActionLabel,
   helperText,
   hideExportMenu = false,
   guestMode = false,
 }) => {
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(initialResult || null);
   const [isLoading, setIsLoading] = useState(!initialResult);
+  const committed = profileResult?.targeting;
+  /** Un ciblage gardé se reprend, il ne se relance pas : le bouton doit le dire. */
+  const actionLabel =
+    primaryActionLabel ?? (committed ? 'Reprendre mon parcours ciblé' : 'Démarrer mon parcours personnalisé');
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -111,7 +116,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
                 </p>
               </div>
               <Button onClick={() => onStartPathway()} size="lg" className="shrink-0">
-                {primaryActionLabel}
+                {actionLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
@@ -255,8 +260,22 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
               ))}
             </div>
 
+            {committed && (
+              <p className="mb-3 text-sm text-gray-600">
+                Votre parcours est ciblé sur{' '}
+                <span className="font-semibold text-gray-900">
+                  {FUNCTIONAL_DOMAINS_BY_ID[committed.flagshipDomainId].label}
+                </span>{' '}
+                — {committed.occupationIds.length} débouché(s)
+                {committed.specializationIds.length > 0
+                  ? ` et ${committed.specializationIds.length} axe(s) retenu(s)`
+                  : ''}
+                . Reprenez-le, ou ouvrez la fiche d’un autre domaine pour viser ailleurs.
+              </p>
+            )}
+
             <Button onClick={() => onStartPathway()} size="lg" className="group w-full sm:w-auto">
-              {primaryActionLabel}
+              {actionLabel}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
 

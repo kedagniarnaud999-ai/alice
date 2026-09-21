@@ -1,7 +1,8 @@
-import { ProfileResult, FunctionalDomainId, CareerSituation } from '@/types/test';
+import { ProfileResult, FunctionalDomainId, CareerSituation, Targeting } from '@/types/test';
 import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { LearningModule, MODULE_CATALOG } from '@/data/modules';
 import { CrossOccupation } from '@/data/occupations';
+import { resolveFocus } from '@/utils/focusSelection';
 
 export interface LearningTrack {
   id: string;
@@ -189,8 +190,31 @@ export interface TargetedPathwayInput {
   seededModules: LearningModule[];
 }
 
+/**
+ * Le ciblage relu du profil, résolu comme l'écran l'aurait résolu à l'instant du
+ * clic : un seul chemin de `Targeting` vers des fiches et des séances réelles.
+ */
+export function fromTargeting(targeting: Targeting): TargetedPathwayInput {
+  const { occupations, modules } = resolveFocus(targeting);
+  return {
+    flagshipDomainId: targeting.flagshipDomainId,
+    occupations,
+    seededModules: modules,
+  };
+}
+
 class PathwayEngine {
   generatePathway(result: ProfileResult, occupation?: CrossOccupation): PersonalizedPathway {
+    if (!occupation && result.targeting) {
+      const targeted = this.generateTargetedPathway(result, fromTargeting(result.targeting));
+      // Un ciblage stocké peut périmer avec le catalogue : si plus aucune fiche
+      // retenue ne se construit, on retombe sur les pistes par domaine plutôt que
+      // de laisser le candidat sans parcours.
+      if (targeted.recommendedTracks.length > 0) {
+        return targeted;
+      }
+    }
+
     const occupationTrack = occupation ? buildTrackForOccupation(occupation) : null;
     const tracks = this.selectRecommendedTracks(result);
 

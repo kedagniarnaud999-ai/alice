@@ -1,8 +1,15 @@
-import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
+import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult, Targeting } from '@/types/test';
 import { ALL_DOMAIN_IDS } from '@/data/domains';
 import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { ASSESSMENT_VERSION } from '@/data/questions';
+import { domainOccupations } from '@/utils/domainFocus';
+import {
+  MAX_TARGETED_OPENINGS,
+  MAX_TARGETED_SPECIALIZATIONS,
+  specializationsInPlay,
+  validateFocus,
+} from '@/utils/focusSelection';
 
 const SITUATIONS: CareerSituation[] = ['bachelier', 'jeune_diplome', 'reconversion', 'professionnel'];
 
@@ -50,7 +57,7 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
     (id): id is FunctionalDomainId => KNOWN_DOMAINS.has(id)
   );
 
-  return {
+  const parsed: ProfileResult = {
     assessmentVersion: ASSESSMENT_VERSION,
     situation: candidate.situation as CareerSituation,
     profileType: asText(candidate.profileType, 'Profil en construction'),
@@ -73,6 +80,46 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
     ),
     selectedOccupationId: asKnownOccupationId(candidate.selectedOccupationId),
   };
+
+  parsed.targeting = asTargeting(candidate.targeting, parsed);
+  return parsed;
+}
+
+/**
+ * Le ciblage revient d'une colonne JSONB écrite à une autre heure du catalogue :
+ * une fiche retirée depuis, un domaine que le candidat a écarté entre-temps, un axe
+ * renommé. Plutôt que de recoudre le choix à la main, on le relit sous la règle que
+ * l'écran applique déjà (`validateFocus`) : ce qui ne passerait pas devant le
+ * candidat ne passe pas ici. Le profil retombe alors sur les pistes par domaine,
+ * et l'entonnoir se recroise — jamais un parcours bâti sur des clés mortes.
+ */
+function asTargeting(value: unknown, result: ProfileResult): Targeting | undefined {
+  if (!value || typeof value !== 'object') {
+    return undefined;
+  }
+
+  const source = value as Record<string, unknown>;
+  const flagship = source.flagshipDomainId;
+  if (typeof flagship !== 'string' || !KNOWN_DOMAINS.has(flagship)) {
+    return undefined;
+  }
+  const flagshipDomainId = flagship as FunctionalDomainId;
+  if (result.excludedDomainIds.includes(flagshipDomainId)) {
+    return undefined;
+  }
+
+  const opensDomain = new Set(domainOccupations(flagshipDomainId).map((occupation) => occupation.id));
+  const occupationIds = asStringList(source.occupationIds)
+    .filter((id) => opensDomain.has(id))
+    .slice(0, MAX_TARGETED_OPENINGS);
+
+  const inPlay = new Set(specializationsInPlay(flagshipDomainId, occupationIds).map((entry) => entry.id));
+  const specializationIds = asStringList(source.specializationIds)
+    .filter((id) => inPlay.has(id))
+    .slice(0, MAX_TARGETED_SPECIALIZATIONS);
+
+  const draft: Targeting = { flagshipDomainId, occupationIds, specializationIds };
+  return validateFocus(draft, result) === null ? draft : undefined;
 }
 
 function asRawDomains(value: unknown): DomainScore[] | null {
