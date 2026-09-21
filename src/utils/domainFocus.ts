@@ -1,7 +1,7 @@
 import { DomainScore, FunctionalDomainId, ProfileResult, Targeting } from '@/types/test';
 import { CrossOccupation, CROSS_OCCUPATIONS } from '@/data/occupations';
 import { specializationsForDomain } from '@/data/specializations';
-import { matchOccupations } from '@/utils/occupationMatcher';
+import { matchOccupations, OccupationMatch } from '@/utils/occupationMatcher';
 
 /**
  * Résolution `domaine → débouchés → spécialités`, sans React ni état : l'écran
@@ -24,6 +24,47 @@ export function domainOccupations(domainId: FunctionalDomainId): CrossOccupation
     (a, b) =>
       (b.core[domainId] ?? 0) - (a.core[domainId] ?? 0) || a.id.localeCompare(b.id)
   );
+}
+
+export interface DomainOpeningsView {
+  /** Les fiches du domaine que rien ne ferme chez ce candidat, dans son ordre d'exigence. */
+  openings: OccupationMatch[];
+  /** Toutes les fiches du domaine, fermées ou non : le dénominateur du message de repli. */
+  total: number;
+  /** Domaines écartés qui, en cœur d'une fiche de ce domaine, la ferment pour ce candidat. */
+  blockedBy: FunctionalDomainId[];
+}
+
+/**
+ * Ce que la fiche d'un domaine peut montrer à ce candidat.
+ *
+ * Une fiche croisée meurt dès qu'UN seul de ses domaines clés est écarté : un
+ * domaine recommandé peut donc légitimement se trouver sans aucun métier. Sans la
+ * cause, l'écran ressemble à un domaine vide alors qu'il est seulement fermé pour
+ * cette personne — et le candidat n'a aucune raison de rester le croire.
+ */
+export function domainOpenings(
+  result: ProfileResult,
+  domainId: FunctionalDomainId
+): DomainOpeningsView {
+  const fiches = domainOccupations(domainId);
+  const matched = new Map(matchOccupations(result).matches.map((match) => [match.occupation.id, match]));
+  const openings = fiches
+    .map((occupation) => matched.get(occupation.id))
+    .filter((match): match is OccupationMatch => match !== undefined);
+  if (openings.length > 0) return { openings, total: fiches.length, blockedBy: [] };
+
+  const excluded = new Set(
+    result.domains.filter((domain) => domain.excluded).map((domain) => domain.id)
+  );
+  const blockedBy = new Set<FunctionalDomainId>();
+  fiches.forEach((occupation) => {
+    (Object.keys(occupation.core) as FunctionalDomainId[]).forEach((coreId) => {
+      if (excluded.has(coreId)) blockedBy.add(coreId);
+    });
+  });
+
+  return { openings, total: fiches.length, blockedBy: [...blockedBy].sort((a, b) => a.localeCompare(b)) };
 }
 
 /**

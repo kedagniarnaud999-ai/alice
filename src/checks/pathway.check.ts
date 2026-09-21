@@ -7,7 +7,7 @@ import { OPPORTUNITIES, opportunitiesForOccupation, opportunitiesForDomain } fro
 import type { OpportunityKind } from '@/data/opportunities';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
-import { domainOccupations, flagshipCandidates, focusFromResult } from '@/utils/domainFocus';
+import { domainOccupations, domainOpenings, flagshipCandidates, focusFromResult } from '@/utils/domainFocus';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine, buildTrackForOccupation } from '@/utils/pathwayEngine';
@@ -879,6 +879,19 @@ ALL_SITUATIONS.forEach((_option, offset) => {
   if (top && Object.keys(top.occupation.core).some((id) => !result.topDomainIds.includes(id as FunctionalDomainId))) {
     beyondTopDomainSeen = true;
   }
+
+  // Un domaine qu'un candidat peut ouvrir ne doit jamais se découvrir vide sans
+  // raison : le veto sur un autre domaine ferme parfois toutes les fiches croisées,
+  // et dans ce cas la fiche doit pouvoir le nommer au lieu de le taire.
+  result.domains
+    .filter((domain) => !domain.excluded && domain.rank > 0)
+    .forEach((domain) => {
+      const sheet = domainOpenings(result, domain.id);
+      check(
+        sheet.openings.length > 0 || sheet.blockedBy.length > 0,
+        `${result.situation} : ${domain.id} est recommandé mais sa fiche ne montre aucun débouché et n'en explique aucun`
+      );
+    });
 
   const blankSignals = FUNCTION_ROLE_IDS.reduce(
     (acc, role) => {

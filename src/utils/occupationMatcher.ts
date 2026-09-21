@@ -27,6 +27,19 @@ const GAP_THRESHOLD = 45;
 
 export type OccupationBand = 'accessible' | 'prochain_pas' | 'eloigne';
 
+/** Ce que la bande promet au candidat, dans les mots qu'il lit à l'écran. */
+export const OCCUPATION_BAND_LABEL: Record<OccupationBand, string> = {
+  accessible: 'Dans votre portée',
+  prochain_pas: 'Prochain pas',
+  eloigne: 'À construire',
+};
+
+export const OCCUPATION_BAND_BADGE: Record<OccupationBand, 'success' | 'warning' | 'default'> = {
+  accessible: 'success',
+  prochain_pas: 'warning',
+  eloigne: 'default',
+};
+
 /** Du plus proche au plus loin : c'est l'échelle sur laquelle recule la disponibilité. */
 const BAND_ORDER: OccupationBand[] = ['accessible', 'prochain_pas', 'eloigne'];
 

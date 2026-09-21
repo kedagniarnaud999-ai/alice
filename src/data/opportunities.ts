@@ -296,3 +296,14 @@ export function opportunitiesForDomain(
 /** Le badge « Démo » tant qu'aucune donnée réelle n'est entrée dans le catalogue. */
 export const isDemoOpportunity = (opportunity: Opportunity): boolean =>
   opportunity.source === 'demo';
+
+/** Le pendant du badge, dès qu'une offre badgée est montrée à l'écran. */
+export const DEMO_OPPORTUNITY_NOTICE =
+  'Les offres marquées « Démo » sont des familles d’établissements, de formations et de bourses, pas des annonces : elles valident l’affichage en attendant l’annuaire vérifié des partenaires AliTché, qui les remplacera offre par offre.';
+
+/** Comment l'offre se suit, en mots d'écran : les clés de données restent plates. */
+export const OPPORTUNITY_DELIVERY_LABEL: Record<NonNullable<Opportunity['delivery']>, string> = {
+  presentiel: 'en présentiel',
+  distanciel: 'à distance',
+  hybride: 'en hybride',
+};

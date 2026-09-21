@@ -4,6 +4,7 @@ import { HomePage } from '@/components/home/HomePage';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
 import { TestFlow } from '@/components/test/TestFlow';
 import { ResultsDashboard } from '@/components/results/ResultsDashboard';
+import { DomainDetail } from '@/components/results/DomainDetail';
 import { PathwayView } from '@/components/pathway/PathwayView';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -22,10 +23,10 @@ import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
 import { useAuth } from '@/contexts/AuthContext';
-import { ProfileResult, TestResponse } from '@/types/test';
+import { ProfileResult, TestResponse, FunctionalDomainId } from '@/types/test';
 
-type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'pathway' | 'dashboard' | 'profile';
-type TrialState = 'welcome' | 'test' | 'loading' | 'results';
+type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'domain' | 'pathway' | 'dashboard' | 'profile';
+type TrialState = 'welcome' | 'test' | 'loading' | 'results' | 'domain';
 
 function App() {
   return (
@@ -75,6 +76,7 @@ const TrialExperience = () => {
   const { isAuthenticated } = useAuth();
   const [trialState, setTrialState] = useState<TrialState>('welcome');
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(storageManager.loadProfileResult());
+  const [openDomainId, setOpenDomainId] = useState<FunctionalDomainId | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -115,6 +117,16 @@ const TrialExperience = () => {
     return <LoadingScreen message="Analyse de votre profil en cours..." />;
   }
 
+  if (trialState === 'domain' && profileResult && openDomainId) {
+    return (
+      <DomainDetail
+        result={profileResult}
+        domainId={openDomainId}
+        onBack={() => setTrialState('results')}
+      />
+    );
+  }
+
   return (
       <ResultsDashboard
         result={profileResult ?? undefined}
@@ -123,6 +135,10 @@ const TrialExperience = () => {
         primaryActionLabel="Créer mon compte pour poursuivre"
         helperText="Retrouvez ce profil, vos recommandations et la suite de votre parcours dans un espace personnel."
         onStartPathway={() => navigate('/register?from=trial')}
+        onOpenDomain={(domainId) => {
+          setOpenDomainId(domainId);
+          setTrialState('domain');
+        }}
       />
   );
 };
@@ -132,6 +148,7 @@ const WorkspaceApp = () => {
   const { isAuthenticated } = useAuth();
   const [appState, setAppState] = useState<AppState>('home');
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(null);
+  const [openDomainId, setOpenDomainId] = useState<FunctionalDomainId | null>(null);
   const [pathway, setPathway] = useState<PersonalizedPathway | null>(null);
   const [moduleProgress, setModuleProgress] = useState<UserModuleProgress[]>([]);
   const [initializing, setInitializing] = useState(true);
@@ -258,6 +275,11 @@ const WorkspaceApp = () => {
     }
   };
 
+  const handleOpenDomain = (domainId: FunctionalDomainId) => {
+    setOpenDomainId(domainId);
+    setAppState('domain');
+  };
+
   const handleViewDashboard = () => {
     if (profileResult) {
       setAppState('dashboard');
@@ -364,7 +386,19 @@ const WorkspaceApp = () => {
       {appState === 'loading' && <LoadingScreen message="Analyse de votre profil en cours..." />}
 
       {appState === 'results' && profileResult && (
-        <ResultsDashboard result={profileResult} onStartPathway={handleStartPathway} />
+        <ResultsDashboard
+          result={profileResult}
+          onStartPathway={handleStartPathway}
+          onOpenDomain={handleOpenDomain}
+        />
+      )}
+
+      {appState === 'domain' && profileResult && openDomainId && (
+        <DomainDetail
+          result={profileResult}
+          domainId={openDomainId}
+          onBack={() => setAppState('results')}
+        />
       )}
 
       {appState === 'dashboard' && profileResult && (

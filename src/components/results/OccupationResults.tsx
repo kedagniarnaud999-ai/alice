@@ -4,13 +4,16 @@ import { ProfileResult } from '@/types/test';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { matchOccupations, OccupationBand, OccupationMatch } from '@/utils/occupationMatcher';
+import { matchOccupations, OccupationBand, OccupationMatch, OCCUPATION_BAND_BADGE, OCCUPATION_BAND_LABEL } from '@/utils/occupationMatcher';
 import { buildTrackForOccupation } from '@/utils/pathwayEngine';
+import { ChipFilter, ChipOption } from '@/components/ui/ChipFilter';
 import {
+  DEMO_OPPORTUNITY_NOTICE,
   isDemoOpportunity,
   opportunitiesForOccupation,
   Opportunity,
   OpportunityKind,
+  OPPORTUNITY_DELIVERY_LABEL,
 } from '@/data/opportunities';
 import { CrossOccupation } from '@/data/occupations';
 
@@ -29,6 +32,13 @@ const KIND_PLURAL: Record<OpportunityKind, string> = {
   bourse: 'Bourses',
 };
 
+const KIND_OPTIONS: ChipOption[] = [
+  { value: 'all', label: 'Toutes' },
+  { value: 'etablissement', label: KIND_PLURAL.etablissement },
+  { value: 'formation', label: KIND_PLURAL.formation },
+  { value: 'bourse', label: KIND_PLURAL.bourse },
+];
+
 const KIND_ICON: Record<OpportunityKind, React.ComponentType<{ className?: string }>> = {
   etablissement: School,
   formation: BookOpen,
@@ -38,24 +48,6 @@ const KIND_ICON: Record<OpportunityKind, React.ComponentType<{ className?: strin
 /** « a », « a et b », « a, b et c » — la liste des motifs se lit comme une phrase. */
 const enumerate = (items: string[]): string =>
   items.length < 2 ? items[0] : `${items.slice(0, -1).join(', ')} et ${items[items.length - 1]}`;
-
-const DELIVERY_LABEL: Record<NonNullable<Opportunity['delivery']>, string> = {
-  presentiel: 'en présentiel',
-  distanciel: 'à distance',
-  hybride: 'en hybride',
-};
-
-const BAND_LABEL: Record<OccupationBand, string> = {
-  accessible: 'Dans votre portée',
-  prochain_pas: 'Prochain pas',
-  eloigne: 'À construire',
-};
-
-const BAND_BADGE: Record<OccupationBand, 'success' | 'warning' | 'default'> = {
-  accessible: 'success',
-  prochain_pas: 'warning',
-  eloigne: 'default',
-};
 
 const INTRO: Record<OccupationBand, string> = {
   accessible:
@@ -117,29 +109,12 @@ export const OccupationResults: React.FC<OccupationResultsProps> = ({
             ce que vous pouvez vraiment mobiliser aujourd’hui : {enumerate(result.capacity.reasons)}.
           </p>
         )}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Écoles et financements
-          </span>
-          {(['all', 'etablissement', 'formation', 'bourse'] as const).map((kind) => {
-            const active = kindFilter === kind;
-            return (
-              <button
-                key={kind}
-                type="button"
-                onClick={() => setKindFilter(kind)}
-                aria-pressed={active}
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  active
-                    ? 'border-primary-300 bg-primary-50 text-primary-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {kind === 'all' ? 'Toutes' : KIND_PLURAL[kind]}
-              </button>
-            );
-          })}
-        </div>
+        <ChipFilter
+          label="Écoles et financements"
+          options={KIND_OPTIONS}
+          value={kindFilter}
+          onChange={(value) => setKindFilter(value as OpportunityKind | 'all')}
+        />
       </CardHeader>
 
       <CardContent>
@@ -164,11 +139,7 @@ export const OccupationResults: React.FC<OccupationResultsProps> = ({
         )}
 
         {shown.some((match) => visibleOpportunities(match.occupation, kindFilter).some(isDemoOpportunity)) && (
-          <p className="mt-5 text-xs text-gray-500">
-            Les offres marquées « Démo » sont des familles d’établissements, de formations et de
-            bourses, pas des annonces : elles valident l’affichage en attendant l’annuaire vérifié des
-            partenaires AliTché, qui les remplacera offre par offre.
-          </p>
+          <p className="mt-5 text-xs text-gray-500">{DEMO_OPPORTUNITY_NOTICE}</p>
         )}
 
         {excluded.length > 0 && (
@@ -233,8 +204,8 @@ const OccupationCard: React.FC<{
           <h3 className="text-lg font-semibold text-gray-900">{occupation.title}</h3>
           <p className="mt-1 text-sm leading-6 text-gray-600">{occupation.context}</p>
         </div>
-        <Badge variant={BAND_BADGE[band]} size="sm">
-          {BAND_LABEL[band]}
+        <Badge variant={OCCUPATION_BAND_BADGE[band]} size="sm">
+          {OCCUPATION_BAND_LABEL[band]}
         </Badge>
       </div>
 
@@ -297,7 +268,7 @@ const OccupationCard: React.FC<{
                     <span className="text-xs text-gray-500">
                       {' '}
                       · {KIND_LABEL[opportunity.kind]}
-                      {opportunity.delivery ? ` · ${DELIVERY_LABEL[opportunity.delivery]}` : ''}
+                      {opportunity.delivery ? ` · ${OPPORTUNITY_DELIVERY_LABEL[opportunity.delivery]}` : ''}
                       {opportunity.country !== 'multi' ? ` · ${opportunity.country}` : ''}
                     </span>
                     {isDemoOpportunity(opportunity) && (

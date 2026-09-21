@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, CheckCircle2, Compass, Heart, Loader2, MapPin, Sparkles, Target, TrendingUp, XCircle } from 'lucide-react';
-import { ProfileResult, DomainScore } from '@/types/test';
+import { ProfileResult, DomainScore, FunctionalDomainId } from '@/types/test';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -13,6 +13,8 @@ interface ResultsDashboardProps {
   result?: ProfileResult;
   /** Sans fiche, le parcours se construit sur les domaines ; avec, il se taille pour le métier. */
   onStartPathway: (occupationId?: string) => void;
+  /** Ouvrir la fiche d'un domaine recommandé : le parent tient la navigation, comme pour le parcours. */
+  onOpenDomain?: (domainId: FunctionalDomainId) => void;
   primaryActionLabel?: string;
   helperText?: string;
   hideExportMenu?: boolean;
@@ -22,6 +24,7 @@ interface ResultsDashboardProps {
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   result: initialResult,
   onStartPathway,
+  onOpenDomain,
   primaryActionLabel = 'Démarrer mon parcours personnalisé',
   helperText,
   hideExportMenu = false,
@@ -194,7 +197,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
         </Card>
 
         {profileResult.domains && profileResult.domains.length > 0 && (
-          <DomainRanking domains={profileResult.domains} />
+          <DomainRanking domains={profileResult.domains} onOpenDomain={onOpenDomain} />
         )}
 
         <OccupationResults
@@ -279,7 +282,10 @@ const barColorFor = (normalized: number): string => {
   return 'bg-gray-200';
 };
 
-const DomainRanking: React.FC<{ domains: DomainScore[] }> = ({ domains }) => {
+const DomainRanking: React.FC<{
+  domains: DomainScore[];
+  onOpenDomain?: (domainId: FunctionalDomainId) => void;
+}> = ({ domains, onOpenDomain }) => {
   const ranked = domains.filter((d) => !d.excluded && d.rank > 0);
   const excluded = domains.filter((d) => d.excluded);
 
@@ -305,7 +311,14 @@ const DomainRanking: React.FC<{ domains: DomainScore[] }> = ({ domains }) => {
                   </span>
                   <span className="font-semibold text-gray-900">{domain.label}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-500">{domain.normalized}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-500">{domain.normalized}%</span>
+                  {onOpenDomain && (
+                    <Button variant="outline" size="sm" onClick={() => onOpenDomain(domain.id)}>
+                      Consulter
+                    </Button>
+                  )}
+                </div>
               </div>
               <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-100">
                 <div
