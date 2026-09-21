@@ -1,5 +1,5 @@
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { SupabaseNotConfiguredError, supabase } from '@/lib/supabase';
 
 export interface User {
   id: string;
@@ -41,64 +41,97 @@ const mapSupabaseUser = (user: SupabaseUser): User => ({
   emailVerified: !!user.email_confirmed_at,
 });
 
+const isNetworkFailure = (message: string) =>
+  message.toLowerCase().includes('failed to fetch') || message.toLowerCase().includes('networkerror');
+
+// « Failed to fetch » remonte sans dire ce qui est injoignable : sur AliTché, cette formulation a masqué
+// une panne du projet Supabase pendant tout un dépannage de configuration.
+const normalizeAuthError = (error: unknown): Error => {
+  if (error instanceof SupabaseNotConfiguredError) {
+    return error;
+  }
+
+  const message = error instanceof Error ? error.message : String(error ?? '');
+
+  if (isNetworkFailure(message)) {
+    return new Error(
+      "Supabase est injoignable. Vérifiez VITE_SUPABASE_URL, votre connexion, et que cette URL est autorisée par le navigateur."
+    );
+  }
+
+  return error instanceof Error ? error : new Error('Une erreur de connexion est survenue.');
+};
+
 export class AuthService {
   async register(data: RegisterData): Promise<RegisterResponse> {
-    const redirectTo = `${window.location.origin}/auth/callback`;
-    const { data: result, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        emailRedirectTo: redirectTo,
-        data: {
-          full_name: data.name,
-          role: 'USER',
+    try {
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const { data: result, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: {
+            full_name: data.name,
+            role: 'USER',
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw normalizeAuthError(error);
+      }
+
+      const isExistingAccount =
+        !!result.user && Array.isArray(result.user.identities) && result.user.identities.length === 0;
+
+      return {
+        user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
+        requiresEmailVerification: true,
+        isExistingAccount,
+        message: isExistingAccount
+          ? 'Cet email semble déjà associé à un compte. Connectez-vous ou réinitialisez votre mot de passe si besoin.'
+          : 'Registration successful. Please check your email to verify your account.',
+      };
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
-
-    const isExistingAccount =
-      !!result.user && Array.isArray(result.user.identities) && result.user.identities.length === 0;
-
-    return {
-      user: result.user ? mapSupabaseUser(result.user) : this.buildPendingUser(data),
-      requiresEmailVerification: true,
-      isExistingAccount,
-      message: isExistingAccount
-        ? 'Cet email semble déjà associé à un compte. Connectez-vous ou réinitialisez votre mot de passe si besoin.'
-        : 'Registration successful. Please check your email to verify your account.',
-    };
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const { data: result, error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      const { data: result, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
 
-    if (error || !result.user || !result.session) {
-      throw error ?? new Error('Unable to create a Supabase session.');
+      if (error || !result.user || !result.session) {
+        throw normalizeAuthError(error ?? new Error('Unable to create a Supabase session.'));
+      }
+
+      return {
+        user: mapSupabaseUser(result.user),
+        token: result.session.access_token,
+      };
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
-
-    return {
-      user: mapSupabaseUser(result.user),
-      token: result.session.access_token,
-    };
   }
 
   async loginWithGoogle(): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw normalizeAuthError(error);
+      }
+    } catch (error) {
+      throw normalizeAuthError(error);
     }
   }
 
