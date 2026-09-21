@@ -13,9 +13,24 @@ export const ResetPassword: React.FC = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [hasSession, setHasSession] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Lu au premier rendu : supabase-js efface le fragment de façon asynchrone.
+  const [arrivalHash] = useState(() => window.location.hash);
+
   useEffect(() => {
+    const params = new URLSearchParams(arrivalHash.replace(/^#/, ''));
+    const errorCode = params.get('error_code');
+
+    if (errorCode || params.get('error_description')) {
+      setLinkError(
+        errorCode === 'otp_expired'
+          ? 'Ce lien a expiré ou a déjà été utilisé. Demandez un nouveau lien, puis ouvrez-le sans attendre.'
+          : 'Ce lien de réinitialisation est invalide. Demandez un nouveau lien.'
+      );
+    }
+
     const loadSession = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
@@ -28,7 +43,7 @@ export const ResetPassword: React.FC = () => {
     };
 
     loadSession();
-  }, []);
+  }, [arrivalHash]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((current) => ({
@@ -97,7 +112,19 @@ export const ResetPassword: React.FC = () => {
             </div>
           ) : (
             <>
-              {!hasSession && status === 'idle' && (
+              {linkError && (
+                <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                  <p className="mb-2">{linkError}</p>
+                  <a
+                    href="/forgot-password"
+                    className="font-medium text-primary-600 hover:text-primary-700"
+                  >
+                    Demander un nouveau lien
+                  </a>
+                </div>
+              )}
+
+              {!hasSession && status === 'idle' && !linkError && (
                 <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
                   Ouvrez cette page depuis le lien reçu par email afin que Supabase restaure la
                   session de réinitialisation.
