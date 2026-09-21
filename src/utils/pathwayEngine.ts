@@ -180,6 +180,15 @@ export function buildTrackForOccupation(occupation: CrossOccupation): LearningTr
   };
 }
 
+/** Ce que le candidat a ciblé, déjà résolu en fiches et en modules réels. */
+export interface TargetedPathwayInput {
+  flagshipDomainId: FunctionalDomainId;
+  /** Les débouchés retenus, dans l'ordre où le candidat les a choisis. */
+  occupations: CrossOccupation[];
+  /** Les séances des axes de spécialisation : elles passent devant les quick wins. */
+  seededModules: LearningModule[];
+}
+
 class PathwayEngine {
   generatePathway(result: ProfileResult, occupation?: CrossOccupation): PersonalizedPathway {
     const occupationTrack = occupation ? buildTrackForOccupation(occupation) : null;
@@ -190,6 +199,36 @@ class PathwayEngine {
       occupationTitle: occupationTrack?.title,
       recommendedTracks: occupationTrack ? [occupationTrack, ...tracks] : tracks,
       quickWins: this.selectQuickWins(result),
+      longTermGoals: this.generateLongTermGoals(result),
+      milestones: this.generateMilestones(),
+    };
+  }
+
+  /**
+   * Le parcours d'un candidat qui a choisi : une piste par débouché retenu, dans
+   * son ordre, et rien des autres domaines prioritaires — c'est le prix du ciblage,
+   * et sa promesse. La piste du domaine phare ne revient qu'en appoint, si aucune
+   * fiche choisie ne l'exige : sinon le candidat partirait dans une porte qu'il n'a
+   * pas retenue.
+   */
+  generateTargetedPathway(result: ProfileResult, input: TargetedPathwayInput): PersonalizedPathway {
+    const occupationTracks = input.occupations
+      .map((occupation) => buildTrackForOccupation(occupation))
+      .filter((track): track is LearningTrack => track !== null);
+
+    const coversFlagship = input.occupations.some(
+      (occupation) => (occupation.core[input.flagshipDomainId] ?? 0) > 0
+    );
+    const flagshipTrack = coversFlagship ? null : buildTrackForDomain(input.flagshipDomainId);
+    const recommendedTracks = flagshipTrack
+      ? [...occupationTracks, flagshipTrack]
+      : occupationTracks;
+
+    return {
+      profileType: result.profileType,
+      occupationTitle: occupationTracks[0]?.title,
+      recommendedTracks,
+      quickWins: uniqueModules([...input.seededModules, ...this.selectQuickWins(result)]).slice(0, 3),
       longTermGoals: this.generateLongTermGoals(result),
       milestones: this.generateMilestones(),
     };

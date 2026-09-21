@@ -5,6 +5,7 @@ import { WelcomeScreen } from '@/components/test/WelcomeScreen';
 import { TestFlow } from '@/components/test/TestFlow';
 import { ResultsDashboard } from '@/components/results/ResultsDashboard';
 import { DomainDetail } from '@/components/results/DomainDetail';
+import { FocusFlow } from '@/components/focus/FocusFlow';
 import { PathwayView } from '@/components/pathway/PathwayView';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -19,14 +20,26 @@ import { AuthCallback } from '@/pages/AuthCallback';
 import { ProfileSettings } from '@/pages/ProfileSettings';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
 import { OCCUPATIONS_BY_ID } from '@/data/occupations';
+import { focusFromResult } from '@/utils/domainFocus';
+import { resolveFocus } from '@/utils/focusSelection';
 import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
 import { useAuth } from '@/contexts/AuthContext';
-import { ProfileResult, TestResponse, FunctionalDomainId } from '@/types/test';
+import { ProfileResult, Targeting, TestResponse, FunctionalDomainId } from '@/types/test';
 
-type AppState = 'home' | 'welcome' | 'test' | 'loading' | 'results' | 'domain' | 'pathway' | 'dashboard' | 'profile';
-type TrialState = 'welcome' | 'test' | 'loading' | 'results' | 'domain';
+type AppState =
+  | 'home'
+  | 'welcome'
+  | 'test'
+  | 'loading'
+  | 'results'
+  | 'domain'
+  | 'focus'
+  | 'pathway'
+  | 'dashboard'
+  | 'profile';
+type TrialState = 'welcome' | 'test' | 'loading' | 'results' | 'domain' | 'focus';
 
 function App() {
   return (
@@ -77,6 +90,7 @@ const TrialExperience = () => {
   const [trialState, setTrialState] = useState<TrialState>('welcome');
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(storageManager.loadProfileResult());
   const [openDomainId, setOpenDomainId] = useState<FunctionalDomainId | null>(null);
+  const [focusDraft, setFocusDraft] = useState<Targeting | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -123,6 +137,24 @@ const TrialExperience = () => {
         result={profileResult}
         domainId={openDomainId}
         onBack={() => setTrialState('results')}
+        onChoose={(domainId) => {
+          setFocusDraft(focusFromResult(profileResult, domainId));
+          setTrialState('focus');
+        }}
+      />
+    );
+  }
+
+  if (trialState === 'focus' && profileResult && focusDraft) {
+    return (
+      <FocusFlow
+        result={profileResult}
+        draft={focusDraft}
+        onChange={setFocusDraft}
+        onBack={() => setTrialState('domain')}
+        confirmLabel="Créer mon compte pour démarrer ce parcours"
+        onConfirm={() => navigate('/register?from=trial')}
+        onBuildOnDomains={() => navigate('/register?from=trial')}
       />
     );
   }
@@ -149,6 +181,7 @@ const WorkspaceApp = () => {
   const [appState, setAppState] = useState<AppState>('home');
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(null);
   const [openDomainId, setOpenDomainId] = useState<FunctionalDomainId | null>(null);
+  const [focusDraft, setFocusDraft] = useState<Targeting | null>(null);
   const [pathway, setPathway] = useState<PersonalizedPathway | null>(null);
   const [moduleProgress, setModuleProgress] = useState<UserModuleProgress[]>([]);
   const [initializing, setInitializing] = useState(true);
@@ -280,6 +313,27 @@ const WorkspaceApp = () => {
     setAppState('domain');
   };
 
+  const handleChooseDomain = (domainId: FunctionalDomainId) => {
+    if (!profileResult) return;
+    setFocusDraft(focusFromResult(profileResult, domainId));
+    setAppState('focus');
+  };
+
+  const handleConfirmFocus = (draft: Targeting) => {
+    if (!profileResult) return;
+
+    const { occupations, modules } = resolveFocus(draft);
+    const targetedPathway = pathwayEngine.generateTargetedPathway(profileResult, {
+      flagshipDomainId: draft.flagshipDomainId,
+      occupations,
+      seededModules: modules,
+    });
+
+    setPathway(targetedPathway);
+    storageManager.savePathway(targetedPathway);
+    setAppState('pathway');
+  };
+
   const handleViewDashboard = () => {
     if (profileResult) {
       setAppState('dashboard');
@@ -398,6 +452,18 @@ const WorkspaceApp = () => {
           result={profileResult}
           domainId={openDomainId}
           onBack={() => setAppState('results')}
+          onChoose={handleChooseDomain}
+        />
+      )}
+
+      {appState === 'focus' && profileResult && focusDraft && (
+        <FocusFlow
+          result={profileResult}
+          draft={focusDraft}
+          onChange={setFocusDraft}
+          onBack={() => setAppState('domain')}
+          onConfirm={handleConfirmFocus}
+          onBuildOnDomains={() => handleStartPathway()}
         />
       )}
 

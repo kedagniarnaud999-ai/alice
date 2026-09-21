@@ -2,12 +2,21 @@ import { MODULE_CATALOG, LearningModule } from '@/data/modules';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
-import { SPECIALIZATIONS, specializationsForDomain } from '@/data/specializations';
+import { SPECIALIZATIONS, SPECIALIZATIONS_BY_ID, specializationsForDomain } from '@/data/specializations';
 import { OPPORTUNITIES, opportunitiesForOccupation, opportunitiesForDomain } from '@/data/opportunities';
 import type { OpportunityKind } from '@/data/opportunities';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
 import { domainOccupations, domainOpenings, flagshipCandidates, focusFromResult } from '@/utils/domainFocus';
+import {
+  MAX_TARGETED_OPENINGS,
+  MAX_TARGETED_SPECIALIZATIONS,
+  resolveFocus,
+  specializationsInPlay,
+  toggleOccupation,
+  toggleSpecialization,
+  validateFocus,
+} from '@/utils/focusSelection';
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine, buildTrackForOccupation } from '@/utils/pathwayEngine';
@@ -846,6 +855,126 @@ DOMAIN_IDS.forEach((domainId) => {
   check(
     draft.specializationIds.every((specializationId) => SPECIALIZATIONS.find((entry) => entry.id === specializationId)?.domainId === domainId),
     `${domainId} : la spécialité pré-cochée est déclarée dans un autre domaine`
+  );
+});
+
+/**
+ * La mécanique elle-même : ce que les cases savent refuser, ce qu'elles emportent
+ * en se décochant, et ce que le moteur fabrique avec la sélection. Sans ce bloc,
+ * un ciblage décoratif passerait inaperçu — des cases cochées qui laisseraient
+ * partir le candidat sur le même parcours que si elles n'avaient jamais existé.
+ */
+DOMAIN_IDS.forEach((domainId) => {
+  const profile = new TestAnalyzer(walkForCores(soleCore(domainId), 0)).analyze();
+  const draft = focusFromResult(profile, domainId);
+  const { openings } = domainOpenings(profile, domainId);
+  const openingIds = openings.map((match) => match.occupation.id);
+  const inPlay = specializationsInPlay(domainId, draft.occupationIds);
+
+  const blocker = validateFocus(draft, profile);
+  check(blocker === null,
+    `${domainId} : le ciblage pré-coché se refuse lui-même (${blocker ?? '—'}), l'écran s'ouvrirait sur un bouton mort`);
+
+  check(validateFocus({ ...draft, occupationIds: [] }, profile) !== null,
+    `${domainId} : un parcours ciblé démarre sans aucune cible`);
+
+  const overPicked = {
+    ...draft,
+    occupationIds: openingIds.slice(0, MAX_TARGETED_OPENINGS + 1),
+    specializationIds: [] as string[],
+  };
+  check(openingIds.length <= MAX_TARGETED_OPENINGS || validateFocus(overPicked, profile) !== null,
+    `${domainId} : ${MAX_TARGETED_OPENINGS + 1} débouchés passent la validation, la borne n'est qu'affichée`);
+
+  // La case libre se désactive plutôt qu'elle n'écarte en silence une voie déjà retenue.
+  const clicked = openingIds.reduce(
+    (state, id) => toggleOccupation(state, id),
+    { ...draft, occupationIds: [] as string[], specializationIds: [] as string[] }
+  );
+  check(clicked.occupationIds.length <= MAX_TARGETED_OPENINGS,
+    `${domainId} : ${clicked.occupationIds.length} débouchés après une série de clics, la borne n'est pas tenue par les cases`);
+
+  const axisClicks = inPlay.reduce(
+    (state, entry) => toggleSpecialization(state, entry.id),
+    { ...draft, specializationIds: [] as string[] }
+  );
+  check(axisClicks.specializationIds.length <= MAX_TARGETED_SPECIALIZATIONS,
+    `${domainId} : ${axisClicks.specializationIds.length} axes après une série de clics, la borne n'est pas tenue par les cases`);
+
+  const anchor = draft.specializationIds[0];
+  if (anchor) {
+    const carried = (SPECIALIZATIONS_BY_ID[anchor]?.occupationIds ?? []).filter((id) =>
+      draft.occupationIds.includes(id)
+    );
+    if (carried.length > 0) {
+      const lastSupport = { ...draft, occupationIds: [carried[0]], specializationIds: [anchor] };
+      check(toggleOccupation(lastSupport, carried[0]).specializationIds.length === 0,
+        `${domainId} : l'axe ${anchor} survit au débouché qui était seul à le porter`);
+    }
+  }
+
+  // « Au moins une spécialisation si applicable » : un domaine sans axe sous ses
+  // débouchés ne doit pas fermer la porte, un domaine qui en propose le doit.
+  const bare = validateFocus({ ...draft, specializationIds: [] }, profile);
+  check(inPlay.length === 0 ? bare === null : bare !== null,
+    `${domainId} : ${inPlay.length === 0 ? 'aucun axe applicable et la validation exige pourtant une spécialité' : 'la validation laisse démarrer sans axe alors que ce domaine en propose'}`);
+
+  const resolved = resolveFocus(draft);
+  check(resolved.occupations.length === draft.occupationIds.length,
+    `${domainId} : un débouché pré-coché ne résout pas en fiche réelle`);
+  check(resolved.modules.length === 0 || draft.specializationIds.length > 0,
+    `${domainId} : des séances sortent d'un ciblage sans aucun axe`);
+  check(resolved.modules.every((module) => (module.domains ?? []).includes(domainId)),
+    `${domainId} : une séance de l'axe retenu n'appartient pas au domaine phare`);
+
+  const targeted = pathwayEngine.generateTargetedPathway(profile, {
+    flagshipDomainId: domainId,
+    occupations: resolved.occupations,
+    seededModules: resolved.modules,
+  });
+  check(targeted.recommendedTracks.length > 0,
+    `${domainId} : un ciblage valide accouche d'un parcours sans aucune piste`);
+
+  check(
+    JSON.stringify(targeted) ===
+      JSON.stringify(
+        pathwayEngine.generateTargetedPathway(profile, {
+          flagshipDomainId: domainId,
+          occupations: resolved.occupations,
+          seededModules: resolved.modules,
+        })
+      ),
+    `${domainId} : le même ciblage produit deux parcours différents`
+  );
+
+  const promisedTrackIds = resolved.occupations
+    .map((occupation) => buildTrackForOccupation(occupation)?.id)
+    .filter((trackId): trackId is string => Boolean(trackId));
+  const coversFlagship = resolved.occupations.some((occupation) => (occupation.core[domainId] ?? 0) > 0);
+  const expectedTrackIds = coversFlagship ? promisedTrackIds : [...promisedTrackIds, `track_${domainId}`];
+  check(
+    targeted.recommendedTracks.map((track) => track.id).join('|') === expectedTrackIds.join('|'),
+    `${domainId} : le parcours ciblé déroule ${targeted.recommendedTracks.map((track) => track.id).join(', ')} au lieu de ${expectedTrackIds.join(', ') || 'rien'} — il déborde de ce que le candidat a choisi`
+  );
+
+  targeted.recommendedTracks.forEach((track) =>
+    checkTrackContract(track, `${domainId} · piste ciblée ${track.id}`));
+
+  check(
+    targeted.quickWins.length > 0 && targeted.quickWins.length <= QUICK_WIN_COUNT,
+    `${domainId} : ${targeted.quickWins.length} victoire(s) rapide(s) sur un parcours ciblé`
+  );
+  check(
+    resolved.modules.length === 0 || targeted.quickWins[0]?.id === resolved.modules[0].id,
+    `${domainId} : l'axe choisi n'ouvre pas le parcours, le ciblage se noie dans les suggestions par défaut`
+  );
+  const surfacedIds = new Set([
+    ...targeted.quickWins.map((module) => module.id),
+    ...targeted.recommendedTracks.flatMap((track) => track.modules).map((module) => module.id),
+  ]);
+  check(
+    resolved.modules.every((module) => surfacedIds.has(module.id)),
+    `${domainId} : une séance de l'axe retenu n'apparaît nulle part dans le parcours ciblé`
   );
 });
 
