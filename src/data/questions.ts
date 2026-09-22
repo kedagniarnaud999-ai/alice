@@ -4,15 +4,21 @@ import { Question } from '@/types/test';
  * The questionnaire is a staged funnel:
  *   1. situation   → who the person is (post-bac / diplômé / reconversion / pro)
  *   2. psych       → compressed psychological profile (drives the narrative)
- *   3. interests   → functional-domain affinity + hard exclusions (GoStudy-style)
- *   4. aptitude    → self-assessed ability, a lighter corroborating signal
+ *   3. interests   → functional-domain affinity + hard exclusions
+ *   4. aptitude    → what the person can already do, corroborating the interest signal
  *   5. constraints → time / resources / blocker (drives feasibility + band recession)
  *
  * `orientationQuestions` is the full, ordered list (including the conditional
  * branching questions). The analyzer looks answers up by id; the flow decides
  * visibility through `visibleIf`.
+ *
+ * Le domaine de carrière doit être déduit des façons de faire, pas nommé par le
+ * candidat : `checks/signal.check.ts` borne la part que les deux questions de
+ * déclaration (q_interest_fields, q_target_sectors) pèsent dans le plafond de
+ * chaque domaine. Bump this version whenever weights move — a profile computed
+ * on the previous scale is not comparable and must not be replayed.
  */
-export const ASSESSMENT_VERSION = 3;
+export const ASSESSMENT_VERSION = 4;
 
 export const orientationQuestions: Question[] = [
   // ─────────────────────────────── 1. SITUATION ───────────────────────────────
@@ -335,21 +341,21 @@ export const orientationQuestions: Question[] = [
     type: 'multiple',
     maxSelections: 4,
     options: [
-      { id: 'a_sell', text: 'Vendre, négocier, conclure un marché', domains: { commerce_marketing: 3 } },
+      { id: 'a_sell', text: 'Vendre, négocier, conclure un marché', domains: { commerce_marketing: 4 } },
       { id: 'a_organize', text: "Classer, planifier, mettre de l'ordre dans des dossiers", domains: { administration: 3, finance: 1 } },
-      { id: 'a_numbers', text: 'Analyser des chiffres, des budgets, des tableaux', domains: { finance: 3 } },
+      { id: 'a_numbers', text: 'Analyser des comptes, un budget, des indicateurs', domains: { finance: 4 } },
       { id: 'a_build', text: 'Réparer, assembler, fabriquer de mes mains', domains: { ingenierie: 3, agriculture: 1 } },
-      { id: 'a_machines', text: "Comprendre comment fonctionnent des machines ou des installations", domains: { ingenierie: 2, logistique: 1 } },
-      { id: 'a_code', text: "Programmer, créer des sites ou des applications", domains: { ict: 3 } },
-      { id: 'a_data', text: "Exploiter des données, des tableurs, des outils digitaux", domains: { ict: 2, finance: 2 } },
-      { id: 'a_host', text: "Accueillir, servir, mettre les gens à l'aise", domains: { tourisme: 3 } },
-      { id: 'a_food', text: 'Cuisiner, préparer, recevoir', domains: { tourisme: 2 } },
-      { id: 'a_care', text: 'Prendre soin des autres, soigner, accompagner', domains: { sante_social: 3, education: 1 } },
-      { id: 'a_healthsci', text: 'Comprendre le corps, la santé, les maladies', domains: { sante_social: 3 } },
-      { id: 'a_teach', text: "Expliquer, former, transmettre un savoir", domains: { education: 3 } },
-      { id: 'a_write', text: "Écrire, concevoir, créer du contenu", domains: { commerce_marketing: 2, education: 2 } },
-      { id: 'a_nature', text: "Travailler dehors, avec les plantes ou les animaux", domains: { agriculture: 3 } },
-      { id: 'a_logistics', text: "Organiser des transports, des livraisons, des stocks", domains: { logistique: 3, administration: 1 } },
+      { id: 'a_machines', text: 'Comprendre comment fonctionnent une machine ou une installation', domains: { ingenierie: 4, logistique: 1 } },
+      { id: 'a_code', text: 'Développer un logiciel, un site, une application', domains: { ict: 4 } },
+      { id: 'a_data', text: 'Exploiter des données, les structurer, en tirer une décision', domains: { ict: 2, finance: 2 } },
+      { id: 'a_host', text: "Accueillir un client, le placer, servir une salle", domains: { tourisme: 4 } },
+      { id: 'a_food', text: 'Cuisiner, préparer, dresser', domains: { tourisme: 3 } },
+      { id: 'a_care', text: "Prendre soin d'une personne, réaliser des soins, l'accompagner", domains: { sante_social: 4, education: 1 } },
+      { id: 'a_healthsci', text: 'Comprendre le corps, une maladie, un résultat médical', domains: { sante_social: 3 } },
+      { id: 'a_teach', text: 'Concevoir une session de formation et l’animer devant un groupe', domains: { education: 4 } },
+      { id: 'a_write', text: 'Écrire, concevoir un support, créer du contenu', domains: { commerce_marketing: 2, education: 2 } },
+      { id: 'a_nature', text: 'Surveiller une culture, un élevage, récolter au bon moment', domains: { agriculture: 4 } },
+      { id: 'a_logistics', text: 'Organiser des transports, des livraisons, tenir des stocks', domains: { logistique: 4, administration: 1 } },
     ],
   },
   {
@@ -375,19 +381,21 @@ export const orientationQuestions: Question[] = [
     id: 'q_interest_fields',
     stage: 'interests',
     text: "Quel ou quels domaines voulez-vous au cœur de votre travail ? (2 max)",
+    sectionDescription:
+      "Dites-le franchement : ce que vous choisissez ici compte, mais ce sont vos façons de faire qui tranchent. Un domaine que vous nommez sans que rien d'autre ne le soutienne redescendra à l'analyse.",
     type: 'multiple',
     maxSelections: 2,
     options: [
-      { id: 'f_administration', text: 'Administration & Gestion', domains: { administration: 8 } },
-      { id: 'f_commerce', text: 'Commerce, Vente & Marketing', domains: { commerce_marketing: 8 } },
-      { id: 'f_finance', text: 'Finance & Comptabilité', domains: { finance: 8 } },
-      { id: 'f_ingenierie', text: 'Ingénierie & Métiers techniques', domains: { ingenierie: 8 } },
-      { id: 'f_ict', text: "Technologies de l'information", domains: { ict: 8 } },
-      { id: 'f_tourisme', text: 'Tourisme, Hôtellerie & Restauration', domains: { tourisme: 8 } },
-      { id: 'f_sante', text: 'Santé & Services sociaux', domains: { sante_social: 8 } },
-      { id: 'f_education', text: 'Éducation & Formation', domains: { education: 8 } },
-      { id: 'f_agriculture', text: 'Agriculture & Agroalimentaire', domains: { agriculture: 8 } },
-      { id: 'f_logistique', text: 'Transport & Logistique', domains: { logistique: 8 } },
+      { id: 'f_administration', text: 'Administration & Gestion', domains: { administration: 3 } },
+      { id: 'f_commerce', text: 'Commerce, Vente & Marketing', domains: { commerce_marketing: 3 } },
+      { id: 'f_finance', text: 'Finance & Comptabilité', domains: { finance: 3 } },
+      { id: 'f_ingenierie', text: 'Ingénierie & Métiers techniques', domains: { ingenierie: 3 } },
+      { id: 'f_ict', text: "Technologies de l'information", domains: { ict: 3 } },
+      { id: 'f_tourisme', text: 'Tourisme, Hôtellerie & Restauration', domains: { tourisme: 3 } },
+      { id: 'f_sante', text: 'Santé & Services sociaux', domains: { sante_social: 3 } },
+      { id: 'f_education', text: 'Éducation & Formation', domains: { education: 3 } },
+      { id: 'f_agriculture', text: 'Agriculture & Agroalimentaire', domains: { agriculture: 3 } },
+      { id: 'f_logistique', text: 'Transport & Logistique', domains: { logistique: 3 } },
     ],
   },
   {
@@ -399,16 +407,16 @@ export const orientationQuestions: Question[] = [
     type: 'multiple',
     maxSelections: 3,
     options: [
-      { id: 't_administration', text: 'Une administration, une ONG, une direction', domains: { administration: 4 } },
-      { id: 't_commerce', text: 'Une équipe commerciale, une marque, un marché', domains: { commerce_marketing: 4 } },
-      { id: 't_finance', text: 'Une banque, une assurance, un service financier', domains: { finance: 4 } },
-      { id: 't_ingenierie', text: 'Un chantier, une usine, un atelier technique', domains: { ingenierie: 4 } },
-      { id: 't_ict', text: 'Une équipe produit, informatique ou digitale', domains: { ict: 4 } },
-      { id: 't_tourisme', text: 'Un hôtel, un restaurant, une agence de voyage', domains: { tourisme: 4 } },
-      { id: 't_sante', text: 'Un centre de santé, une association, une clinique', domains: { sante_social: 4 } },
-      { id: 't_education', text: 'Une école, un centre de formation, une université', domains: { education: 4 } },
-      { id: 't_agriculture', text: 'Une exploitation, une ferme, une filière agricole', domains: { agriculture: 4 } },
-      { id: 't_logistique', text: 'Un entrepôt, un port, une flotte de transport', domains: { logistique: 4 } },
+      { id: 't_administration', text: 'Une administration, une ONG, une direction', domains: { administration: 2 } },
+      { id: 't_commerce', text: 'Une équipe commerciale, une marque, un marché', domains: { commerce_marketing: 2 } },
+      { id: 't_finance', text: 'Une banque, une assurance, un service financier', domains: { finance: 2 } },
+      { id: 't_ingenierie', text: 'Un chantier, une usine, un atelier technique', domains: { ingenierie: 2 } },
+      { id: 't_ict', text: 'Une équipe produit, informatique ou digitale', domains: { ict: 2 } },
+      { id: 't_tourisme', text: 'Un hôtel, un restaurant, une agence de voyage', domains: { tourisme: 2 } },
+      { id: 't_sante', text: 'Un centre de santé, une association, une clinique', domains: { sante_social: 2 } },
+      { id: 't_education', text: 'Une école, un centre de formation, une université', domains: { education: 2 } },
+      { id: 't_agriculture', text: 'Une exploitation, une ferme, une filière agricole', domains: { agriculture: 2 } },
+      { id: 't_logistique', text: 'Un entrepôt, un port, une flotte de transport', domains: { logistique: 2 } },
     ],
   },
   {
@@ -534,16 +542,16 @@ export const orientationQuestions: Question[] = [
     type: 'multiple',
     maxSelections: 4,
     options: [
-      { id: 'ab_numbers', text: "Manipuler des chiffres, des budgets", domains: { finance: 2, administration: 1 } },
-      { id: 'ab_selling', text: 'Vendre, convaincre', domains: { commerce_marketing: 2 } },
-      { id: 'ab_tech', text: 'Coder, bricoler un ordinateur ou un réseau', domains: { ict: 2, ingenierie: 1 } },
-      { id: 'ab_build', text: "Réparer, construire, utiliser des outils", domains: { ingenierie: 2, agriculture: 1 } },
-      { id: 'ab_care', text: 'Soigner, accompagner des personnes', domains: { sante_social: 2 } },
-      { id: 'ab_teach', text: 'Expliquer, faire apprendre', domains: { education: 2 } },
-      { id: 'ab_host', text: 'Accueillir, servir, gérer une salle', domains: { tourisme: 2 } },
-      { id: 'ab_organize', text: 'Organiser une logistique, des stocks, des plannings', domains: { logistique: 2, administration: 1 } },
-      { id: 'ab_nature', text: 'Cultiver, élever, travailler en extérieur', domains: { agriculture: 2 } },
-      { id: 'ab_admin', text: "Gérer l'administratif et les dossiers", domains: { administration: 2 } },
+      { id: 'ab_numbers', text: 'Réaliser une analyse comptable, suivre un budget', domains: { finance: 3, administration: 1 } },
+      { id: 'ab_selling', text: 'Négocier, convaincre, fidéliser un client', domains: { commerce_marketing: 3 } },
+      { id: 'ab_tech', text: 'Développer un logiciel, administrer un système ou un réseau', domains: { ict: 3, ingenierie: 1 } },
+      { id: 'ab_build', text: 'Installer, réparer, maintenir un équipement', domains: { ingenierie: 3, agriculture: 1 } },
+      { id: 'ab_care', text: 'Prendre en charge une personne, réaliser des soins', domains: { sante_social: 3 } },
+      { id: 'ab_teach', text: 'Animer une session, faire apprendre un groupe', domains: { education: 3 } },
+      { id: 'ab_host', text: 'Accueillir, servir, tenir une salle', domains: { tourisme: 3 } },
+      { id: 'ab_organize', text: "Organiser des flux, suivre des stocks, tenir les délais", domains: { logistique: 3, administration: 1 } },
+      { id: 'ab_nature', text: 'Conduire une culture, un élevage, une récolte', domains: { agriculture: 3 } },
+      { id: 'ab_admin', text: "Assurer la gestion administrative d'une activité", domains: { administration: 3 } },
     ],
   },
   {
