@@ -19,6 +19,7 @@ import {
   PSYCH_TRAITS,
   FUNCTION_ROLE_IDS,
 } from '@/data/psychAffinity';
+import { domainOccupations } from '@/utils/domainFocus';
 
 type ScoreMap = Record<string, number>;
 
@@ -572,18 +573,20 @@ export class TestAnalyzer {
     const topId = topDomainIds[0];
     const domain = topId ? FUNCTIONAL_DOMAINS_BY_ID[topId] : undefined;
     const topLabel = domain?.label ?? 'votre domaine prioritaire';
-    const occupation = domain?.occupations[0];
+    const flagshipOpening = topId ? domainOccupations(topId)[0] : undefined;
 
     const opener: Record<CareerSituation, string> = {
-      bachelier: `Ciblez les filières post-bac menant à « ${topLabel} » et vérifiez leurs conditions d'admission.`,
+      bachelier: `Ciblez les formations post-bac qui mènent au domaine « ${topLabel} » et vérifiez leurs conditions d’admission.`,
       jeune_diplome: `Alignez CV et LinkedIn sur « ${topLabel} » et postulez aux offres et stages de ce domaine.`,
       reconversion: `Validez « ${topLabel} » par un projet-test avant toute rupture, en vous appuyant sur vos compétences transférables.`,
       professionnel: `Choisissez une certification montante en « ${topLabel} » pour accélérer votre évolution interne.`,
     };
     actions.push(opener[situation]);
 
-    if (occupation) {
-      actions.push(`Explorez le parcours « ${topLabel} » — métier type de référence : ${occupation}.`);
+    if (flagshipOpening) {
+      actions.push(
+        `Explorez le parcours « ${topLabel} » — débouché de référence du catalogue : ${flagshipOpening.title}.`
+      );
     }
 
     actions.push(

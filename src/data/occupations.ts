@@ -314,8 +314,8 @@ export const CROSS_OCCUPATIONS: CrossOccupation[] = [
     title: 'Éducateur pour la santé communautaire',
     context:
       "Hygiène de l'eau, vaccination, prévention des pandémies : le travail de santé se gagne dans les cours et les écoles, pas seulement au dispensaire.",
-    core: { sante: 3, social: 2, education: 2 },
-    sectors: ['agriculture', 'administration'],
+    core: { sante: 3, social: 2 },
+    sectors: ['education', 'agriculture'],
     functions: ['relation', 'terrain'],
     skills: ['Sensibilisation', 'Premiers signes d’alerte', 'Hygiène de l’eau', 'Écoute Active', 'Animation de groupe'],
     studyPaths: ['BTS Santé communautaire', 'Licence Santé publique — promotion de la santé', 'Formation Agent de santé communautaire'],
@@ -408,6 +408,252 @@ export const CROSS_OCCUPATIONS: CrossOccupation[] = [
       'Master Gestion des projets de développement',
     ],
     situations: ALL_SITUATIONS,
+  },
+
+  // --- Santé clinique : les quatre métiers que la FSS, l'INMeS et l'IFSIO forment
+  // et que la taxonomie promettait sans fiche pour les porter.
+  {
+    id: 'infirmier_etat',
+    title: 'Infirmier(ère) d’État',
+    context:
+      "Constantes, perfusions, pansements, prévention des escarres : le soin se fait au lit du malade et se poursuit dans le cahier de transmissions que l'équipe relèvera après vous.",
+    core: { sante: 3, social: 2 },
+    sectors: ['administration', 'education'],
+    functions: ['terrain', 'relation'],
+    skills: ['Soins de base', 'Hygiène', 'Cahier de transmissions', 'Relève de service', 'Gestion de priorités', 'Tenu de dossier'],
+    studyPaths: [
+      'Licence Soins infirmiers et obstétricaux, option Infirmiers d’État — INMeS (UAC)',
+      'IFSIO (Université de Parakou) — Soins infirmiers et obstétricaux',
+      'Master professionnel en soins spécialisés — INMeS',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'sage_femme',
+    title: 'Sage-femme',
+    context:
+      "Suivi de grossesse, accouchement, soins du nouveau-né et conseils à la mère : la maternité est le premier lieu de santé publique du pays, et vous y décidez seule avant d'évacuer.",
+    core: { sante: 3, social: 2 },
+    sectors: ['administration', 'education'],
+    functions: ['relation', 'analyse'],
+    skills: ['Soins de base', 'Hygiène', 'Premiers signes d’alerte', 'Cahier de transmissions', 'Accompagnement', 'Sensibilisation'],
+    studyPaths: [
+      'Licence Soins infirmiers et obstétricaux, option Sages-Femmes d’État — INMeS (UAC)',
+      'IFSIO (Université de Parakou) — Infirmiers et sages-femmes d’État',
+      'Master professionnel en soins spécialisés — INMeS',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'kinesitherapeute',
+    title: 'Kinésithérapeute',
+    context:
+      "Après un accident, une chirurgie, un AVC : vous reprenez le mouvement perdu séance après séance, et vous travaillez à ne plus être indispensable au patient.",
+    core: { sante: 3, social: 2 },
+    sectors: ['administration', 'education'],
+    functions: ['technique', 'terrain'],
+    skills: ['Aide à la mobilité', 'Prévention des chutes', 'Soins de base', 'Écoute', 'Accompagnement', 'Prise des repas'],
+    studyPaths: [
+      'École Supérieure de Kinésithérapie — FSS (UAC)',
+      'Licence Sciences de la santé, parcours rééducation',
+      'Spécialisation en réadaptation fonctionnelle',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'dieteticien_nutrition',
+    title: 'Diététicien(ne)',
+    context:
+      "Ration d'hôpital, repas de crèche, régime d'un diabétique, enquête nutritionnelle dans un village : vous chiffrez ce que les gens mangent et vous le rendez faisable avec ce qu'ils ont sous la main.",
+    core: { sante: 3, agriculture: 2 },
+    sectors: ['tourisme', 'social'],
+    functions: ['analyse', 'technique'],
+    skills: ['HACCP', 'Chaîne du froid', 'Qualité sanitaire', 'Traçabilité', 'Règles d’étiquetage', 'Prise des repas'],
+    studyPaths: [
+      'École de Nutrition et de Diététique — FSS (UAC)',
+      'FSA (UAC) — Nutrition Humaine et Sécurité Alimentaire',
+      'Faculté d’Agronomie (UP) — Nutrition et sciences agro-alimentaires',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+
+  // --- Postes d'entrée : les métiers que la taxonomie annonçait sans fiche, et qui
+  // sont le premier contrat d'un bachelier, pas le cinquième d'une carrière.
+  {
+    id: 'educateur_specialise',
+    title: 'Éducateur(trice) spécialisé(e)',
+    context:
+      "Un adolescent placé, un adulte en situation de handicap, une famille débordée : vous tenez l'activité quotidienne, vous repérez ce que le comportement dit, et vous écrivez ce sur quoi l'équipe décidera.",
+    core: { social: 3, education: 2 },
+    sectors: ['sante', 'administration'],
+    functions: ['terrain', 'relation'],
+    skills: ['Animation de groupe', 'Écoute Active', 'Médiation', 'Tenu de dossier', 'Accompagnement', 'Règles de vie'],
+    studyPaths: [
+      'Licence Travail social',
+      'Diplôme d’éducateur spécialisé',
+      'Formation continue en animation socio-éducative',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'enseignant_primaire',
+    title: 'Enseignant(e) du primaire',
+    context:
+      "Une soixantaine d'élèves parfois, un programme à couvrir, des niveaux mélangés et des parents à rencontrer : la classe est un poste de gestion autant que de transmission.",
+    core: { education: 3, social: 2 },
+    sectors: ['sante', 'administration'],
+    functions: ['terrain', 'relation'],
+    skills: ['Pédagogie', 'Animation', 'Évaluation', 'Animation de groupe', 'Règles de vie', 'Gestion du temps'],
+    studyPaths: [
+      'Licence d’enseignement fondamental',
+      'École normale d’instituteurs (ENI)',
+      'Formation en pédagogie active et gestion de classe',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'agent_accueil_administration',
+    title: 'Agent d’accueil et de gestion administrative',
+    context:
+      "L'usager arrive sans savoir quel papier lui manque : vous écoutez, vous classez, vous saisissez, vous orientez. C'est à ce guichet que le service devient réel — ou se décrédibilise.",
+    core: { administration: 3, social: 2 },
+    sectors: ['education', 'sante'],
+    functions: ['relation', 'coordination'],
+    skills: ['Traitement de texte', 'Tableau de saisie', 'Mise en page', 'Tenu de dossier', 'Accompagnement', 'Organisation'],
+    studyPaths: [
+      'BTS/Licence Gestion administrative',
+      'Secrétariat et bureautique — centre de formation professionnelle',
+      'Concours administratif et technique de l’État',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'assistant_direction',
+    title: 'Assistant(e) de direction',
+    context:
+      "Agenda, dossier de revue, compte rendu, notes de frais, déplacement : vous êtes la mémoire de la personne qui décide et le premier filtre de sa journée.",
+    core: { administration: 3, finance: 2 },
+    sectors: ['commerce_marketing', 'sante'],
+    functions: ['coordination', 'relation'],
+    skills: ['Excel', 'Traitement de texte', 'Impression et PDF', 'Organisation', 'Plan de trésorerie', 'Encaissements et décaissements'],
+    studyPaths: [
+      'BTS/Licence Gestion administrative',
+      'Licence professionnelle Assistanat de direction',
+      'Certification bureautique et gestion d’agenda',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'comptable',
+    title: 'Comptable',
+    context:
+      "Écritures, rapprochements bancaires, déclarations, pièces à classer, clôture : les chiffres d'une structure ne deviennent une déclaration que si quelqu'un les tient au quotidien.",
+    core: { finance: 3, administration: 2 },
+    sectors: ['commerce_marketing', 'logistique'],
+    functions: ['analyse', 'technique'],
+    skills: ['Écritures comptables', 'Rapprochement bancaire', 'Bilan', 'Compte de résultat', 'Excel', 'Journal de caisse'],
+    studyPaths: [
+      'BTS Comptabilité et gestion',
+      'DCG / Licence Sciences de gestion',
+      'Formation SYSCOHADA révisé en situation',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'chef_chantier',
+    title: 'Chef de chantier (bâtiment)',
+    context:
+      "Plan, implantation, approvisionnement, équipe, sécurité, météo : la journée du chantier se décide avant l'arrivée des maçons, et le coulé engage votre signature.",
+    core: { ingenierie: 3, administration: 2 },
+    sectors: ['logistique', 'commerce_marketing'],
+    functions: ['coordination', 'terrain'],
+    skills: ['Lecture de plan', 'Normes', 'Analyse de risque', 'Consigne sécurité', 'Gestion de Projet', 'Organisation'],
+    studyPaths: [
+      'BTS/Licence Génie civil',
+      'Licence professionnelle Conduite de travaux',
+      'Formation chef d’équipe en centre de formation professionnelle',
+    ],
+    situations: ['jeune_diplome', 'reconversion', 'professionnel'],
+  },
+  {
+    id: 'developpeur_web_mobile',
+    title: 'Développeur(se) web et mobile',
+    context:
+      "Un site vitrine, une appli de commande, un tableau de bord de coopérative : vous transformez une demande en interface qui tient, avec le réseau et le téléphone dont les gens disposent vraiment.",
+    core: { ict: 3, commerce_marketing: 2 },
+    sectors: ['education', 'finance'],
+    functions: ['conception', 'technique'],
+    skills: ['HTML', 'CSS', 'JavaScript', 'Web Development', 'Prototypage', 'Création de supports'],
+    studyPaths: [
+      'Licence Informatique / MIAGE',
+      'École du numérique ou bootcamp (développement web)',
+      'Portfolio de projets réels et autoformation encadrée',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'receptionniste_hotel',
+    title: 'Réceptionniste',
+    context:
+      "Réservation, arrivée, chambre, réclamation, départ : le premier visage de l'établissement tient aussi la caisse, le logiciel et la nuit. Le client ne jugera que cela.",
+    core: { tourisme: 3, commerce_marketing: 2 },
+    sectors: ['administration', 'ict'],
+    functions: ['relation', 'terrain'],
+    skills: ['Réservation', 'Check-in et check-out', 'Fidélisation client', 'Logiciel de réception', 'Anglais de l’accueil', 'Prise de commande'],
+    studyPaths: [
+      'BTS Hôtellerie — accueil et réception',
+      'École de gestion hôtelière',
+      'Formation langues et logiciel de réception',
+    ],
+    situations: ['bachelier', 'jeune_diplome', 'reconversion'],
+  },
+  {
+    id: 'conseiller_technique_agricole',
+    title: 'Conseiller(ère) technique agricole',
+    context:
+      "Itinéraire technique, semences adaptées, charges par hectare : le conseil ne vaut que s'il se vérifie au champ, en saison, avec le groupe de producteurs qui l'a demandé.",
+    core: { agriculture: 3, social: 2 },
+    sectors: ['ingenierie', 'commerce_marketing'],
+    functions: ['terrain', 'relation'],
+    skills: ['Itinéraire technique', 'Fertilité du sol', 'Calcul de charges', 'Animation de groupe', 'Sensibilisation', 'Écoute Active'],
+    studyPaths: [
+      'BTS/Licence Agronomie — productions végétales',
+      'FSA (UAC) ou Faculté d’Agronomie (UP) — sciences agronomiques',
+      'Formation en conseil et vulgarisation agricole',
+    ],
+    situations: ALL_SITUATIONS,
+  },
+  {
+    id: 'magasinier_preparateur',
+    title: 'Magasinier(ère)-préparateur(trice)',
+    context:
+      "Réception, zone de stockage, inventaire tournant, bons de sortie : c'est au magasin que la rupture se voit avant qu'elle n'arrête la production, la clinique ou la pharmacie.",
+    core: { logistique: 3, administration: 2 },
+    sectors: ['sante', 'ingenierie'],
+    functions: ['technique', 'terrain'],
+    skills: ['Fiche de stock', 'Seuil d’alerte', 'Inventaire tournant', 'Lutte contre les ruptures', 'Tableau de saisie', 'Organisation'],
+    studyPaths: [
+      'BTS Transport et logistique',
+      'Titre professionnel de magasinier (centre de formation)',
+      'Formation pratiques d’entreposage et de sécurité',
+    ],
+    situations: ['bachelier', 'jeune_diplome', 'reconversion'],
+  },
+  {
+    id: 'attache_commercial',
+    title: 'Attaché(e) commercial(e)',
+    context:
+      "Portefeuille à visiter, objectif à tenir, devis à négocier, règlement à relancer : la vente se joue sur la route, dans un carnet de commandes et un tableau de suivi.",
+    core: { commerce_marketing: 3, administration: 2 },
+    sectors: ['logistique', 'agriculture'],
+    functions: ['relation', 'terrain'],
+    skills: ['Négociation', 'Calcul de prix de vente', 'Encaissement', 'Communication', 'Analyse de données', 'Excel'],
+    studyPaths: [
+      'BTS/Licence Commerce international',
+      'Techniques de vente — école de commerce ou centre agréé',
+      'Formation négociation et gestion de portefeuille client',
+    ],
+    situations: ['bachelier', 'jeune_diplome', 'reconversion'],
   },
 ];
 
