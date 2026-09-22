@@ -20,7 +20,8 @@ export type FunctionalDomainId =
   | 'ingenierie'
   | 'ict'
   | 'tourisme'
-  | 'sante_social'
+  | 'sante'
+  | 'social'
   | 'education'
   | 'agriculture'
   | 'logistique';

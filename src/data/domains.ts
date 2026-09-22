@@ -12,7 +12,7 @@ export interface FunctionalDomain {
 }
 
 /**
- * Local catalogue of the 10 functional domains used by the orientation engine.
+ * Local catalogue of the 11 functional domains used by the orientation engine.
  * This is an original, self-contained taxonomy (inspired by common francophone
  * career-field groupings); it does not import or depend on any external catalogue.
  */
@@ -144,24 +144,45 @@ export const FUNCTIONAL_DOMAINS: FunctionalDomain[] = [
     ],
   },
   {
-    id: 'sante_social',
-    label: 'Santé & Services sociaux',
-    shortLabel: 'Santé & Social',
-    tagline: 'Soigner, accompagner et protéger',
+    id: 'sante',
+    label: 'Santé',
+    shortLabel: 'Santé',
+    tagline: 'Soigner, prévenir et rétablir',
     description:
-      'Les soins, la santé publique et l’accompagnement social — prendre soin des personnes et des communautés.',
+      'Les soins, le diagnostic et la santé publique — du geste infirmier à la surveillance épidémiologique, auprès du patient comme des populations.',
     occupations: [
       'Infirmier(ère)',
-      'Aide-soignant(e)',
-      'Assistant(e) social(e)',
       'Sage-femme',
+      'Kinésithérapeute',
+      'Diététicien(ne)',
       'Agent de santé communautaire',
     ],
     studyPaths: [
       'Institut de formation en soins infirmiers',
       'Licence Sciences de la santé',
-      'Travail social / CSS',
-      'Santé publique',
+      'Kinésithérapie / nutrition-diététique',
+      'Santé publique et épidémiologie',
+    ],
+  },
+  {
+    id: 'social',
+    label: 'Social & Accompagnement',
+    shortLabel: 'Social',
+    tagline: 'Accompagner, protéger et insérer',
+    description:
+      "L'accompagnement des personnes vulnérables, la protection de l'enfance, l'action socio-éducative et le développement communautaire — rétablir l'accès aux droits et aux services, avant qu'il ne faille soigner.",
+    occupations: [
+      'Assistant(e) social(e)',
+      'Éducateur(trice) spécialisé(e)',
+      'Administrateur(trice) d\'action socio-éducative',
+      'Chargé(e) de protection de l\'enfance',
+      'Agent de développement communautaire',
+    ],
+    studyPaths: [
+      'Travail social / protection de l\'enfance',
+      'STASE — action socio-éducative',
+      'Sociologie appliquée',
+      'Planification du développement local',
     ],
   },
   {

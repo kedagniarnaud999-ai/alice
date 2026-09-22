@@ -216,11 +216,11 @@ export const SPECIALIZATIONS: Specialization[] = [
     moduleIds: ['mod_sejour_touristique', 'mod_reception_hoteliere', 'mod_communication'],
   },
 
-  // --- Santé & Services sociaux ---
+  // --- Santé ---
   {
     id: 'sp_soins_accompagnement',
     label: 'Soins de base et accompagnement',
-    domainId: 'sante_social',
+    domainId: 'sante',
     note: 'Les gestes quotidiens du soin et de la dépendance, faits proprement et transmis à l’équipe.',
     occupationIds: ['gestionnaire_etablissement_sante', 'educateur_sante_communaute'],
     moduleIds: ['mod_soins_base', 'mod_accompagnement_personne_agee', 'mod_secourisme'],
@@ -228,7 +228,7 @@ export const SPECIALIZATIONS: Specialization[] = [
   {
     id: 'sp_sante_communaute',
     label: 'Santé communautaire et prévention',
-    domainId: 'sante_social',
+    domainId: 'sante',
     note: "Hygiène de l'eau, vaccination, classe et quartier : le travail de santé se gagne avant le dispensaire.",
     occupationIds: ['educateur_sante_communaute', 'charge_approvisionnement_sanitaire'],
     moduleIds: ['mod_sante_scolaire', 'mod_travail_en_equipe_soignante', 'mod_soins_base'],
@@ -236,10 +236,36 @@ export const SPECIALIZATIONS: Specialization[] = [
   {
     id: 'sp_gestion_structure_sanitaire',
     label: 'Gestion d\'une structure de santé',
-    domainId: 'sante_social',
+    domainId: 'sante',
     note: "Faire tourner la clinique, les plannings, les stocks et les comptes d'un centre.",
     occupationIds: ['gestionnaire_etablissement_sante', 'charge_approvisionnement_sanitaire'],
     moduleIds: ['mod_travail_en_equipe_soignante', 'mod_hygiene_alimentaire', 'mod_secourisme'],
+  },
+
+  // --- Social & Accompagnement ---
+  {
+    id: 'sp_accompagnement_personnes',
+    label: 'Accompagnement des personnes vulnérables',
+    domainId: 'social',
+    note: "Recevoir une personne, tenir son dossier, la conduire jusqu'aux droits qu'elle n'ouvrait pas seule.",
+    occupationIds: ['assistant_social', 'charge_protection_enfance'],
+    moduleIds: ['mod_entretien_social', 'mod_acces_aux_droits', 'mod_accompagnement_personne_agee'],
+  },
+  {
+    id: 'sp_protection_enfance_famille',
+    label: 'Protection de l’enfance et famille',
+    domainId: 'social',
+    note: "Repérer un danger, décrire les faits sans les interpréter, alerter qui décide et suivre la situation.",
+    occupationIds: ['charge_protection_enfance', 'assistant_social'],
+    moduleIds: ['mod_protection_enfance', 'mod_mediation_familiale', 'mod_entretien_social'],
+  },
+  {
+    id: 'sp_developpement_communaute',
+    label: 'Développement communautaire',
+    domainId: 'social',
+    note: "Partir des acteurs d'un quartier, écrire un programme qu'un financeur soutient et dont on rend compte.",
+    occupationIds: ['agent_developpement_local', 'administrateur_socio_educatif', 'educateur_sante_communaute'],
+    moduleIds: ['mod_animation_communaute', 'mod_programme_social_bailleurs', 'mod_acces_aux_droits'],
   },
 
   // --- Éducation & Formation ---
