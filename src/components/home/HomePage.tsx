@@ -45,21 +45,6 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="hidden text-2xl font-bold text-[#004494] md:block">AliTché</span>
           </button>
 
-          <div className="hidden items-center gap-6 md:flex">
-            <button type="button" className="border-b-2 border-[#40c2fd] px-2 py-1 font-semibold text-[#004494]">
-              Orientation
-            </button>
-            <button type="button" className="text-[#424752] transition-colors hover:text-[#004494]">
-              Métiers
-            </button>
-            <button type="button" className="text-[#424752] transition-colors hover:text-[#004494]">
-              Écoles
-            </button>
-            <button type="button" className="text-[#424752] transition-colors hover:text-[#004494]">
-              Mentors
-            </button>
-          </div>
-
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
@@ -224,7 +209,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       <footer className="border-t border-[#c2c6d4]/30 bg-[#f2f4f6] pb-8 pt-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-12">
-          <div className="mb-12 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mb-12 grid gap-12 md:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <BrandMark className="h-12 w-12" />
@@ -237,7 +222,6 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
             </div>
 
-            <FooterLinks title="Plateforme" links={['Orientation', 'Métiers', 'Écoles', 'Mentors']} />
             <FooterLinks title="Support" links={["Centre d'aide", 'Contact', 'FAQ']} />
             <FooterLinks title="Légal" links={['Mentions légales', 'Confidentialité', 'CGU']} />
           </div>
