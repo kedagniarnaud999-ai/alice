@@ -173,19 +173,6 @@ export class AuthService {
     }
   }
 
-  async sendMagicLink(email: string): Promise<void> {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      throw error;
-    }
-  }
-
   async exchangeCodeForSession(code: string): Promise<User | null> {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {

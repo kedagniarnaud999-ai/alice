@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle, LockKeyhole, Sparkles, XCircle } from 'lucide-react';
 import { BrandMark } from '@/components/brand/BrandMark';
 import { AuthAlert } from '@/components/auth/AuthAlert';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { describeAuthError, type AuthErrorDescription } from '@/utils/authErrors';
 
 const registerSchema = z
@@ -156,6 +157,8 @@ export const RegisterForm: React.FC = () => {
             </div>
 
             <AuthAlert error={authError} />
+
+            <GoogleAuthButton label="S'inscrire avec Google" onError={setAuthError} />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
