@@ -129,9 +129,18 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   ouvre ; le mot « Premium » a disparu de l'écran — décidé le 2026-09-23, la distinction reste dans les données.
   Reste à trancher sur ce que deviennent les quatre onglets de l'accueil : les relier à des écrans qui existent
   déjà, ou les retirer.
+- **Avancement (23/09/2026)** : les étiquettes de prix sont retirées de l'écran — la pastille « Gratuit » /
+  « Premium » de la liste du parcours, la même pastille sur la fiche d'un module, la mention « gratuit /
+  payant » de la fiche d'un domaine, et le cadenas de la carte de module (ouvert pour les gratuits, fermé pour
+  les payants) : le mot avait disparu, le symbole était resté. Les six modules concernés gardent l'information
+  dans leurs données : rien n'est effacé, rien n'est annoncé. Sur les quatre fausses promesses listées ici, il
+  en reste trois : les quatre onglets morts de l'accueil (à toi de trancher), la carte du tableau de bord qui
+  ouvre une autre page qu'elle ne le dit, et l'écran « Lien traité » que le vrai chemin d'inscription
+  n'emprunte jamais.
 - **Taille** : trois jours.
 - **Où ça se joue** : `src/components/home/HomePage.tsx`, `src/components/dashboard/Dashboard.tsx`,
-  `src/pages/VerifyEmail.tsx`, `src/components/pathway/PathwayView.tsx`.
+  `src/pages/VerifyEmail.tsx`, `src/components/pathway/PathwayView.tsx`,
+  `src/components/results/DomainDetail.tsx`.
 
 ### S1.6 — Rejouer le parcours complet cinq fois de suite, à la main, et le raconter
 
@@ -175,11 +184,32 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Comment on saura que c'est fini** : un vrai compte Google ouvre AliTché depuis le bouton, une fermeture du
   navigateur puis une réouverture remettent le candidat dans son parcours, et le mot « magique » n'apparaît plus
   dans l'application. Plus une ligne ajoutée à la liste des chemins de connexion qui ne sont plus proposés.
-- **Taille** : une journée de mon côté. Deux manipulations sont hors de mon atteinte et sans coût — créer
-  l'identifiant client chez Google, et l'activer dans la console d'authentification avec l'adresse de retour que
-  je prépare. Ces deux écrans sont les tiens.
-- **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`, la page de connexion,
-  `README.md`.
+- **Taille** : une journée de mon côté, et elle est faite. Les deux manipulations qui restent sont sur tes écrans,
+  elles ne coûtent rien.
+- **Ce qui est fait dans le dépôt (23/09/2026)** : le bouton « Continuer avec Google » apparaît sur l'écran de
+  connexion, « S'inscrire avec Google » sur l'écran de création de compte, et les deux reviennent par le chemin
+  `/auth/callback` qui existait déjà dans le code sans jamais être emprunté. La fonction qui envoyait un lien de
+  connexion sans mot de passe est supprimée : plus aucun écran ne la proposait, et elle entretenait un deuxième
+  chemin d'entrée que personne n'a jamais parcouru.
+- **Ce qui reste à faire, et seulement là, chez Google** : console Google Cloud → « API et services » →
+  « Identifiants » → créer un identifiant client OAuth de type « Application Web » → dans « URI de redirection
+  autorisés », ajouter exactement
+  `https://pldbjuprxqmuxwqtjgnq.supabase.co/auth/v1/callback`.
+  **Et chez Supabase** : tableau de bord → Authentication → « Sign In / Providers » → Google → coller
+  l'identifiant client et la clé secrète donnés par Google, puis activer le fournisseur. Juste à côté, dans
+  Authentication → « URL Configuration » : « Site URL » = `https://ali-ce-i6it.vercel.app`, et dans « Redirect
+  URLs » ajouter `https://ali-ce-i6it.vercel.app/auth/callback` ainsi que `http://localhost:5173/auth/callback`
+  pour travailler sur ta machine. L'adresse `pldbjuprxqmuxwqtjgnq.supabase.co` a été relue aujourd'hui sur le site
+  en ligne ; si le projet venait à être recréé, elle change, et c'est elle qu'il faut recopier mot pour mot chez
+  Google.
+- **À savoir avant les cinq tests de la semaine** : tant que les deux réglages ci-dessus ne sont pas faits, le
+  bouton est visible et un clic mène sur une page d'erreur de Google. Ce n'est pas cassé de mon côté, c'est
+  inachevé du leur. Deux issues possibles : tu fais les deux réglages avant de lancer les tests — c'est une
+  dizaine de minutes —, ou tu me dis de retirer le bouton jusqu'à ce que ce soit réglé, et c'est une ligne à
+  enlever.
+- **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`,
+  `src/components/auth/GoogleAuthButton.tsx`, `src/components/auth/LoginForm.tsx`,
+  `src/components/auth/RegisterForm.tsx`, `src/pages/AuthCallback.tsx`, `README.md` (touche à S2.3).
 
 ### S2.3 — Réécrire la fiche d'identité du dépôt, en français simple
 

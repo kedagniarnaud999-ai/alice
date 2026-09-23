@@ -78,9 +78,9 @@ tâche S1.5. Et la première vraie leçon est la tâche S5.2, qui attend la rép
 **Ce que dit ton document.** Chapitre 19, ce qu'il ne faut pas développer maintenant, et chapitre 26 : le
 modèle économique est une direction, pas une décision qui a été prise.
 
-**Ce que le produit fait.** Les modules payants portent une étiquette « Premium » à l'écran, comme si une offre
-payante existait. Aucun paiement n'est possible nulle part, aucun prix n'est affiché, aucun compte payant ne
-se distingue d'un compte gratuit.
+**Ce que le produit faisait à la mesure (23/09/2026).** Les modules marqués non gratuits portaient une étiquette
+« Premium » à l'écran, comme si une offre payante existait. Aucun paiement n'est possible nulle part, aucun prix
+n'est affiché, aucun compte payant ne se distingue d'un compte gratuit.
 
 **Ce que je propose.** Retirer l'étiquette (tâche S1.5), et garder la distinction quelque part dans les
 données pour ne pas avoir à la reconstruire le jour où tu décides ce qui est payant. Un visiteur qui voit
@@ -89,6 +89,13 @@ annoncé comme un outil d'orientation. Les deux coûtent plus cher que l'étique
 
 **Ta décision.** *Reçue le 2026-09-23 : l'étiquette est retirée de l'affichage. La distinction reste dans les
 données, elle ne se voit plus.* → tâche S1.5.
+
+**Où on en est, le soir du 23/09/2026.** Le mot « Premium » n'apparaît plus dans l'application, et le mot
+« payant » non plus : la pastille a été retirée de la liste du parcours et de la fiche d'un module, la mention a
+disparu de la fiche d'un domaine, et le cadenas des cartes de module — ouvert pour les gratuits, fermé pour les
+six autres — est parti avec, parce que le mot avait disparu mais pas le symbole. Les six modules concernés
+gardent leur drapeau dans leurs données, donc le jour où une offre payante existe, l'information est là et il n'y
+a pas à la reconstituer.
 
 ---
 
@@ -124,10 +131,10 @@ ce qui le rend digne d'être référencé. → tâche S5.1, et une tâche à cr�
 **Ce que dit ton document.** Chapitre 13, ce qui est déjà développé : « création de compte ». Le document ne
 parle ni de Google ni du lien de connexion.
 
-**Ce que le produit fait.** Les deux boutons existent dans le code de la page de connexion et fonctionnent
-techniquement. Aucune interface de l'application ne les affiche : un candidat ne peut créer un compte que par
-adresse e-mail et mot de passe. Le fichier de présentation du dépôt, lui, annonce la connexion Google comme
-une fonctionnalité du produit.
+**Ce que le produit faisait à la mesure (23/09/2026).** Les deux boutons existaient dans le code de la page de
+connexion et fonctionnaient techniquement. Aucune interface de l'application ne les affichait : un candidat ne
+pouvait créer un compte que par adresse e-mail et mot de passe. Le fichier de présentation du dépôt, lui, annonce
+la connexion Google comme une fonctionnalité du produit.
 
 **Ce que je propose.** Une décision pour les deux (tâche S2.2). Google : le finir et l'afficher, ou le retirer
 — pour un public ouest-africain francophone, la connexion Google est probablement le meilleur bouton de la
@@ -141,6 +148,13 @@ service d'authentification utilisé. Mais les deux manipulations qui ferment ce 
 dans deux consoles en ligne : créer l'identifiant client chez Google, et l'activer côté authentification avec
 l'adresse de retour. Ce que je peux tenir : préparer les valeurs exactes à coller, l'adresse de retour, et
 l'écran qui affiche le bouton. Ce que tu tiens : les deux consoles. → tâche S2.2.
+
+**Où on en est, le soir du 23/09/2026.** Côté dépôt, c'est fait : « Continuer avec Google » s'affiche sur l'écran
+de connexion, « S'inscrire avec Google » sur l'écran de création de compte, et la fonction qui envoyait un lien
+sans mot de passe est sortie du code. Le point n'est fermé que quand les deux consoles sont réglées — les valeurs
+exactes à coller, adresse de retour comprise, sont écrites dans la tâche S2.2 du backlog. Un avertissement lié aux
+cinq tests de la semaine : avant ces réglages, un clic sur le bouton mène sur une page d'erreur de Google. Soit tu
+fais les deux réglages avant de lancer les tests, soit tu me dis de retirer le bouton jusque-là et je le retire.
 
 ---
 
@@ -211,9 +225,9 @@ non vérifié — ce qui est l'inverse de promettre, et ne coûte rien.
 | 1 | les six dimensions du questionnaire | non | en attente | S2.5 |
 | 2 | « le parcours est presque finalisé » | oui, par une preuve | reçue : cinq personnes cette semaine | S1.6, S3.7 |
 | 3 | les briques de formation déjà développées | non | en attente | S1.5 |
-| 4 | l'étiquette « Premium » | non | reçue : on la retire | S1.5 |
+| 4 | l'étiquette de prix « Premium » | non | reçue et faite : retirée de l'écran, conservée dans les données | S1.5 |
 | 5 | héberger des cours ou orienter vers des cours | **oui — tout le sprint 5 en dépend** | reçue : orienter, puis référencer, puis produire | S5.1 |
-| 6 | Google et le lien de connexion | **oui — c'est ce qu'on annonce aux visiteurs** | reçue : Google à finir, lien magique à retirer | S2.2 |
+| 6 | Google et le lien de connexion | **oui — c'est ce qu'on annonce aux visiteurs** | reçue : Google affiché, lien sans mot de passe retiré ; restent les deux réglages en console | S2.2 |
 | 7 | la vérification de l'adresse e-mail | non | en attente | S2.1 |
 | 8 | les compétences comme élément central | non, mais ça décide du sprint 4 | en attente | S4.4 |
 | 9 | ce que le dépôt affirme, et l'état du catalogue | non | en attente | S2.3, S2.4, S2.6 |
