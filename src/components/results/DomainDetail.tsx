@@ -279,8 +279,7 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
                         <span className="font-medium">{module.title}</span>
                         <span className="text-xs text-gray-500">
                           {' '}
-                          · {module.duration} · {MODULE_DIFFICULTY_LABELS[module.difficulty]} ·{' '}
-                          {module.isFree ? 'gratuit' : 'payant'}
+                          · {module.duration} · {MODULE_DIFFICULTY_LABELS[module.difficulty]}
                         </span>
                       </div>
                     </li>

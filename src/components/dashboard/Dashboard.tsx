@@ -244,7 +244,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 {isResetting
-                  ? 'Reinitialisation...'
+                  ? 'Réinitialisation...'
                   : showResetConfirm
                     ? 'Cliquez à nouveau pour confirmer'
                     : 'Réinitialiser mes données'}

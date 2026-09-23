@@ -15,11 +15,9 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  Lock,
   Play,
   Target,
   TrendingUp,
-  Unlock,
 } from 'lucide-react';
 
 interface PathwayViewProps {
@@ -232,15 +230,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
-      <div className="mb-3 flex items-start justify-between">
+      <div className="mb-3">
         <Badge variant="primary" size="sm">
           {MODULE_DIFFICULTY_LABELS[module.difficulty]}
         </Badge>
-        {module.isFree ? (
-          <Unlock className="h-4 w-4 text-green-600" />
-        ) : (
-          <Lock className="h-4 w-4 text-gray-400" />
-        )}
       </div>
 
       <button onClick={onOpen} className="w-full text-left">
@@ -369,15 +362,6 @@ const TrackCard: React.FC<TrackCardProps> = ({
                         <span>{MODULE_FORMAT_LABELS[module.format]}</span>
                       </div>
                     </button>
-                    {module.isFree ? (
-                      <Badge variant="success" size="sm">
-                        Gratuit
-                      </Badge>
-                    ) : (
-                      <Badge variant="warning" size="sm">
-                        Premium
-                      </Badge>
-                    )}
                   </div>
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-xs text-gray-500">
@@ -452,9 +436,6 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <Badge variant="primary" size="sm">
               {MODULE_DIFFICULTY_LABELS[module.difficulty]}
-            </Badge>
-            <Badge variant={module.isFree ? 'success' : 'warning'} size="sm">
-              {module.isFree ? 'Gratuit' : 'Premium'}
             </Badge>
             <Badge variant="default" size="sm">
               {MODULE_FORMAT_LABELS[module.format]}
