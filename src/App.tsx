@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { HomePage } from '@/components/home/HomePage';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
 import { TestFlow } from '@/components/test/TestFlow';
@@ -362,6 +363,10 @@ const WorkspaceApp = () => {
       // sans cet envoi, un autre appareil rejouerait les pistes par domaine.
       profileService.saveProfile(chosen).catch((error) => {
         console.warn('Ciblage gardé en local, la synchronisation à distance a échoué.', error);
+        toast.error(
+          "Votre choix de direction est gardé sur cet appareil, mais il n'a pas pu partir sur votre compte. Un autre appareil ne le verra pas. Refaites ce choix depuis l'écran de direction dès que votre connexion sera rétablie.",
+          { id: 'sync-ciblage' }
+        );
       });
     }
     setAppState('pathway');
@@ -384,20 +389,47 @@ const WorkspaceApp = () => {
   };
 
   const handleResetData = async () => {
-    try {
-      if (isAuthenticated) {
-        await profileService.clearMyData();
-        await moduleService.clearMyProgress().catch(() => undefined);
-      }
-    } catch (error) {
-      console.error('Unable to clear remote data, continuing with local reset.', error);
-    } finally {
+    if (!isAuthenticated) {
       storageManager.clearAllData();
       setProfileResult(null);
       setPathway(null);
       setModuleProgress([]);
       setAppState('home');
+      toast.success('Vos réponses ont été effacées sur cet appareil.');
+      return;
     }
+
+    const failed: string[] = [];
+
+    try {
+      await profileService.clearMyData();
+    } catch (error) {
+      console.error('Remote profile deletion failed.', error);
+      failed.push('votre profil et vos réponses');
+    }
+
+    try {
+      await moduleService.clearMyProgress();
+    } catch (error) {
+      console.error('Remote module progress deletion failed.', error);
+      failed.push('votre progression dans les modules');
+    }
+
+    if (failed.length > 0) {
+      // Rien n'est supprimé sur cet appareil : le bouton reste à portée,
+      // et personne ne se croit effacé alors que le serveur n'a rien reçu.
+      toast.error(
+        `Effacement impossible : le serveur n'a pas supprimé ${failed.join(' ni ')}. Vérifiez votre connexion, puis relancez l'effacement avec ce même bouton.`
+      );
+      return;
+    }
+
+    storageManager.clearAllData();
+    setProfileResult(null);
+    setPathway(null);
+    setModuleProgress([]);
+    setAppState('home');
+    toast.success('Effacement terminé : votre compte est vide, et cet appareil aussi.');
   };
 
   const handleModuleProgressChange = async (
@@ -411,6 +443,10 @@ const WorkspaceApp = () => {
       }
     } catch (error) {
       console.error('Unable to persist module progress remotely, keeping local state.', error);
+      toast.error(
+        "Votre progression dans ce module n'a pas pu partir sur votre compte, elle reste sur cet appareil. Remettez-la à jour depuis votre parcours quand votre connexion sera rétablie.",
+        { id: 'sync-progression' }
+      );
     } finally {
       setModuleProgress((current) => {
         if (!pathway) {

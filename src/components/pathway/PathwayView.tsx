@@ -88,7 +88,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
           <CardHeader>
             <div className="flex items-center gap-2">
               <Target className="h-6 w-6 text-green-700" />
-              <CardTitle>Quick wins - Demarrez maintenant</CardTitle>
+              <CardTitle>Gains rapides — Démarrez maintenant</CardTitle>
             </div>
             <p className="mt-2 text-sm text-gray-600">
               Ces modules courts vous permettent de progresser rapidement et de prendre confiance.

@@ -304,7 +304,7 @@ class PathwayEngine {
   private generateLongTermGoals(result: ProfileResult): string[] {
     const goals: Record<CareerSituation, string[]> = {
       bachelier: [
-        "Choisir et intégrer une filière alignée sur votre domaine prioritaire",
+        'Choisir et intégrer une formation alignée sur votre domaine prioritaire',
         'Bâtir un premier portfolio de projets simples',
         'Développer un réseau dans le domaine visé',
       ],

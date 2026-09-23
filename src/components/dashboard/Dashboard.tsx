@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { profileService } from '@/services/profile.api';
 import { storageManager } from '@/utils/storageManager';
+import toast from 'react-hot-toast';
 
 interface DashboardProps {
   profileResult?: ProfileResult;
@@ -52,6 +53,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
         storageManager.saveProfileResult(remoteProfile);
       } catch (error) {
         console.error('Erreur chargement profil distant, fallback local:', error);
+        toast.error(
+          "Votre profil n'a pas pu être rechargé depuis votre compte. Ce que vous voyez vient de cet appareil et peut être plus ancien.",
+          { id: 'sync-profil-affiche' }
+        );
         const localProfile = storageManager.loadProfileResult();
         if (localProfile) {
           setProfileResult(localProfile);
@@ -79,7 +84,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="text-center">
-          <p className="mb-4 text-gray-600">Aucun profil trouve</p>
+          <p className="mb-4 text-gray-600">Aucun profil trouvé.</p>
           <Button onClick={() => onNavigate('home')}>Commencer le test</Button>
         </div>
       </div>
@@ -117,7 +122,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">Tableau de bord</h1>
-          <p className="text-lg text-gray-600">Gerez votre parcours AliTché</p>
+          <p className="text-lg text-gray-600">Gérez votre parcours AliTché</p>
         </div>
 
         <div className="mb-8 grid gap-6 md:grid-cols-3">
@@ -179,7 +184,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
             <div className="mb-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Modules termines</span>
+                <span className="text-gray-600">Modules terminés</span>
                 <span className="font-semibold text-gray-900">
                   {completedModules}/{totalModules}
                 </span>
@@ -191,7 +196,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 ></div>
               </div>
               <div className="flex justify-between text-xs text-gray-500">
-                <span>Quick wins: {pathway?.quickWins.length ?? 0}</span>
+                <span>Gains rapides : {pathway?.quickWins.length ?? 0}</span>
                 <span>{progressPercent}% du parcours suivi</span>
               </div>
             </div>

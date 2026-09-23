@@ -274,6 +274,8 @@ gate.options.forEach((situationOption, offset) => {
   /** « Filière » renvoie à l'universitaire et brouille la décision attendue : l'écran parle de domaine de carrière. */
   check(!/fili/i.test(result.profileDescription),
     `${label} : la phrase de profil reparle de filière — ${result.profileDescription}`);
+  check(!pathway.longTermGoals.some((goal) => /fili/i.test(goal)),
+    `${label} : un objectif long terme affiché reparle de filière`);
 
   const visible = getVisibleQuestions(responses);
   visible.forEach((question) => {

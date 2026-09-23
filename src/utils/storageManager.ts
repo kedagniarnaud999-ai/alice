@@ -3,6 +3,7 @@ import { PersonalizedPathway } from './pathwayEngine';
 import { UserModuleProgress } from '@/services/module.api';
 import { normalizeProfileResult } from './profileResult';
 import { ASSESSMENT_VERSION } from '@/data/questions';
+import toast from 'react-hot-toast';
 
 const STORAGE_KEYS = {
   TEST_RESPONSES: 'alice_test_responses',
@@ -12,6 +13,19 @@ const STORAGE_KEYS = {
   MODULE_PROGRESS: 'alice_module_progress',
   USER_PROFILE: 'alice_user_profile',
 };
+
+const NOTICES = {
+  save: "Rien n'a été enregistré sur cet appareil : le stockage du navigateur est plein ou interdit. Rechargez la page et refaites votre dernière réponse ; connectez-vous pour que vos réponses partent sur votre compte.",
+  load: "Les réponses déjà enregistrées sur cet appareil n'ont pas pu être relues. Rechargez la page ; si le message revient, recommencez le questionnaire.",
+  clear: "Impossible d'effacer les données de cet appareil. Videz le stockage du site AliTché dans les réglages de votre navigateur.",
+} as const;
+
+// Un navigateur sans stockage déclenche la panne sur chaque lecture au chargement :
+// le même `id` évite que cinq bandeaux identiques s'empilent à l'écran.
+function notifyStorage(kind: keyof typeof NOTICES, detail: unknown) {
+  console.error(`Local storage ${kind} failed:`, detail);
+  toast.error(NOTICES[kind], { id: `local-${kind}` });
+}
 
 export interface UserProfile {
   name?: string;
@@ -29,7 +43,7 @@ class StorageManager {
         savedAt: new Date().toISOString(),
       }));
     } catch (error) {
-      console.error('Error saving test progress:', error);
+      notifyStorage('save', error);
     }
   }
 
@@ -50,7 +64,7 @@ class StorageManager {
         };
       }
     } catch (error) {
-      console.error('Error loading test progress:', error);
+      notifyStorage('load', error);
     }
     return null;
   }
@@ -59,7 +73,7 @@ class StorageManager {
     try {
       localStorage.removeItem(STORAGE_KEYS.TEST_PROGRESS);
     } catch (error) {
-      console.error('Error clearing test progress:', error);
+      notifyStorage('clear', error);
     }
   }
 
@@ -70,7 +84,7 @@ class StorageManager {
         savedAt: new Date().toISOString(),
       }));
     } catch (error) {
-      console.error('Error saving profile result:', error);
+      notifyStorage('save', error);
     }
   }
 
@@ -82,7 +96,7 @@ class StorageManager {
         return normalizeProfileResult(data.result);
       }
     } catch (error) {
-      console.error('Error loading profile result:', error);
+      notifyStorage('load', error);
     }
     return null;
   }
@@ -95,7 +109,7 @@ class StorageManager {
         savedAt: new Date().toISOString(),
       }));
     } catch (error) {
-      console.error('Error saving pathway:', error);
+      notifyStorage('save', error);
     }
   }
 
@@ -109,7 +123,7 @@ class StorageManager {
         })
       );
     } catch (error) {
-      console.error('Error saving module progress:', error);
+      notifyStorage('save', error);
     }
   }
 
@@ -121,7 +135,7 @@ class StorageManager {
         return data.progress ?? [];
       }
     } catch (error) {
-      console.error('Error loading module progress:', error);
+      notifyStorage('load', error);
     }
     return [];
   }
@@ -137,7 +151,7 @@ class StorageManager {
         return data.pathway;
       }
     } catch (error) {
-      console.error('Error loading pathway:', error);
+      notifyStorage('load', error);
     }
     return null;
   }
@@ -146,7 +160,7 @@ class StorageManager {
     try {
       localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
     } catch (error) {
-      console.error('Error saving user profile:', error);
+      notifyStorage('save', error);
     }
   }
 
@@ -157,7 +171,7 @@ class StorageManager {
         return JSON.parse(saved);
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      notifyStorage('load', error);
     }
     return null;
   }
@@ -168,7 +182,7 @@ class StorageManager {
         localStorage.removeItem(key);
       });
     } catch (error) {
-      console.error('Error clearing all data:', error);
+      notifyStorage('clear', error);
     }
   }
 
