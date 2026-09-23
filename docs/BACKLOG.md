@@ -551,9 +551,12 @@ Mon chapitre 19, complété par ce que le produit a déjà commencé à promettr
 - **Le mot que j'avais exclu est revenu à l'écran.** La phrase « Choisir et intégrer une filière alignée sur votre
   domaine prioritaire » s'affiche sous « Objectifs long terme » depuis le 23/09/2026. Elle est remplacée par
   « formation », et le contrôle qui veille déjà à ce que le mot ne revienne pas dans la phrase de profil regarde
-  désormais aussi les objectifs du parcours : `npm run verify` le refuse maintenant. Quatre titres d'écran avaient
-  par ailleurs perdu leurs accents — « Gerez votre parcours », « Modules termines », « Aucun profil trouve »,
-  « Quick wins - Demarrez maintenant » — ils sont remis, et le titre anglais s'écrit en français comme le reste.
+  désormais aussi les objectifs du parcours : `npm run verify` le refuse maintenant. Le mot survivait aussi dans une
+  réponse du questionnaire, « Une exploitation, une ferme, une filière agricole » ; elle dit maintenant « une
+  coopérative agricole », et son identifiant comme ses poids n'ayant pas bougé, personne n'a eu à recommencer son
+  questionnaire. Huit textes d'écran avaient par ailleurs perdu leurs accents : « Gerez votre parcours », « Aucun
+  profil trouve », « Modules termines », « Quick wins - Demarrez maintenant », les trois verbes « Demarrer » du
+  parcours et le compteur « termines ». Ils sont remis, et le titre anglais s'écrit en français comme le reste.
 - **La poussée en ligne** : feu vert donné, onze commits poussés le 23/09 au soir, dont les deux de code
   (S1.5 et S2.2). Ce qu'ils changent se voit maintenant sur `https://ali-ce-i6it.vercel.app`, vérifié dans le
   fichier livré : le bouton Google y est, le mot « Premium » et les quatre onglets n'y sont plus.

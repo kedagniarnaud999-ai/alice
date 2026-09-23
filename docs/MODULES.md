@@ -38,7 +38,7 @@ direction qu'on lui justifie.
 | Identifier des domaines cohérents avec son profil | **Développé** | Classement des 11 domaines de carrière de `src/data/domains.ts`, affiché par `DomainRanking` (`src/components/results/ResultsDashboard.tsx:304`). Les domaines que le candidat a écartés restent à l'écran, marqués « Écartés par vous » (`src/components/results/ResultsDashboard.tsx:365`). |
 | Recevoir des recommandations | **Développé** | Jusqu'à 3 fiches de métier sur les 45 de `src/data/occupations.ts`, dans `src/components/results/OccupationResults.tsx`, chacune avec son terrain le plus porteur, ses voies de formation et les offres réelles reliées à ce métier. |
 | Comprendre pourquoi certaines recommandations sont proposées | **Développé** | Trois raisons au plus par domaine de carrière (`src/utils/testAnalyzer.ts:384`), écrites à partir des réponses elles-mêmes, et affichées sur la fiche du domaine (`src/components/results/DomainDetail.tsx:116`). |
-| Conserver les résultats dans son profil | **Engagé** | Le résultat est bien écrit et bien relu : `saveProfile` (`src/services/profile.api.ts:20`), relu à l'ouverture de l'espace (`src/App.tsx:196`). Deux pièces manquent. D'un côté le barème : dès que sa version change, `src/utils/profileResult.ts:43` répond « aucun résultat » et le candidat doit refaire ses 31 questions. De l'autre la feuille de réponses : elle est rangée dans sa propre table et relue nulle part (`src/services/profile.api.ts:72`) — c'est la tâche S4.1. |
+| Conserver les résultats dans son profil | **Engagé** | Le résultat est bien écrit et bien relu : `saveProfile` (`src/services/profile.api.ts:20`), relu à l'ouverture de l'espace (`src/App.tsx:201`). Deux pièces manquent. D'un côté le barème : dès que sa version change, `src/utils/profileResult.ts:43` répond « aucun résultat » et le candidat doit refaire ses 31 questions. De l'autre la feuille de réponses : elle est rangée dans sa propre table et relue nulle part (`src/services/profile.api.ts:72`) — c'est la tâche S4.1. |
 | « Le questionnaire comporte actuellement 6 dimensions » | **Engagé** | Cinq groupes sont construits, pas six : situation (`src/data/questions.ts:28`), profil (`:97`), centres d'intérêt (`:337`), aptitudes (`:545`), contraintes (`:586`). Mes six dimensions sont toutes couvertes, mais motivations et talents naturels tombent dans un seul groupe, et le groupe des contraintes n'existe pas dans ma liste. Point 1 de `docs/ECARTS-PRODUIT-CODE.md`, ma réponse n'y est pas encore écrite. |
 
 Ce module est le plus avancé des dix, et c'est justement son piège : un candidat qui le traverse voit un résultat
@@ -54,7 +54,7 @@ J'en attends qu'il grandisse avec la personne au lieu de rester une fiche figée
 
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
-| Informations personnelles | **Développé** | `src/pages/ProfileSettings.tsx` : un seul champ se corrige, « Nom complet » (`:69`, saisie `:73`) ; l'adresse électronique (`:86`) et le rôle (`:95`) s'affichent sans qu'on puisse y toucher, et la photo se remplace (`:48`). C'est le seul écran de saisie du profil, et il ne contient que cela. |
+| Informations personnelles | **Développé** | `src/pages/ProfileSettings.tsx` : un seul champ se corrige, « Nom complet » (`:70`, saisie `:74`) ; l'adresse électronique (`:87`) et le rôle (`:95`) s'affichent sans qu'on puisse y toucher, et la photo se remplace (`:48`). C'est le seul écran de saisie du profil, et il ne contient que cela. |
 | Parcours académique | **Absent** | Rien ne le demande et rien ne le range. Aucun champ, aucune donnée, aucun écran. |
 | Formations | **Absent** | Les 51 modules du catalogue sont des formations qu'AliTché propose, pas des formations que la personne a suivies. La distinction n'existe nulle part dans le code. |
 | Expériences | **Absent** | Aucun écran, aucun champ. Une personne qui a travaillé cinq ans n'a aucun endroit où le dire. |
@@ -65,7 +65,7 @@ J'en attends qu'il grandisse avec la personne au lieu de rester une fiche figée
 | Réalisations | **Absent** | Aucun endroit où les inscrire. |
 | Objectifs | **Absent** | Le domaine de carrière visé et le métier visé sont bien gardés, mais ce ne sont pas des objectifs écrits par la personne ; elle n'en formule aucun. |
 | Projet professionnel | **Engagé** | Le ciblage est choisi puis sauvegardé (`src/App.tsx:346`) et revalidé à chaque ouverture contre le catalogue du jour (`src/utils/profileResult.ts:96`). Ce qui manque : rien de ce que demande mon module 6 — secteur, compétences nécessaires, expériences à acquérir — n'est attaché à ce projet. |
-| Progression | **Développé** | `src/services/module.api.ts` relit l'avancement par module, et `src/components/dashboard/Dashboard.tsx:111` l'affiche en pourcentage de modules terminés. |
+| Progression | **Développé** | `src/services/module.api.ts` relit l'avancement par module, et `src/components/dashboard/Dashboard.tsx:117` l'affiche en pourcentage de modules terminés. |
 | « Le profil devient une identité numérique académique et professionnelle évolutive » | **Absent** | Le produit ne range la personne que dans trois endroits : qui elle est, ce qu'elle a répondu, où elle en est de ses modules. Une identité académique et professionnelle demande au moins six des douze lignes ci-dessus, et aucune n'est écrite. |
 
 Sur douze choses que je demande, deux sont faites et une seule est à moitié faite. C'est l'écart le plus large du
@@ -80,8 +80,8 @@ J'en attends que la personne sache, en regardant une fois, où elle en est et ce
 
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
-| Où suis-je ? | **Développé** | `src/components/dashboard/Dashboard.tsx:157` : la lecture du profil et la situation de départ s'affichent sur la première carte de l'espace. |
-| Qu'ai-je déjà accompli ? | **Développé** | `src/components/dashboard/Dashboard.tsx:111` : le nombre de modules terminés sur le total du parcours, en pourcentage et en fraction (`:184`). C'est étroit — tout ce que le produit tient pour « accompli », c'est ce que la personne a déclaré elle-même. |
+| Où suis-je ? | **Développé** | `src/components/dashboard/Dashboard.tsx:157` : la carte « Votre profil » donne la lecture du profil (`:158`) et la phrase qui la résume (`:161`). |
+| Qu'ai-je déjà accompli ? | **Développé** | `src/components/dashboard/Dashboard.tsx:117` : le compte des modules terminés sur le total du parcours (`src/components/dashboard/Dashboard.tsx:118`), en pourcentage et en fraction (`:189`). C'est étroit — tout ce que le produit tient pour « accompli », c'est ce que la personne a déclaré elle-même. |
 | Qu'ai-je validé ? | **Absent** | Rien n'est validé nulle part. « Terminer le module » (`src/components/pathway/PathwayView.tsx:477`) est un clic sur soi-même ; aucune note, aucune vérification, aucune attestation ne vient derrière. |
 | Qu'est-ce qu'il me reste à faire ? | **Développé** | Le parcours est écrit module par module, avec son état d'avancement et le compteur en fractions (`src/components/pathway/PathwayView.tsx:335`). |
 | Quelle est ma prochaine étape ? | **Développé** | La carte des gains rapides (`src/components/pathway/PathwayView.tsx:91`) place en tête du parcours les modules les plus courts à fermer, bouton « Commencer » à l'appui (`:273`). |
@@ -97,6 +97,15 @@ désormais aussi dans les objectifs du parcours — le texte ne peut plus reveni
 Le second : quatre titres d'écran avaient perdu leurs accents, « Quick wins - Demarrez maintenant », « Modules
 termines », « Aucun profil trouve », « Gerez votre parcours ». Ils sont remis au français, et le titre anglais
 s'écrit maintenant « Gains rapides », comme ce fichier l'appelle.
+
+Le même relevé, repris après coup dans les mêmes fichiers, ne laisse plus rien en suspens. Quatre verbes du parcours
+avaient eux aussi perdu leur accent : « Demarrer ce module », deux fois « Demarrer », et le compteur « termines »
+(`src/components/pathway/PathwayView.tsx:273`, `:335`, `:384`, `:463`). Ils l'ont repris. La dernière occurrence du
+mot exclu tenait dans une réponse du questionnaire : « Une exploitation, une ferme, une filière agricole »
+(`src/data/questions.ts:422`) — c'est le candidat qui la lit sur l'écran du module 1, et le contrôle du parcours ne
+regardait pas cette chaîne-là. La réponse s'écrit maintenant « une coopérative agricole ». Son identifiant et ses
+poids n'ont pas bougé : un candidat qui a déjà coché cette case garde le même résultat, personne n'a eu à
+recommencer son questionnaire.
 
 ---
 
@@ -124,8 +133,8 @@ et sa sœur S5.2, qui veut que chaque module renvoie vers une formation qui exis
 
 ## Module 5 — Compétences
 
-J'en attends le cœur du produit : pouvoir dire à quelqu'un ce qu'il sait déjà, ce qui lui manque, et comment le
-combler.
+J'en attends le cœur du produit : pouvoir dire à quelqu'un ce qu'il sait déjà, ce qui lui manque, et par quoi le
+rattraper.
 
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
@@ -152,7 +161,7 @@ J'en attends que la personne écrive elle-même où elle va, et que le produit s
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
 | Son objectif professionnel | **Engagé** | Un objectif est bien choisi et gardé : le domaine de carrière, puis la fiche de métier visée, écrits dans le profil (`src/App.tsx:346`, `src/services/profile.api.ts:20`). Ce qui manque : la personne ne l'écrit pas. Elle clique une proposition, et le produit appelle cela un projet. |
-| Le secteur ciblé | **Absent** | Aucun champ ne le demande. Le produit calcule bien un « terrain le plus porteur pour vous » (`src/components/results/OccupationResults.tsx:229`), mais c'est une déduction de sa part, pas un ciblage de la mienne. |
+| Le secteur ciblé | **Absent** | Aucun champ ne le demande. Le produit calcule bien un « terrain le plus porteur pour vous » (`src/components/results/OccupationResults.tsx:229`), mais c'est une déduction de sa part, pas un choix que j'aurais fait. |
 | Les métiers envisagés | **Développé** | Trois fiches au plus sont posées à l'écran (`src/components/results/OccupationResults.tsx:94`), et le choix de l'une d'elles remplace le ciblage précédent (`src/App.tsx:309`). |
 | Les compétences nécessaires | **Développé** | Chaque fiche de métier porte sa liste de compétences dans `src/data/occupations.ts`, et elle est affichée sur sa carte. |
 | Les formations pertinentes | **Développé** | Deux niveaux sur la même carte : « Voies de formation » issues de la fiche (`src/components/results/OccupationResults.tsx:245`), puis « Où se former, comment financer » avec jusqu'à quatre offres réelles reliées à ce métier (`:251`). |
@@ -204,9 +213,9 @@ AliTché.
 | Certifications | **Absent** | Aucune donnée, aucun écran. |
 | Projets | **Absent** | Les fiches de métier décrivent des projets de domaine, jamais un projet fait par la personne. |
 | Réalisations | **Absent** | Aucune donnée, aucun écran. |
-| Portfolio | **Absent** | Pas d'écran, pas d'adresse qui lui soit propre, pas de donnée. Aucun des neuf écrans après connexion n'est un portfolio (leur liste tient en dix entrées, `src/App.tsx:31`). |
+| Portfolio | **Absent** | Pas d'écran, pas d'adresse qui lui soit propre, pas de donnée. Aucun des neuf écrans après connexion n'est un portfolio (leur liste tient en dix entrées, `src/App.tsx:32`). |
 | Objectifs professionnels | **Engagé** | La donnée existe, choisie et gardée (`src/App.tsx:346`) ; elle n'est présentée nulle part comme un objectif, seulement comme le point de départ d'un parcours. |
-| « L'utilisateur garde le contrôle sur ce qui est visible » | **Absent** | Ce contrôle suppose quelque chose de publié. Rien n'est publié, et le mot même de visibilité n'apparaît dans aucun fichier du produit. Le seul geste qui y ressemble est le bouton « Partager », et il copie l'adresse de l'écran (`src/components/results/ExportMenu.tsx:29`) — or cette adresse est `/app` pour les neuf écrans (`src/App.tsx:47`), derrière une connexion : le lien envoyé ne porte rien, et ne peut donc pas non plus être retiré. C'est la tâche S3.5. |
+| « L'utilisateur garde le contrôle sur ce qui est visible » | **Absent** | Ce contrôle suppose quelque chose de publié. Rien n'est publié, et le mot même de visibilité n'apparaît dans aucun fichier du produit. Le seul geste qui y ressemble est le bouton « Partager », et il copie l'adresse de l'écran (`src/components/results/ExportMenu.tsx:29`) — or cette adresse est `/app` pour les neuf écrans (`src/App.tsx:58`), derrière une connexion : le lien envoyé ne porte rien, et ne peut donc pas non plus être retiré. C'est la tâche S3.5. |
 
 Trois détails à ne pas manquer quand ce module s'ouvrira. Le partage est annoncé comme un contrôle alors qu'il ne
 montre rien. Le site public propose une rubrique « Légal » dont les trois boutons — Mentions légales,

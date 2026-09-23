@@ -419,7 +419,7 @@ export const orientationQuestions: Question[] = [
       { id: 't_sante', text: 'Un centre de santé, une clinique, un service de soins', domains: { sante: 2 }, functions: { relation: 1, terrain: 1 } },
       { id: 't_social', text: 'Une association, un centre social, une structure d’aide à la personne', domains: { social: 2 }, functions: { relation: 1, terrain: 1 } },
       { id: 't_education', text: 'Une école, un centre de formation, une université', domains: { education: 2 } },
-      { id: 't_agriculture', text: 'Une exploitation, une ferme, une filière agricole', domains: { agriculture: 2 } },
+      { id: 't_agriculture', text: 'Une exploitation, une ferme, une coopérative agricole', domains: { agriculture: 2 } },
       { id: 't_logistique', text: 'Un entrepôt, un port, une flotte de transport', domains: { logistique: 2 } },
     ],
   },

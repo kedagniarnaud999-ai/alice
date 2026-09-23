@@ -270,7 +270,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             }}
           >
             <Play className="mr-1 h-4 w-4" />
-            {isQuickWin ? 'Commencer' : 'Demarrer ce module'}
+            {isQuickWin ? 'Commencer' : 'Démarrer ce module'}
           </Button>
         ) : (
           <Button size="sm" variant="outline" className="w-full" onClick={onOpen}>
@@ -332,7 +332,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
           <span>Modules du parcours ({track.modules.length})</span>
         </div>
         <span className="text-gray-500">
-          {completedCount}/{track.modules.length} termines
+          {completedCount}/{track.modules.length} terminés
         </span>
       </div>
 
@@ -381,7 +381,7 @@ const TrackCard: React.FC<TrackCardProps> = ({
                             onOpenModule(module);
                           }}
                         >
-                          Demarrer
+                          Démarrer
                         </Button>
                       )}
                       <Button size="sm" onClick={() => onOpenModule(module)}>
@@ -460,7 +460,7 @@ const ModuleDetailView: React.FC<ModuleDetailViewProps> = ({
               {currentProgress === 0 && (
                 <Button onClick={() => onUpdateModuleProgress(module.id, 10, 'in_progress')}>
                   <Play className="mr-2 h-4 w-4" />
-                  Demarrer le module
+                  Démarrer le module
                 </Button>
               )}
               {currentProgress > 0 && currentProgress < 100 && (
