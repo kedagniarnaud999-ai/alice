@@ -18,7 +18,7 @@ import { Question } from '@/types/test';
  * chaque domaine. Bump this version whenever weights move — a profile computed
  * on the previous scale is not comparable and must not be replayed.
  */
-export const ASSESSMENT_VERSION = 5;
+export const ASSESSMENT_VERSION = 6;
 
 export const orientationQuestions: Question[] = [
   // ─────────────────────────────── 1. SITUATION ───────────────────────────────
@@ -348,16 +348,16 @@ export const orientationQuestions: Question[] = [
       { id: 'a_machines', text: 'Comprendre comment fonctionnent une machine ou une installation', domains: { ingenierie: 4, logistique: 1 } },
       { id: 'a_code', text: 'Développer un logiciel, un site, une application', domains: { ict: 4 } },
       { id: 'a_data', text: 'Exploiter des données, les structurer, en tirer une décision', domains: { ict: 2, finance: 2 } },
-      { id: 'a_host', text: "Accueillir un client, le placer, servir une salle", domains: { tourisme: 4 } },
-      { id: 'a_food', text: 'Cuisiner, préparer, dresser', domains: { tourisme: 3 } },
-      { id: 'a_care', text: "Prendre soin d'une personne, réaliser des soins", domains: { sante: 4, education: 1 } },
-      { id: 'a_healthsci', text: 'Comprendre le corps, une maladie, un résultat médical', domains: { sante: 3 } },
+      { id: 'a_host', text: "Accueillir un client, le placer, servir une salle", domains: { tourisme: 4 }, functions: { relation: 2 } },
+      { id: 'a_food', text: 'Cuisiner, préparer, dresser', domains: { tourisme: 3 }, functions: { technique: 2, terrain: 1 } },
+      { id: 'a_care', text: "Prendre soin d'une personne, réaliser des soins", domains: { sante: 4, education: 1 }, functions: { relation: 2, technique: 1 } },
+      { id: 'a_healthsci', text: 'Comprendre le corps, une maladie, un résultat médical', domains: { sante: 3 }, functions: { analyse: 2 } },
       { id: 'a_accompagne', text: "Accompagner une personne ou un groupe dans ses démarches", domains: { social: 4, education: 1 } },
-      { id: 'a_quartier', text: 'Faire travailler un quartier, une association, une collectivité', domains: { social: 3, administration: 1 } },
+      { id: 'a_quartier', text: 'Faire travailler un quartier, une association, une collectivité', domains: { social: 3, administration: 1 }, functions: { relation: 2, terrain: 1, coordination: 1 } },
       { id: 'a_teach', text: 'Concevoir une session de formation et l’animer devant un groupe', domains: { education: 4 } },
-      { id: 'a_write', text: 'Écrire, concevoir un support, créer du contenu', domains: { commerce_marketing: 2, education: 2 } },
-      { id: 'a_nature', text: 'Surveiller une culture, un élevage, récolter au bon moment', domains: { agriculture: 4 } },
-      { id: 'a_logistics', text: 'Organiser des transports, des livraisons, tenir des stocks', domains: { logistique: 4, administration: 1 } },
+      { id: 'a_write', text: 'Écrire, concevoir un support, créer du contenu', domains: { commerce_marketing: 2, education: 2 }, functions: { conception: 2 } },
+      { id: 'a_nature', text: 'Surveiller une culture, un élevage, récolter au bon moment', domains: { agriculture: 4 }, functions: { terrain: 2, analyse: 1 } },
+      { id: 'a_logistics', text: 'Organiser des transports, des livraisons, tenir des stocks', domains: { logistique: 4, administration: 1 }, functions: { coordination: 2, terrain: 2, technique: 1 } },
     ],
   },
   {
@@ -416,8 +416,8 @@ export const orientationQuestions: Question[] = [
       { id: 't_ingenierie', text: 'Un chantier, une usine, un atelier technique', domains: { ingenierie: 2 } },
       { id: 't_ict', text: 'Une équipe produit, informatique ou digitale', domains: { ict: 2 } },
       { id: 't_tourisme', text: 'Un hôtel, un restaurant, une agence de voyage', domains: { tourisme: 2 } },
-      { id: 't_sante', text: 'Un centre de santé, une clinique, un service de soins', domains: { sante: 2 } },
-      { id: 't_social', text: 'Une association, un centre social, une structure d’aide à la personne', domains: { social: 2 } },
+      { id: 't_sante', text: 'Un centre de santé, une clinique, un service de soins', domains: { sante: 2 }, functions: { relation: 1, terrain: 1 } },
+      { id: 't_social', text: 'Une association, un centre social, une structure d’aide à la personne', domains: { social: 2 }, functions: { relation: 1, terrain: 1 } },
       { id: 't_education', text: 'Une école, un centre de formation, une université', domains: { education: 2 } },
       { id: 't_agriculture', text: 'Une exploitation, une ferme, une filière agricole', domains: { agriculture: 2 } },
       { id: 't_logistique', text: 'Un entrepôt, un port, une flotte de transport', domains: { logistique: 2 } },
@@ -434,7 +434,7 @@ export const orientationQuestions: Question[] = [
       { id: 'c_bio', text: 'Biologie, sciences de la vie', domains: { sante: 2, agriculture: 2 } },
       { id: 'c_physique', text: 'Physique, technologie, génie', domains: { ingenierie: 3, ict: 1 } },
       { id: 'c_info', text: 'Informatique, digital, code', domains: { ict: 3 } },
-      { id: 'c_eco', text: 'Économie, gestion, comptabilité', domains: { administration: 2, finance: 2, commerce_marketing: 2 } },
+      { id: 'c_eco', text: 'Économie, gestion, comptabilité', domains: { administration: 2, finance: 2, commerce_marketing: 2 }, functions: { analyse: 1, technique: 2 } },
       { id: 'c_comm', text: 'Langues, communication, expression', domains: { commerce_marketing: 2, education: 2, tourisme: 1 } },
       { id: 'c_shs', text: 'Histoire, géo, sciences humaines', domains: { education: 2, social: 2, administration: 1 } },
       { id: 'c_agronomie', text: 'Agronomie, environnement, vivant', domains: { agriculture: 3 } },
@@ -449,10 +449,10 @@ export const orientationQuestions: Question[] = [
     type: 'single',
     options: [
       { id: 'pt_product', text: 'Un produit numérique que des milliers de personnes utilisent', domains: { ict: 3, commerce_marketing: 1 } },
-      { id: 'pt_store', text: 'Développer un commerce, une clientèle, un chiffre d’affaires', domains: { commerce_marketing: 3, finance: 1 } },
+      { id: 'pt_store', text: 'Développer un commerce, une clientèle, un chiffre d’affaires', domains: { commerce_marketing: 3, finance: 1 }, functions: { relation: 2, terrain: 1 } },
       { id: 'pt_structure', text: 'Structurer une organisation, des procédures, une équipe', domains: { administration: 3, logistique: 1 } },
       { id: 'pt_site', text: 'Un chantier, une machine, une installation qui tourne', domains: { ingenierie: 3, logistique: 1 } },
-      { id: 'pt_guest', text: 'Un lieu d’accueil, une table, un voyage réussi', domains: { tourisme: 3 } },
+      { id: 'pt_guest', text: 'Un lieu d’accueil, une table, un voyage réussi', domains: { tourisme: 3 }, functions: { conception: 1, relation: 2 } },
       { id: 'pt_service', text: 'Un service qui change la vie de personnes concrètes', domains: { sante: 3, social: 3, education: 1 } },
       { id: 'pt_class', text: 'Une classe, une formation, des apprenants qui progressent', domains: { education: 3 } },
       { id: 'pt_farm', text: 'Une exploitation, une culture, un élevage qui produit', domains: { agriculture: 3 } },
