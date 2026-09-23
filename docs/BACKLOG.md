@@ -535,9 +535,8 @@ Ton chapitre 19, complété par ce que le produit a déjà commencé à promettr
 - Les quatre onglets de l'accueil (« Orientation », « Métiers », « Écoles », « Mentors ») ne mènent nulle part
   aujourd'hui. Est-ce qu'on les relie aux écrans qui existent déjà, ou est-ce qu'on les retire de la barre de
   navigation ?
-- Un feu vert pour pousser les commits de documentation sur le dépôt en ligne : ils sont écrits, ils sont
-  locaux, rien de ce qui touche à l'application n'est concerné.
-- Un feu vert pour ClickUp, ou le maintien de l'organisation actuelle jusqu'à la fin du sprint 1.
+- Un feu vert pour pousser les trois commits du 23/09 au soir : deux de code (S1.5 et S2.2) et un de
+  documentation. Rien de ce que change S1.5 ni S2.2 n'est en ligne tant que ce feu vert n'est pas donné.
 
 **Ce que je ne te redemanderai pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
 (les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,
@@ -546,7 +545,19 @@ le texte sur ce que le produit fait vraiment — sauf avis contraire de ta part.
 
 # Et ClickUp
 
-Ton mandat prévoyait de reporter ce backlog dans ClickUp et de le suivre en sprints. Ce n'est pas fait : l'espace
-ClickUp actuel est organisé en grands blocs et en dossiers qui portent la découpe précédente, avec dix-neuf tâches
-créées avant ce document. Recaler ClickUp ici veut dire renommer des dossiers, déplacer des tâches et en créer une
-trentaine. Ça se fait, mais sur ton feu vert, et en une seule fois pour ne pas payer deux fois le quota d'appels.
+C'est fait le 2026-09-23, dans l'espace iNOVA LAB, dossier AliTché.
+
+- Six listes portent maintenant ce backlog : « Sprint 1 · Stabiliser », « Sprint 2 · Corriger les
+  incohérences », « Sprint 3 · Rendre le parcours fluide », « Sprint 4 · Connecter les données entre
+  elles », « Sprint 5 · Relier les modules à des formations réelles », et « Ensuite · important, mais ne
+  bloque pas ». Une carte par ligne de ce fichier : vingt-huit dans les cinq sprints, huit dans
+  « Ensuite ». Chacune rappelle son numéro, ce que ça change, ce qui prouvera que c'est fini, sa taille,
+  les fichiers concernés, et renvoie ici. Deux cartes portent l'étiquette « en cours » : S1.5 et S2.2.
+- Seules deux dates y ont été mises, parce que ce sont les deux seules écrites dans ce fichier : S1.4 et
+  S1.6 au 27/09/2026, pour les cinq tests de la semaine, et S3.7 au 30/11/2026. Le reste du calendrier est
+  à toi.
+- Les cartes de la découpe précédente n'ont pas été supprimées : vingt-sept d'entre elles, mesuré avant
+  d'écrire, et non dix-neuf comme je l'avais noté. Elles sont restées où elles étaient, dans six listes
+  renommées « Avant le cadrage · … ». Le connecteur ne sait pas supprimer une liste, donc ce tri se fait
+  dans l'interface ClickUp quand tu y passes : elles sont visibles mais ne se confondent plus avec le
+  travail à faire.
