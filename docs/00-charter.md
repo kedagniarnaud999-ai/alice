@@ -1,11 +1,11 @@
 # Charter — AliTché
 
 > Gate 0. Ce document est le contrat du projet. Il est relu et validé avant toute ligne de code.
-> Date de rédaction : 2026-09-21 · Révisé le : 2026-09-23 (reprise de cap) · Validé le : —
+> Date de rédaction : 2026-09-21 · Repris le : 2026-09-23 (deux passes, même jour) · Validé le : —
 >
-> **Brouillon soumis à validation.** Le gate 0 est bloquant : aucun module, aucune tâche, aucune arborescence
-> ClickUp ne sont engagés avant que les objectifs, les non-goals, le découpage en modules et le périmètre
-> ci-dessous soient acceptés. Les trois points marqués « à trancher » attendent une réponse.
+> **Brouillon soumis à validation — deuxième passe.** Le gate 0 est bloquant : rien n'est engagé — ni module,
+> ni tâche, ni arborescence ClickUp — avant la signature. Les trois arbitrages demandés ont été rendus le
+> 2026-09-23 et sont consignés en fin de document ; il ne reste que le « validé ».
 >
 > Base de ce document : tronc `672d56f`, dépôt `kedagniarnaud999-ai/alice`, production
 > `https://ali-ce-i6it.vercel.app`. Toutes les affirmations du §« Où on est » ont été mesurées ou lues le
@@ -44,7 +44,7 @@ Identifiants repris obligatoires par chaque tâche du backlog. Une tâche sans `
 |---|---|---|---|---|---|
 | OBJ-1 | Le parcours complet tient sans blocage | Parcours complets terminés **vus rendus** dans un navigateur, sur 5 parcours de test rejoués à la main | 5 / 5 | 2026-10-15 | 0 / 5 — le code est là, les pixels n'ont jamais été vus |
 | OBJ-2 | Le produit devient mesurable | Événements clés instrumentés : inscription, test terminé, résultats vus, parcours ouvert, export | 5 / 5 | 2026-10-31 | 0 / 5 — le dépôt ne contient aucun suivi d'événement |
-| OBJ-3 | Un étranger à l'équipe l'utilise | Personnes hors équipe ayant terminé un parcours complet **sans qu'on les guide** | 10 · **à confirmer** | 2026-11-30 | 0 — jamais tenté |
+| OBJ-3 | Un étranger à l'équipe l'utilise | Personnes hors équipe ayant terminé un parcours complet **sans qu'on les guide** | 10 | 2026-11-30 | 0 — jamais tenté |
 | OBJ-4 | La dette cesse de croître | `tsc --noEmit` et `npm run verify` verts sur `master` à chaque fusion, **et** coussin de classabilité minimal ≥ 2 points | 100 % | permanent | tenu depuis `eebebc8` ; lint exclu jusqu'à T-022 (voir ci-dessous) |
 
 Trois corrections apportées à la version du 2026-09-21 :
@@ -56,7 +56,7 @@ Trois corrections apportées à la version du 2026-09-21 :
    (`package.json:8`) et les paquets aussi, mais aucun fichier de configuration n'est suivi — vérifié le
    2026-09-23 (`ls` à la racine : aucune `.eslintrc.*`). La configuration vit dans la PR #12, ouverte depuis le
    2026-09-20 et non fusionnée. Écrire un objectif que la machine ne peut pas évaluer est une dette déguisée
-   en critère. Le lint revient dans OBJ-4 dès T-022, donc à la date que fixera le point « Hygiène du dépôt ».
+   en critère. Le lint revient dans OBJ-4 dès T-022, donc à la date que fixera l'arbitrage 2 du bas de document.
 3. **OBJ-4 porte désormais le coussin, pas seulement le vert.** Mesuré le 2026-09-23 : la version antérieure
    à la dernière vague était « verte » avec un coussin minimal de **0**, une fiche tenue par un simple
    départage alphabétique. Un voyant vert n'était pas une marge.
@@ -70,7 +70,7 @@ et aucune ne pourrait l'être, faute d'instrumentation.
    passeport JWT, service d'e-mail, uploads, plus ses fichiers de déploiement Railway/Fly/Docker) est appelé
    par **aucun** écran : `apiClient` (`src/services/api.client.ts`) n'est référencé nulle part, et
    `auth.api.ts`, `module.api.ts`, `profile.api.ts` parlent directement à Supabase. Ce code reste en l'état,
-   ne reçoit aucune fonctionnalité nouvelle, et n'est pas linté. Le retirer est le point « Hygiène du dépôt », pas un prétexte.
+   ne reçoit aucune fonctionnalité nouvelle, et n'est pas linté. Le retirer est l'arbitrage 2 (en fin de document), pas un prétexte.
 2. AliTché **ne met pas en relation employeurs et candidats**. Pas d'espace recruteur, pas de dépôt de
    candidature, pas de messagerie, pas d'offre d'emploi.
 3. AliTché **n'ouvre aucun espace institutionnel** — université, consultant, centre d'employabilité,
@@ -85,7 +85,7 @@ et aucune ne pourrait l'être, faute d'instrumentation.
    Le résultat est indicatif, et l'écran doit continuer de le dire.
 7. AliTché **n'accepte plus de `node_modules` versionné** : 10 579 fichiers suivis sur 10 722 (98,7 %). Les
    revues de diff ne veulent plus rien dire et chaque commit pèse. La règle est écrite ici, son application
-   est le point « Hygiène du dépôt ».
+   est l'arbitrage 2 (en fin de document).
 8. AliTché **n'ajoute pas de nouvelle surface fonctionnelle tant qu'OBJ-1 est à 0 / 5**. C'est la non-goal qui
    compte pour les six prochains mois : « on développera les modules restants » n'est pas une réponse à
    l'absence d'utilisateur. Un module nouveau exige un arbitrage écrit, pas une session de plus.
@@ -201,25 +201,50 @@ conditionné aux deux premiers, et la Non-Goal 8 rend ce refus opposable séance
 
 ## Découpage en modules
 
-Huit modules fonctionnels, plus un socle. Cette table est l'autorité pour les sous-dossiers de documentation
-et pour l'arborescence ClickUp — c'est l'objet du point « Axe de découpage ». Chaque module est une surface, pas une couche : front, back et
-donnée cohabitent dans le même module.
+**Décision rendue le 2026-09-23 : les modules remplacent les épics.** E1-E5 sont dissoutes et redistribuées
+dans M0-M8. ClickUp reçoit un dossier par module, le dépôt un sous-dossier de documentation par module
+(`docs/modules/m4-catalogue/`), et une tâche ne porte plus qu'un seul code. Le module n'est pas une couche :
+front, back et donnée cohabitent dans le même module.
 
-| Code | Module | Chemins dans le dépôt | Où il en est | Ce qui reste |
+### Où va chaque module
+
+| Code | Module | Ce qu'il saura démontrer à la fin du mouvement 3 | Déjà livré, à prouver | À développer |
 |---|---|---|---|---|
-| **M0** | Socle & méthode | `docs/`, `AGENTS.md`, `.devmethod/` | entamé — charter et backlog écrits, rien de signé ni d'architecturé | T-001 à T-007 |
-| **M1** | Compte & session | `src/components/auth/`, `src/pages/`, `src/services/auth.api.ts` | fait, **jamais vu rendu** au-delà de la connexion | T-015, T-018, T-025 |
-| **M2** | Questionnaire | `src/components/test/`, `src/data/questions.ts` | fait et mesuré — 31 questions, barème v6 | T-024 (migration de barème), T-013 (URL par étape) |
-| **M3** | Moteur de recommandation | `src/utils/testAnalyzer.ts`, `src/utils/occupationMatcher.ts`, `src/utils/pathwayEngine.ts`, `src/checks/` | fait et gardé par une gate mesurée (coussin 2) | T-021, T-008 (source de vérité sur les intitulés) |
-| **M4** | Catalogue (donnée) | `src/data/` (7 fichiers) | partiel — 45 fiches tiennent, l'exactitude n'est pas prouvée | T-009 ; **et 4 tâches de catalogue non encore versées au backlog** : remplacer les 50 liens `v1.gostudy.net` par l'adresse d'origine, publier les 15 libellés restants en fiches sur paires de cœur libres, consolider la source canonique ROME + MESRS + annuaire, composer socle + formations complémentaires par métier |
-| **M5** | Ciblage & parcours | `src/components/focus/`, `src/components/pathway/` | fait côté calcul, **absent côté suivi** : le parcours se recommande, ne se parcourt pas | T-011, T-026, T-027 |
-| **M6** | Restitution | `src/components/results/`, `src/components/dashboard/`, `src/components/profile/` | partiel — neuf écrans derrière une seule URL | T-010 (export transportant le profil), T-013, T-014, BUG-02 |
-| **M7** | Surface publique | `src/components/home/`, `src/components/brand/` | partiel — vitrine là, trous à l'entrée | T-019, BUG-03 ; **et** alléger le JS initial (214 kB gzip), tâche non versée au backlog |
-| **M8** | Fiabilité & mesure | `package.json`, `src/utils/storageManager.ts`, `vercel.json`, `.github/` (absent) | **le plus faible des huit** : c'est le module qui décide si les sept autres sont croyables | T-016, T-017, T-022, T-023, T-205 |
+| **M0** | Socle & méthode | Un contrat signé, une architecture lue, trois décisions techniques écrites, un README qui ne ment pas, un dépôt sous les 300 fichiers suivis | charter, backlog, PRD | F-18 · T-002, T-003, T-006, T-007 · D-05 |
+| **M1** | Compte & session | Un inconnu s'inscrit, reçoit un vrai e-mail, se reconnecte six jours plus tard, et ses données ne se lisent pas chez le voisin | F-06, F-10 | F-16 · T-015, T-018, T-025 · D-01, D-02, D-03 |
+| **M2** | Questionnaire | 31 questions tiennent, un barème qui change ne jette plus les profils, et ce qu'un candidat a répondu reste relisible | F-01 | T-024 · D-09 |
+| **M3** | Moteur de recommandation | Deux profils opposés ne tombent pas sur le même premier domaine, et chaque fiche reste atteignable avec une marge mesurée | F-02, F-09 | T-008, T-021 |
+| **M4** | Catalogue (donnée) | Chaque métier affiché renvoie à une école qui existe, vérifiée ligne à ligne, avec son socle et ses formations complémentaires | F-04 | F-05 · D-10 · **et 4 tâches de catalogue non encore versées au backlog** |
+| **M5** | Ciblage & parcours | Le parcours ne se recommande plus seulement : il s'ouvre, une leçon s'y lit, et rien ne promet un paiement qui n'existe pas | F-07, F-08 | F-14 · T-026, T-027 · D-04 |
+| **M6** | Restitution | Neuf écrans, neuf URL : on rouvre l'application trois jours après à l'étape atteinte, et un lien partagé rouvre un profil | F-03, F-11, F-12 | F-13 · T-010, T-013, T-014, BUG-02 · D-12 |
+| **M7** | Surface publique | La vitrine ne promet plus un produit plus grand que le produit, et elle s'affiche sur une connexion 3G | — | F-17 · D-06, D-07 · alléger le JS initial (214 kB gzip) |
+| **M8** | Fiabilité & mesure | Cinq événements visibles sur sept jours réels, trois commandes tenues par une machine à chaque push, et une panne qui se dit à l'écran | — | F-15, F-19, F-20 · T-022, T-023, T-205 · D-08, D-11 |
 
-Le module n'écrase pas l'épic existante : l'épic répond « qu'est-ce que le produit saura démontrer ? », le
-module répond « où est-ce que ça vit, et qui est impacté ? ». Toute tâche porte les deux. Mapping : E1 → M0,
-E2 → M6/M7 (états par écran), E3 → M1/M6, E4 → M3/M4, E5 → M8, QA → transversal.
+Trois vocabulaires coexistent, et c'est le seul risque de lisibilité de cette table : `F-nn` est une ligne du
+PRD §6 (ce que l'écran doit faire), `T-0nn` une ligne du backlog (où écrire le code), `D-nn` une décision du §
+ci-dessous (si on la prend à notre place). Les deux premiers se recouvrent parfois — `F-11` et `T-010` sont le
+même travail vu de deux documents. **Aucun code `F` au-delà de F-20 n'existe** : le PRD s'arrête là, et ce qui
+n'y figure pas porte un `T-` ou un `D-`, jamais un numéro inventé.
+
+### Les douze décisions que le tronc a déjà prises à notre place
+
+Ce ne sont pas des bugs. Ce sont des choix de produit implicites, dans le tronc, que personne n'a faits à
+l'endroit. Chacune se refuse en un mot : **servir**, **supprimer**, ou **annoncer**.
+
+| ID | Ce que le dépôt expose aujourd'hui | Ce que ça suppose | Décision à rendre | Module |
+|---|---|---|---|---|
+| D-01 | `loginWithGoogle` dans le contexte d'auth, consommé par aucune interface | Le README annonce « Google OAuth » comme une fonctionnalité | servir (brancher l'écran) ou supprimer | M1 |
+| D-02 | `sendMagicLink` jamais appelé | Une connexion sans mot de passe est à moitié construite | servir ou supprimer | M1 |
+| D-03 | `/verify-email` est un écran « Lien traité » que le flux réel n'emprunte jamais | Deux écrans pour un chemin, un mort | supprimer ou raccorder | M1 |
+| D-04 | Étiquettes « Gratuit » / **« Premium »** rendues sur les modules payants (`PathwayView.tsx:378, 457`), sans aucun paiement derrière | Un paywall visuel qui promet une offre payante et un compte payant qui n'existent pas (Non-Goal 4) | retirer l'affichage, ou assumer T-011 | M5 |
+| D-05 | `README.md` décrit un produit qui n'existe pas : « JWT-based authentication » (l.10), « Express 4.18 » (l.65), « Prisma ORM 5.9 » (l.67), « JWT + Passport.js + Google OAuth2 » (l.68), `api.client.ts` documenté (l.150) — **et le tout en anglais** | Un partenaire, un recruté ou un outil d'IA lit une autre pile technique que la nôtre. La vitrine du dépôt contredit la Non-Goal 1 | réécrire depuis le tronc, en français, et tenir l'écart par une gate | M0 |
+| D-06 | « Orientation », « Métiers », « Écoles », « Mentors » : quatre `<button type="button">` **sans `onClick`** dans la barre de navigation (`HomePage.tsx:49-60`), plus les liens de pied de page (`:306`) | Aucun de ces quatre onglets n'a de route : un visiteur qui clique sur « Écoles » ne se passe rien | servir (rouvrir le parcours sur ces entrées) ou retirer | M7 |
+| D-07 | Image d'accueil hébergée sur `lh3.googleusercontent.com` | L'accueil se casse de l'extérieur un jour sans lien avec nous | servir depuis le dépôt | M7 |
+| D-08 | `storageManager` : **12 de ses 13 méthodes** ont le même corps — `catch` → `console.error` → `null` ou `[]` | Un quota plein, un `JSON.parse` corrompu ou un local storage vidé se lisent comme « vous n'avez jamais passé le test » | bandeau visible (F-19) | M8 |
+| D-09 | `test_responses` : `insert` et `delete` dans `profile.api.ts`, **aucun `select`** dans le dépôt | Un candidat reconnecté retrouve un résultat, jamais ce qu'il a répondu — le replay de profil est impossible par construction | servir (rejouer) ou supprimer la table | M2 |
+| D-10 | `modules.ts:38-41` promet 6 modules par domaine dont 4 gratuits ; le contrôle exige 3 et ne regarde pas la gratuité | Le commentaire dit plus que ce que la gate vérifie | relever le seuil **ou** baisser la promesse — jamais les deux tels quels | M4 |
+| D-11 | `catalogue.report.ts` : 118 lignes, **zéro assertion**, et rien dans `package.json` ni `src/` qui l'appelle | Un rapport que personne ne lit ni ne déclenche | brancher dans `verify` ou supprimer | M8 |
+| D-12 | Trois fichiers sans aucun importateur, vérifié ce jour : `services/api.client.ts`, `components/home/AliTcheLanding.tsx`, `components/ui/Animations.tsx` — plus deux clés `STORAGE_KEYS` mortes | Ils pèsent dans chaque bundle et dans chaque revue de diff, et `api.client.ts` entretient l'illusion d'une API (Non-Goal 1) | supprimer, dans la vague d'assainissement (arbitrage 2) | M6 |
 
 ## Risque principal du projet
 
@@ -251,17 +276,30 @@ On arrête d'ajouter des fonctionnalités d'orientation, et on passe la suite à
 On ne repousse pas le projet pour une raison esthétique (reprise de la palette, refactor du moteur de
 parcours, sorties de `node_modules`) : seulement pour l'un des quatre ci-dessus.
 
-## Points à trancher avant de valider ce charter
+## Arbitrages rendus le 2026-09-23, et ce qui reste ouvert
 
-1. **OBJ-3** — combien de personnes hors équipe, d'ici quand. Proposition maintenue : 10 avant le 2026-11-30,
-   car sous dix on ne distingue pas un produit d'un démonstrateur.
-2. **Hygiène du dépôt** — `backend/`, les 23 guides de la racine, les 10 579 fichiers `node_modules` suivis,
-   et le lint inerte (PR #12). Proposition : une vague d'assainissement au sprint 1, après OBJ-1, avec chaque
-   suppression validée une par une — jamais un `git rm -r` d'un coup.
-3. **Axe de découpage** — les modules M0-M8 deviennent-ils l'arborescence ClickUp (un dossier par module), ou
-   restent-ils l'axe documentaire pendant que les épics E1-E5 portent les sprints ? Proposition : modules =
-   dossiers, épics = listes dans les dossiers, une tâche portant les deux.
+Trois questions posées, trois réponses nettes. Elles sont écrites ici pour qu'on ne les redemande pas.
 
-Ce qui a été retiré de cette version, avec raison écrite plutôt que silencieusemeusement : le point 4 du 2026-09-21 sur le dépôt
-`easy-apply` introuvable. Ce dépôt n'est pas AliTché, il ne change aucune ligne du contrat ci-dessus, et le
-maintenir ici entretenait l'illusion qu'un projet du portefeuille se décidait au gate 0 d'un autre.
+| # | Question | Réponse retenue | Ce que ça change dans ce charter |
+|---|---|---|---|
+| 1 | OBJ-3 : combien de personnes hors équipe, d'ici quand | **10 avant le 2026-11-30** | La mention « à confirmer » disparaît du tableau des objectifs |
+| 2 | Que fait-on du stock de dette (`backend/`, 23 guides, `node_modules`, lint inerte) | **Assainir au sprint 1, une suppression à la fois**, chacune validée avant exécution | Non-Goal 7 et la contrainte d'hébergement restent écrites telles quelles ; F-18 devient une tâche datée du sprint 1, avec OBJ-1 comme précondition. Aucun `git rm -r` global |
+| 3 | Quel axe porte les sprints : modules M0-M8 ou épics E1-E5 | **Les modules remplacent les épics** | Le §Découpage devient l'autorité de l'arborescence, ClickUp et `docs/modules/` prennent les mêmes codes |
+
+Le troisième emporte un coût qu'il faut regarder avant de signer : **les six épics déjà créées dans ClickUp et
+les 19 tâches poussées sont à re-cartographier**, y compris les dépendances déclarées (T-027 après T-013).
+C'est une après-midi de tracker, pas de code. Elle est inscrite au backlog sous M0, et elle ne se fera pas
+avant qu'OBJ-1 avance.
+
+**Ce qui reste ouvert : la signature elle-même.** Le gate 0 a rendu « à reprendre » le 2026-09-23, et la
+raison la plus probable du flou porte un nom : la version présentée disait où on est, ligne par ligne, et
+laissait le mandat entier sur « le reste des modules à développer puis leurs fonctionnalités » implicite.
+Cette passe y répond — la table « Où va chaque module » nomme pour chaque module ce qu'il saura démontrer, et
+la table D-01 à D-12 met sur la table les douze décisions que le tronc a prises tout seul.
+
+Si le flou vient d'ailleurs, c'est ce qu'il faut me dire, et pas un point de plus à éclaircir : le charter
+fait trois cents lignes, et peut déjà être coupé.
+
+Ce qui reste hors du contrat, avec sa raison écrite : le dépôt `easy-apply` introuvable, listé comme point 4
+le 2026-09-21. Ce dépôt n'est pas AliTché, il ne change aucune ligne du contrat ci-dessus, et le maintenir ici
+entretenait l'illusion qu'un projet du portefeuille se décidait au gate 0 d'un autre.
