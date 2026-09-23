@@ -92,13 +92,17 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   un bandeau à l'écran, avec une conduite à tenir.
 - **Pourquoi maintenant** : ta priorité 0 (« vérifier la sauvegarde des données ») et ton principe 2 (l'utilisateur
   doit comprendre où il en est). C'est aussi le cas le plus fréquent de panne silencieuse du produit : sur les
-  treize fonctions qui écrivent localement, douze avalent l'erreur sans rien dire.
+  treize fonctions qui écrivent localement, douze avalent l'erreur sans rien dire. Le même défaut existe à l'envers
+  de la sauvegarde : le bouton « Réinitialiser mes données » du tableau de bord appelle une suppression à distance
+  dont l'échec est seulement écrit dans la console, et l'écran revient à l'accueil comme si la demande était
+  traitée. Une personne qui nous demande d'effacer son compte n'a donc aucun moyen de savoir si c'est fait.
 - **Comment on saura que c'est fini** : on vide le stockage du navigateur, on remplit le questionnaire, on
   recharge. Le message est apparu, il est compris par la personne qui le voit, et la reprise propose la bonne
-  solution.
+  solution. Et côté effacement : on coupe la connexion à la base en ligne, on clique sur « Réinitialiser mes
+  données », et le produit dit qu'il n'a pas pu — au lieu de faire semblant.
 - **Taille** : trois jours.
-- **Où ça se joue** : `src/utils/storageManager.ts` (les douze captures muettes), `src/App.tsx`,
-  `src/components/ServiceStatusBanner.tsx`.
+- **Où ça se joue** : `src/utils/storageManager.ts` (les douze captures muettes), `src/App.tsx` (ligne 386 pour
+  l'effacement), `src/components/dashboard/Dashboard.tsx`, `src/components/ServiceStatusBanner.tsx`.
 
 ### S1.4 — Prouver qu'un compte ne voit pas les données d'un autre
 
@@ -122,8 +126,9 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 - **Pourquoi maintenant** : ta priorité 0 (« corriger les bugs », « vérifier les états de navigation ») et ton
   principe : une fonctionnalité ne doit pas donner l'impression d'un produit plus grand que le produit.
 - **Comment on saura que c'est fini** : chaque bouton visible mène quelque part ; chaque intitulé décrit ce qu'il
-  ouvre ; le mot « Premium » a disparu, ou une offre payante réelle existe derrière (voir les décisions
-  attendues).
+  ouvre ; le mot « Premium » a disparu de l'écran — décidé le 2026-09-23, la distinction reste dans les données.
+  Reste à trancher sur ce que deviennent les quatre onglets de l'accueil : les relier à des écrans qui existent
+  déjà, ou les retirer.
 - **Taille** : trois jours.
 - **Où ça se joue** : `src/components/home/HomePage.tsx`, `src/components/dashboard/Dashboard.tsx`,
   `src/pages/VerifyEmail.tsx`, `src/components/pathway/PathwayView.tsx`.
@@ -159,16 +164,22 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Où ça se joue** : `src/services/auth.api.ts`, `src/pages/VerifyEmailSent.tsx`, `src/pages/VerifyEmail.tsx`,
   `src/pages/AuthCallback.tsx`.
 
-### S2.2 — Décider ce que deviennent Google et la connexion sans mot de passe
+### S2.2 — Finir la connexion Google, retirer la connexion sans mot de passe
 
-- **Ce que ça change** : soit le visiteur voit un bouton « continuer avec Google » qui fonctionne, soit il n'en
-  est plus jamais question, ni à l'écran ni dans les documents.
-- **Pourquoi maintenant** : les deux existent à moitié dans le code. Une fonctionnalité à moitié construite coûte
-  plus cher qu'une fonctionnalité absente : elle fausse toutes les estimations et toutes les descriptions.
-- **Comment on saura que c'est fini** : une décision écrite, appliquée partout — code, accueil, fichiers de
-  description.
-- **Taille** : une journée après ta décision (voir `docs/ECARTS-PRODUIT-CODE.md`).
-- **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`, `README.md`.
+- **Décision reçue le 2026-09-23** : Google est terminé et affiché, à condition de n'engager aucune dépense ; le
+  lien de connexion sans mot de passe est retiré du code et des documents.
+- **Ce que ça change** : le visiteur voit un bouton « continuer avec Google » qui l'amène vraiment dans son
+  compte. La connexion sans mot de passe disparaît du code, de l'accueil et des fichiers de description.
+- **Pourquoi maintenant** : une fonctionnalité à moitié construite coûte plus cher qu'une fonctionnalité absente —
+  elle fausse les estimations, les descriptions, et maintenant la fiche de présentation du dépôt.
+- **Comment on saura que c'est fini** : un vrai compte Google ouvre AliTché depuis le bouton, une fermeture du
+  navigateur puis une réouverture remettent le candidat dans son parcours, et le mot « magique » n'apparaît plus
+  dans l'application. Plus une ligne ajoutée à la liste des chemins de connexion qui ne sont plus proposés.
+- **Taille** : une journée de mon côté. Deux manipulations sont hors de mon atteinte et sans coût — créer
+  l'identifiant client chez Google, et l'activer dans la console d'authentification avec l'adresse de retour que
+  je prépare. Ces deux écrans sont les tiens.
+- **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`, la page de connexion,
+  `README.md`.
 
 ### S2.3 — Réécrire la fiche d'identité du dépôt, en français simple
 
@@ -372,33 +383,36 @@ la progression actualise, le profil valorise.*
 
 ---
 
-# Sprint 5 — Les premières vraies formations
+# Sprint 5 — Relier les modules à des formations réelles
 
-*Ta priorité 3 : compléter les premiers modules de formation, sans construire immédiatement une immense
-bibliothèque.*
+*Ta priorité 3, telle que tu l'as tranchée le 2026-09-23 : orienter d'abord. Les contenus viendront ensuite,
+proposés par les centres de formation et les universités et référencés par nous. Quant à écrire nous-mêmes des
+modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 
-### S5.1 — Dire ce qu'AliTché héberge, ou le dire autrement
+### S5.1 — Dire à l'écran où se suit la formation, et comment s'y inscrire
 
-- **Ce que ça change** : aujourd'hui, ouvrir un module affiche quatre étapes générées automatiquement à partir de
-  son titre. Aucune leçon, aucun exercice. AliTché annonce un parcours de 12 à 19 semaines sans contenir une heure
-  de cours.
-- **Pourquoi maintenant** : c'est la décision qui conditionne tout le sprint. Deux issues également respectables :
-  de vrais contenus (S5.2), ou un écran qui dit clairement « AliTché t'oriente vers cette formation, elle se suit
-  ailleurs ». Ce qui n'est pas une issue, c'est l'état actuel.
-- **Comment on saura que c'est fini** : une décision écrite, et l'écran aligné dessus.
-- **Taille** : une décision, puis rien.
-- **Où ça se joue** : `src/components/pathway/PathwayView.tsx`, et la question est posée dans
+- **Ce que ça change** : ouvrir un module ne montre plus quatre étapes calculées automatiquement à partir de son
+  titre, comme si AliTché donnait le cours. L'écran dit où cette formation se suit, qui la dispense, et comment
+  on y entre.
+- **Pourquoi maintenant** : c'est la face visible de la décision du 2026-09-23. AliTché annonce aujourd'hui un
+  parcours de 12 à 19 semaines sans contenir une heure de cours, et rien à l'écran ne le dit.
+- **Comment on saura que c'est fini** : sur les 51 modules, plus aucun ne présente des étapes générées comme s'il
+  s'agissait de contenu propre ; chacun renvoie vers un lieu de formation réel ou est retiré de la proposition de
+  parcours.
+- **Taille** : trois jours, dont une partie dépend de la tâche S2.6 (relire le catalogue).
+- **Où ça se joue** : `src/components/pathway/PathwayView.tsx`, `src/data/modules.ts`,
   `docs/ECARTS-PRODUIT-CODE.md`.
 
-### S5.2 — Écrire les six premiers modules utiles
+### S5.2 — Relier chaque module à une formation qui existe
 
-- **Ce que ça change** : six modules avec objectif, contenu, exercices, validation et compétence associée — choisis
-  parce qu'ils débouchent réellement un parcours, pas parce qu'ils remplissent une catégorie.
-- **Pourquoi maintenant** : ta priorité 3 demande de commencer par les contenus nécessaires au parcours actuel.
-- **Comment on saura que c'est fini** : six modules suivis de bout en bout par un vrai candidat, avec une validation
-  qui se voit dans le profil (S4.3).
-- **Taille** : trois semaines de production de contenu, pas de code.
-- **Où ça se joue** : `src/data/modules.ts`, nouveaux fichiers de contenu.
+- **Ce que ça change** : derrière un module du parcours, il y a une école, un centre ou une bourse réels, avec une
+  adresse qui mène à eux. Le candidat qui veut suivre ce module sait où aller.
+- **Pourquoi maintenant** : c'est ce que ton produit sait déjà faire, et il ne le fait qu'à moitié : le catalogue
+  contient 165 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
+- **Comment on saura que c'est fini** : pour les domaines prioritaires, chaque module du parcours affiche au moins
+  une formation réelle, vérifiée ligne à ligne (S2.6), avec son lieu, sa durée et son adresse officielle.
+- **Taille** : une semaine par domaine prioritaire, en travaillant domaine par domaine.
+- **Où ça se joue** : `src/data/modules.ts`, `src/data/opportunities.ts`.
 
 ### S5.3 — Valider une compétence acquise
 
@@ -436,6 +450,7 @@ bibliothèque.*
 | E5 | accessibilité clavier et contrastes | utilisable sans souris et en plein soleil |
 | E6 | une version anglaise de l'accueil | cohérente avec une ambition régionale, une fois la version française irréprochable |
 | E7 | écrire la politique de conservation des données | le produit peut toucher des mineurs : durée de garde, effacement à demande, sortie d'un mineur |
+| E8 | recevoir les contenus proposés par les centres et universités, et les référencer | deuxième temps de ta décision du 2026-09-23. Deux questions à trancher avant d'écrire une ligne : comment un établissement dépose un contenu, et qu'est-ce qui le rend digne d'être référencé chez nous |
 
 # Plus tard — utile à l'évolution
 
@@ -476,12 +491,28 @@ Ton chapitre 19, complété par ce que le produit a déjà commencé à promettr
 
 # Ce que ce backlog attend de toi
 
-Neuf points où le produit et ton document de cadrage ne disent pas la même chose sont listés dans
-`docs/ECARTS-PRODUIT-CODE.md`. Deux bloquent réellement la suite :
+**Reçu le 2026-09-23**, et déjà écrit dans les tâches concernées :
 
-- **S5.1** — est-ce qu'AliTché héberge des cours, ou est-ce qu'il oriente vers des cours suivis ailleurs ? Tout le
-  sprint 5 dépend de la réponse.
-- **S2.2 et l'étiquette « Premium »** — ce qui est payant, ce qui ne l'est pas, et ce qu'on affiche en attendant.
+- **S5.1** — orienter d'abord ; ensuite les centres et universités proposeront leurs contenus, référencés par
+  nous ; produire nous-mêmes des modules vient quand on en aura la capacité.
+- **S1.5 et « Premium »** — l'étiquette est retirée de l'écran, la distinction reste dans les données.
+- **S2.2** — la connexion Google est terminée et affichée, sans dépense ; le lien de connexion sans mot de passe
+  est retiré.
+- **S1.6** — cinq personnes hors de l'équipe cette semaine. Le protocole est dans `docs/TESTS-USAGERS.md`.
+
+**Reste à me dire** :
+
+- Les quatre onglets de l'accueil (« Orientation », « Métiers », « Écoles », « Mentors ») ne mènent nulle part
+  aujourd'hui. Est-ce qu'on les relie aux écrans qui existent déjà, ou est-ce qu'on les retire de la barre de
+  navigation ?
+- Un feu vert pour pousser les commits de documentation sur le dépôt en ligne : ils sont écrits, ils sont
+  locaux, rien de ce qui touche à l'application n'est concerné.
+- Un feu vert pour ClickUp, ou le maintien de l'organisation actuelle jusqu'à la fin du sprint 1.
+
+**Ce que je ne te redemanderai pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
+(les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,
+les compétences, l'état du catalogue) se règlent en travaillant. Je les traite comme des évidences — aligner
+le texte sur ce que le produit fait vraiment — sauf avis contraire de ta part.
 
 # Et ClickUp
 

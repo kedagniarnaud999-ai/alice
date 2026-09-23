@@ -4,8 +4,8 @@
 dans le code le jour même, pas déduits d'un souvenir ni d'un ancien document.*
 
 Ce fichier n'annonce aucune correction. Il pose neuf constats en face de neuf phrases de ton document de
-cadrage (`docs/CADRAGE-PRODUIT.md`), et attend neuf réponses. Une réponse tient en une ligne, à écrire à la
-place de « Ta décision ».
+cadrage (`docs/CADRAGE-PRODUIT.md`). Quatre portent une réponse depuis le 2026-09-23 — les points 2, 4, 5
+et 6. Les cinq autres attendent la leur, à une ligne chacun, à écrire à la place de « Ta décision ».
 
 Trois réponses reviennent pour presque tous les points :
 
@@ -50,7 +50,9 @@ bout sans qu'on le guide.
 ne sont pas de l'équipe, et ces cinq récits sont écrits ». C'est la tâche S1.6, et c'est ce qui ouvre le
 sprint 3.
 
-**Ta décision.**
+**Ta décision.** *Reçue le 2026-09-23 : cinq personnes hors de l'équipe, cette semaine.* Le protocole
+d'observation et la fiche de compte rendu sont prêts dans `docs/TESTS-USAGERS.md` : cinq essais, cinq fiches,
+et la règle qu'aucune retouche du parcours n'est décidée sans la fiche en face. → tâches S1.6 et S3.7.
 
 ---
 
@@ -85,7 +87,8 @@ données pour ne pas avoir à la reconstruire le jour où tu décides ce qui est
 « Premium » sans prix en déduit soit que le site est bâclé, soit qu'il va devoir payer pour ce qu'on lui a
 annoncé comme un outil d'orientation. Les deux coûtent plus cher que l'étiquette.
 
-**Ta décision.**
+**Ta décision.** *Reçue le 2026-09-23 : l'étiquette est retirée de l'affichage. La distinction reste dans les
+données, elle ne se voit plus.* → tâche S1.5.
 
 ---
 
@@ -106,7 +109,13 @@ devient « relier chaque module à une formation qui existe déjà quelque part,
 et de pédagogie, pas de code, et qui demande un auteur. La première question de ta règle du chapitre 20 —
 quel problème utilisateur cela résout-il ? — fait pencher la balance vers « orienter » d'abord.
 
-**Ta décision.**
+**Ta décision.** *Reçue le 2026-09-23, en trois temps : d'abord orienter — AliTché renvoie vers des formations
+qui existent ailleurs. Ensuite, les centres de formation et les universités pourront proposer leurs contenus,
+qu'AliTché référence. Et à une étape où l'on en aura la capacité, on pourra produire nous-mêmes des modules
+pour répondre à un besoin constaté.* Le sprint 5 se lit donc ainsi : relier, référencer, et ne rien écrire
+avant d'avoir vu un besoin. Le deuxième temps (les contenus fournis par les établissements) ouvre un travail
+nouveau, qui n'est pas encore dans le backlog : il faudra dire comment un établissement dépose un contenu, et
+ce qui le rend digne d'être référencé. → tâche S5.1, et une tâche à créer.
 
 ---
 
@@ -125,7 +134,13 @@ une fonctionnalité du produit.
 page, ce qui milite pour la finir. Lien de connexion sans mot de passe : le retirer, il fait doublon avec le
 mot de passe sans rien apporter tant qu'on n'a pas mesuré combien de gens l'utiliseraient.
 
-**Ta décision.**
+**Ta décision.** *Reçue le 2026-09-23 : le lien de connexion sans mot de passe est retiré. La connexion Google
+est terminée et affichée, à condition de n'engager aucune dépense — elle était restée là parce que la
+configuration n'avait pas pu être menée à bout.* C'est gratuite des deux côtés, chez Google comme dans le
+service d'authentification utilisé. Mais les deux manipulations qui ferment ce point se font hors du dépôt,
+dans deux consoles en ligne : créer l'identifiant client chez Google, et l'activer côté authentification avec
+l'adresse de retour. Ce que je peux tenir : préparer les valeurs exactes à coller, l'adresse de retour, et
+l'écran qui affiche le bouton. Ce que tu tiens : les deux consoles. → tâche S2.2.
 
 ---
 
@@ -191,17 +206,18 @@ non vérifié — ce qui est l'inverse de promettre, et ne coûte rien.
 
 ## Où chaque réponse se lit dans le travail à faire
 
-| Point | De quoi il parle | Bloque ? | Tâche concernée |
-|---|---|---|---|
-| 1 | les six dimensions du questionnaire | non | S2.5 |
-| 2 | « le parcours est presque finalisé » | oui, mais par une preuve, pas par une décision | S1.6, S3.7 |
-| 3 | les briques de formation déjà développées | non, l'affichage se corrige | S1.5 |
-| 4 | l'étiquette « Premium » | non, l'affichage se retire | S1.5 |
-| 5 | héberger des cours ou orienter vers des cours | **oui — tout le sprint 5 en dépend** | S5.1 |
-| 6 | Google et le lien de connexion | **oui — c'est ce qu'on annonce aux visiteurs** | S2.2 |
-| 7 | la vérification de l'adresse e-mail | non, un chemin à choisir | S2.1 |
-| 8 | les compétences comme élément central | non, mais ça décide du sprint 4 | S4.4 |
-| 9 | ce que le dépôt affirme, et l'état du catalogue | non | S2.3, S2.4, S2.6 |
+| Point | De quoi il parle | Bloque ? | Réponse | Tâche concernée |
+|---|---|---|---|---|
+| 1 | les six dimensions du questionnaire | non | en attente | S2.5 |
+| 2 | « le parcours est presque finalisé » | oui, par une preuve | reçue : cinq personnes cette semaine | S1.6, S3.7 |
+| 3 | les briques de formation déjà développées | non | en attente | S1.5 |
+| 4 | l'étiquette « Premium » | non | reçue : on la retire | S1.5 |
+| 5 | héberger des cours ou orienter vers des cours | **oui — tout le sprint 5 en dépend** | reçue : orienter, puis référencer, puis produire | S5.1 |
+| 6 | Google et le lien de connexion | **oui — c'est ce qu'on annonce aux visiteurs** | reçue : Google à finir, lien magique à retirer | S2.2 |
+| 7 | la vérification de l'adresse e-mail | non | en attente | S2.1 |
+| 8 | les compétences comme élément central | non, mais ça décide du sprint 4 | en attente | S4.4 |
+| 9 | ce que le dépôt affirme, et l'état du catalogue | non | en attente | S2.3, S2.4, S2.6 |
 
-Deux réponses suffisent à débloquer le planning : le point 5 et le point 6. Les sept autres se traitent en
-travaillant.
+Les deux réponses qui bloquaient le planning sont tombées. Restent cinq points non tranchés : le 1 se règle en
+écrivant la correspondance, les 3, 7, 8 et 9 se règlent en travaillant, et je les traite comme des évidences
+sauf avis contraire de ta part.
