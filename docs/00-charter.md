@@ -214,7 +214,7 @@ front, back et donnée cohabitent dans le même module.
 | **M1** | Compte & session | Un inconnu s'inscrit, reçoit un vrai e-mail, se reconnecte six jours plus tard, et ses données ne se lisent pas chez le voisin | F-06, F-10 | F-16 · T-015, T-018, T-025 · D-01, D-02, D-03 |
 | **M2** | Questionnaire | 31 questions tiennent, un barème qui change ne jette plus les profils, et ce qu'un candidat a répondu reste relisible | F-01 | T-024 · D-09 |
 | **M3** | Moteur de recommandation | Deux profils opposés ne tombent pas sur le même premier domaine, et chaque fiche reste atteignable avec une marge mesurée | F-02, F-09 | T-008, T-021 |
-| **M4** | Catalogue (donnée) | Chaque métier affiché renvoie à une école qui existe, vérifiée ligne à ligne, avec son socle et ses formations complémentaires | F-04 | F-05 · D-10 · **et 4 tâches de catalogue non encore versées au backlog** |
+| **M4** | Catalogue (donnée) | Chaque métier affiché renvoie à une école qui existe, vérifiée ligne à ligne, avec son socle et ses formations complémentaires | F-04 | F-05 · D-10 · **et 6 tâches de catalogue non encore versées au backlog** |
 | **M5** | Ciblage & parcours | Le parcours ne se recommande plus seulement : il s'ouvre, une leçon s'y lit, et rien ne promet un paiement qui n'existe pas | F-07, F-08 | F-14 · T-026, T-027 · D-04 |
 | **M6** | Restitution | Neuf écrans, neuf URL : on rouvre l'application trois jours après à l'étape atteinte, et un lien partagé rouvre un profil | F-03, F-11, F-12 | F-13 · T-010, T-013, T-014, BUG-02 · D-12 |
 | **M7** | Surface publique | La vitrine ne promet plus un produit plus grand que le produit, et elle s'affiche sur une connexion 3G | — | F-17 · D-06, D-07 · alléger le JS initial (214 kB gzip) |
