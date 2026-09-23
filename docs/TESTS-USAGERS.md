@@ -4,7 +4,7 @@
 
 ## À quoi ça sert
 
-AliTché a été essayé des centaines de fois par la personne qui l'a construit. Zéro fois par quelqu'un d'autre.
+AliTché a été essayé des centaines de fois par moi, qui l'ai construit. Zéro fois par quelqu'un d'autre.
 Tant qu'on n'a pas vu cinq personnes réelles traverser le parcours, on ne fluidifie que ce qu'on imagine.
 
 Ce document sert à transformer cinq essais en cinq récits comparables, puis en décisions. Il n'y a pas de
@@ -21,23 +21,24 @@ bonne ou mauvaise réponse à collecter : un candidat qui bloque nous apprend pl
 - **Cinq personnes qui ne touchent pas au projet.** Pas un développeur, pas quelqu'un qui a vu AliTché avant.
   Idéalement : un élève de terminale ou un parent qui l'oriente, un jeune diplômé en recherche, une personne en
   poste qui songe à évoluer, une personne en reconversion, quelqu'un qui cherche une formation. Ce sont les
-  quatre publics de ton document, plus un.
+  quatre publics de mon document, plus un.
 - **Leur propre téléphone.** C'est le point le plus important. AliTché est pensé pour un candidat qui est seul
   devant son écran, avec ses questions à lui.
 - **Une connexion internet normale.** Si la personne est en données mobiles, tant mieux : c'est le cas réel.
-- **Quarante minutes**, au calme, sans que tu replies aux questions pendant qu'elle cherche.
-- **Aucun compte créé à l'avance.** La personne crée son compte elle-même, devant toi, avec sa vraie adresse.
+- **Quarante minutes**, au calme, sans répondre aux questions pendant qu'elle cherche.
+- **Aucun compte créé à l'avance.** La personne crée son compte elle-même, devant moi, avec sa vraie adresse.
 - **L'adresse du site en ligne**, pas une version de travail. Ce qu'on teste, c'est ce qu'un candidat verrait.
 
 ## Les consignes à donner à la personne, avant de commencer
 
-Dis-lui ceci, mot pour mot si tu veux :
+À dire tel quel, mot pour mot si on veut :
 
 > « Ce n'est pas toi qu'on teste, c'est le site. Ne cherche pas à bien faire. Dis à voix haute ce que tu
 > regardes, ce que tu cherches, ce que tu ne trouves pas. Si tu bloques, reste bloqué un moment : j'ai besoin
 > de voir où. Si tu veux abandonner, dis-le moi avant de le faire. »
 
-Ensuite tu ne parles plus. Tu ne montres rien du doigt. Tu ne réponds à aucune question du type « je clique où ? ».
+Ensuite, plus rien : on ne parle pas, on ne montre rien du doigt, on ne répond à aucune question du type
+« je clique où ? ».
 Si la personne insiste au bout d'une minute de silence, note la question qu'elle a posée — c'est une information
 sur l'écran, pas sur la personne — et guide-la vers ce qu'elle n'aurait pas dû avoir à demander.
 
@@ -109,12 +110,12 @@ C'est la règle, et c'est ce qui donne leur valeur aux cinq fiches :
 - **Aucune retouche du parcours n'est décidée sans une fiche en face.** Une impression ne suffit pas.
 - **Trois personnes sur cinq bloquées au même endroit** = tâche bloquante du sprint en cours, traitée avant
   d'ajouter quoi que ce soit d'autre.
-- **Cinq personnes qui terminent sans aide** = le parcours est prouvé, et la priorité 1 de ton document est
+- **Cinq personnes qui terminent sans aide** = le parcours est prouvé, et la priorité 1 de mon document est
   atteinte. On peut alors enchaîner sur les sprints 4 et 5 sans y revenir.
 - **Moins de trois fiches reçues** = on ne conclut rien. Un essai isolé raconte une personne, pas un produit.
 
-Ce qu'on ne fera pas : conclure qu'AliTché marche parce que la démonstration est fluide entre nos mains. Ce
-travail-là est fait, il n'apprend plus rien.
+Ce qu'on ne fera pas : conclure qu'AliTché marche parce que la démonstration est fluide entre les mains de
+l'équipe. Ce travail-là est fait, il n'apprend plus rien.
 
 ## Le compte qui reste en ligne
 

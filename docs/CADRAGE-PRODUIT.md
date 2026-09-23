@@ -1,8 +1,8 @@
-<!-- NOTE DE DEPOT (ajoutee le 2026-09-23, texte du fondateur conserve integralement)
-     Document remis par le fondateur le 2026-09-23. Il fait autorite : c'est la reference produit
-     principale d'AliTche, et la source du backlog (docs/BACKLOG.md). Tout document anterieur qui le
-     contredit est range dans docs/hors-usage-2026-09-23/.
-     Les points ou le produit reel ne coincide pas avec ce texte sont listes, sans les corriger ici,
+<!-- NOTE DE DÉPÔT (ajoutée le 2026-09-23 ; mon texte, conservé intégralement en dessous)
+     Le document que j'ai remis le 2026-09-23. Il fait autorité : c'est la référence produit
+     principale d'AliTché, et la source du backlog (docs/BACKLOG.md). Tout document antérieur qui le
+     contredit est rangé dans docs/hors-usage-2026-09-23/.
+     Les points où le produit réel ne coïncide pas avec ce texte sont listés, sans les corriger ici,
      dans docs/ECARTS-PRODUIT-CODE.md.
 -->
 

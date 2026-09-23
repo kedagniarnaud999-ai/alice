@@ -1,12 +1,15 @@
 # AliTché — le travail à faire
 
-**Document de référence :** `docs/CADRAGE-PRODUIT.md`, remis par le fondateur le 2026-09-23.
+**Document de référence :** `docs/CADRAGE-PRODUIT.md`, que j'ai écrit le 2026-09-23.
 Ce backlog en est la déclinaison. Il remplace tout ce qui a été écrit avant : l'ancienne documentation est
 rangée dans `docs/hors-usage-2026-09-23/`, rien n'a été supprimé.
 
-**Où lire quoi.** `docs/CADRAGE-PRODUIT.md` : ce qu'AliTché doit être, écrit par le fondateur. Ce fichier : le
-travail à faire, dans l'ordre. `docs/ECARTS-PRODUIT-CODE.md` : les neuf points où les deux ne disent pas la
-même chose, et qui attendent une réponse. Trois documents plus anciens que le cadrage sont restés en place
+**Où lire quoi.** `docs/CADRAGE-PRODUIT.md` : ce qu'AliTché doit être, tel que je l'ai écrit. Ce fichier : le
+travail à faire, dans l'ordre. `docs/MODULES.md` : les dix modules de mon chapitre 7, fonctionnalité par
+fonctionnalité, avec pour chacune son état réel lu dans le code — développé, engagé, ou absent. C'est cette liste
+que le miroir ClickUp doit reproduire, un dossier par module. `docs/ECARTS-PRODUIT-CODE.md` : les neuf points où les
+deux ne disent pas la même chose, et qui attendent une réponse. Trois documents plus anciens que le cadrage sont
+restés en place
 (`Ali_Ce_Product_Overview_Public.md`, `PRD_Ali_Ce_Private.md`, `PRD_Ali_Ce_Private.html`) : ils sont conservés
 comme traces, et en cas de désaccord avec le cadrage, c'est le cadrage qui a raison.
 
@@ -22,7 +25,7 @@ Chaque tâche dit cinq choses, en français :
 
 Une tâche porte un numéro simple : `S1.3` = sprint 1, tâche 3.
 
-## Les niveaux, tels que ton document les définit
+## Les niveaux, tels que je les définis
 
 | Niveau | Sens |
 |---|---|
@@ -34,7 +37,7 @@ Une tâche porte un numéro simple : `S1.3` = sprint 1, tâche 3.
 
 ## La règle « terminé »
 
-Telle que ton document la pose, et elle s'applique à toutes les tâches de ce fichier :
+Je la pose ainsi, et elle s'applique à toutes les tâches de ce fichier :
 
 une fonctionnalité n'est pas finie parce que le code compile. Elle est finie quand elle fonctionne, qu'elle est
 cohérente avec le parcours, qu'elle est utilisable **sur ordinateur et sur téléphone**, qu'elle affiche les
@@ -43,31 +46,31 @@ quoi, qu'elle ne casse rien de ce qui existait, et qu'elle ressemble au reste d'
 
 ## La règle « avant de développer »
 
-Les huit questions de ton document, en plus court : quel problème, pour qui, à quelle étape, avec quelle donnée,
+Les huit questions de mon document, en plus court : quel problème, pour qui, à quelle étape, avec quelle donnée,
 quelle donnée produite, est-ce nécessaire maintenant, est-ce que ça n'existe pas déjà, est-ce que ça améliore
 réellement le produit. Si une réponse manque : **on ne code pas, on classe au Parking et on demande.**
 
 ## Ce qui existe aujourd'hui, en une phrase mesurée
 
-AliTché est en ligne et fonctionne de bout en bout sur l'ordinateur du fondateur : un visiteur peut découvrir,
+AliTché est en ligne et fonctionne de bout en bout sur ma machine : un visiteur peut découvrir,
 s'inscrire, répondre à **31 questions**, voir un classement de ses **11 domaines de carrière** possibles parmi
 **45 métiers documentés**, choisir une direction et recevoir un parcours bâti sur **51 modules**, avec **165
 écoles, formations et bourses** référencées. Le produit n'a encore été **testé par personne hors de l'équipe**,
 et rien de ce parcours n'a été **vu rendu à l'écran par un utilisateur réel**. C'est pour ça que la priorité 0
-de ton document — stabiliser — est aussi la première du backlog.
+de mon document — stabiliser — est aussi la première du backlog.
 
 ---
 
 # Sprint 1 — Stabiliser
 
-*Ta priorité 0 : « avant d'ajouter de nouvelles fonctionnalités ».*
+*Ma priorité 0 : « avant d'ajouter de nouvelles fonctionnalités ».*
 Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréablement.
 
 ### S1.1 — Voir chaque écran dans ses trois états, sur ordinateur et sur téléphone
 
 - **Ce que ça change** : un candidat qui arrive sur un écran vide, lent ou en panne ne voit plus un blanc ou une
   icône qui tourne sans explication. Il voit pourquoi, et quoi faire.
-- **Pourquoi maintenant** : ta priorité 0 demande de vérifier les états vides, les erreurs et la version mobile.
+- **Pourquoi maintenant** : ma priorité 0 demande de vérifier les états vides, les erreurs et la version mobile.
 - **Comment on saura que c'est fini** : les neuf écrans après connexion, plus l'accueil public, plus le test sans
   compte. Pour chacun : une capture à l'écran vide, une au chargement, une à l'erreur, sur ordinateur et sur
   téléphone. Les captures sont rangées dans `docs/tests/` avec la date.
@@ -78,7 +81,7 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 
 - **Ce que ça change** : plus de message incompréhensible, plus de bouton qui reste grisé sans raison visible,
   plus de mot de passe accepté ou refusé sans que la règle soit dite.
-- **Pourquoi maintenant** : ta priorité 0 cite les formulaires et la sauvegarde des données.
+- **Pourquoi maintenant** : ma priorité 0 cite les formulaires et la sauvegarde des données.
 - **Comment on saura que c'est fini** : inscription, connexion, mot de passe oublié, réinitialisation, profil,
   choix de direction. Pour chacun : un champ vide, un champ faux, un champ trop long, un double envoi. Quatre
   cas notés quelque part, et le message affiché est lisible par quelqu'un qui n'a pas fait d'informatique.
@@ -90,12 +93,12 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 - **Ce que ça change** : aujourd'hui, quand une sauvegarde échoue, AliTché ne le dit pas et le candidat peut
   croire que ses réponses sont perdues — ou les croire sauvegardées alors qu'elles ne sont pas parties. Après :
   un bandeau à l'écran, avec une conduite à tenir.
-- **Pourquoi maintenant** : ta priorité 0 (« vérifier la sauvegarde des données ») et ton principe 2 (l'utilisateur
+- **Pourquoi maintenant** : ma priorité 0 (« vérifier la sauvegarde des données ») et mon principe 2 (l'utilisateur
   doit comprendre où il en est). C'est aussi le cas le plus fréquent de panne silencieuse du produit : sur les
   treize fonctions qui écrivent localement, douze avalent l'erreur sans rien dire. Le même défaut existe à l'envers
   de la sauvegarde : le bouton « Réinitialiser mes données » du tableau de bord appelle une suppression à distance
   dont l'échec est seulement écrit dans la console, et l'écran revient à l'accueil comme si la demande était
-  traitée. Une personne qui nous demande d'effacer son compte n'a donc aucun moyen de savoir si c'est fait.
+  traitée. Une personne qui demande l'effacement de son compte n'a donc aucun moyen de savoir si c'est fait.
 - **Comment on saura que c'est fini** : on vide le stockage du navigateur, on remplit le questionnaire, on
   recharge. Le message est apparu, il est compris par la personne qui le voit, et la reprise propose la bonne
   solution. Et côté effacement : on coupe la connexion à la base en ligne, on clique sur « Réinitialiser mes
@@ -103,12 +106,20 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 - **Taille** : trois jours.
 - **Où ça se joue** : `src/utils/storageManager.ts` (les douze captures muettes), `src/App.tsx` (ligne 386 pour
   l'effacement), `src/components/dashboard/Dashboard.tsx`, `src/components/ServiceStatusBanner.tsx`.
+- **Écrit le 2026-09-23 au soir, à voir à l'écran.** Les douze captures muettes parlent : chacune affiche un message
+  à l'écran avec la reprise qui va avec. Le bouton « Réinitialiser mes données » ne fait plus semblant — si le
+  serveur n'a rien reçu, rien n'est effacé sur l'appareil, le message le dit, et le bouton reste disponible pour
+  relancer. Trois silences de plus sont sortis de la console, parce qu'ils mentaient de la même façon : l'envoi de
+  la direction choisie, l'envoi de l'avancement d'un module, et le repli sur la copie locale du profil quand le
+  compte n'a pas répondu. Les textes sont écrits au « vous » du produit — il avait cent soixante-sept formes de
+  « vous » et aucune de « tu » avant que je commence. Ce que les contrôles automatiques ne disent pas : que le
+  message se voit et se comprend. Les deux scènes décrites ci-dessus restent à jouer à la main.
 
 ### S1.4 — Prouver qu'un compte ne voit pas les données d'un autre
 
 - **Ce que ça change** : on peut dire, avec deux comptes réels et des captures, que les réponses, le profil et la
   progression de l'un ne sont pas lisibles par l'autre.
-- **Pourquoi maintenant** : ta priorité 0 (« vérifier les données »), ton chapitre sur la confidentialité, et une
+- **Pourquoi maintenant** : ma priorité 0 (« vérifier les données »), mon chapitre sur la confidentialité, et une
   lecture qui n'a jamais été contrôlée : la liste de progression est demandée sans filtre explicite côté
   navigateur, donc tout repose sur un réglage de la base en ligne, réglage que personne n'a vérifié à ce jour.
 - **Comment on saura que c'est fini** : deux comptes de test, deux appareils. Ce que le second voit est noté, et
@@ -119,24 +130,25 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 ### S1.5 — Retirer les fausses promesses de l'interface
 
 - **Ce que ça change** : quatre boutons du menu de l'accueil (« Orientation », « Métiers », « Écoles »,
-  « Mentors ») ne font rien du tout aujourd'hui : cliquer ne produit aucun effet. Une carte du tableau de bord
+  « Mentors ») n'avaient aucune action : un clic ne produisait rien. Une carte du tableau de bord
   s'appelle « Voir mes résultats détaillés » et ouvre une autre page. Un écran « Lien traité » existe alors que le
   vrai chemin d'inscription ne l'emprunte jamais. Une étiquette « Premium » s'affiche sur des modules payants,
   alors qu'AliTché ne fait payer quoi que ce soit. Après la tâche : plus aucun de ces quatre écarts.
-- **Pourquoi maintenant** : ta priorité 0 (« corriger les bugs », « vérifier les états de navigation ») et ton
+- **Pourquoi maintenant** : ma priorité 0 (« corriger les bugs », « vérifier les états de navigation ») et mon
   principe : une fonctionnalité ne doit pas donner l'impression d'un produit plus grand que le produit.
 - **Comment on saura que c'est fini** : chaque bouton visible mène quelque part ; chaque intitulé décrit ce qu'il
   ouvre ; le mot « Premium » a disparu de l'écran — décidé le 2026-09-23, la distinction reste dans les données.
-  Reste à trancher sur ce que deviennent les quatre onglets de l'accueil : les relier à des écrans qui existent
-  déjà, ou les retirer.
+  Les quatre onglets de l'accueil sont retirés depuis le 2026-09-23 ; restent à écrire les pages des deux
+  groupes de pied de page qui subsistent, « Support » et « Légal ».
 - **Avancement (23/09/2026)** : les étiquettes de prix sont retirées de l'écran — la pastille « Gratuit » /
   « Premium » de la liste du parcours, la même pastille sur la fiche d'un module, la mention « gratuit /
   payant » de la fiche d'un domaine, et le cadenas de la carte de module (ouvert pour les gratuits, fermé pour
   les payants) : le mot avait disparu, le symbole était resté. Les six modules concernés gardent l'information
-  dans leurs données : rien n'est effacé, rien n'est annoncé. Sur les quatre fausses promesses listées ici, il
-  en reste trois : les quatre onglets morts de l'accueil (à toi de trancher), la carte du tableau de bord qui
-  ouvre une autre page qu'elle ne le dit, et l'écran « Lien traité » que le vrai chemin d'inscription
-  n'emprunte jamais.
+  dans leurs données : rien n'est effacé, rien n'est annoncé. Les quatre onglets morts de l'accueil, repris dans
+  le pied de page sous « Plateforme », sont retirés depuis le 2026-09-23 (commit `6005e19`) ; les groupes
+  « Support » et « Légal » du pied de page restent, leurs pages sont à écrire. Sur les quatre fausses promesses
+  listées ici, il en reste deux : la carte du tableau de bord qui ouvre une autre page qu'elle ne le dit, et
+  l'écran « Lien traité » que le vrai chemin d'inscription n'emprunte jamais.
 - **Taille** : trois jours.
 - **Où ça se joue** : `src/components/home/HomePage.tsx`, `src/components/dashboard/Dashboard.tsx`,
   `src/pages/VerifyEmail.tsx`, `src/components/pathway/PathwayView.tsx`,
@@ -147,7 +159,7 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 - **Ce que ça change** : on remplace « ça marche sur ma machine » par une trace. Cinq parcours, cinq personnes
   différentes de l'équipe si possible (un lycéen, un diplômé, un adulte en reconversion, quelqu'un avec peu de
   connexion, quelqu'un sur téléphone).
-- **Pourquoi maintenant** : c'est ta phase B, et elle conditionne tout le reste : tu écris qu'il ne faut pas
+- **Pourquoi maintenant** : c'est ma phase B, et elle conditionne tout le reste : j'écris qu'il ne faut pas
   ajouter massivement de fonctionnalités avant d'avoir observé les utilisateurs.
 - **Comment on saura que c'est fini** : cinq comptes rendus écrits, avec les endroits où la personne a hésité,
   s'est arrêtée, ou a mal compris une recommandation. Chaque blocage repéré devient une tâche du sprint suivant.
@@ -158,7 +170,7 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
 
 # Sprint 2 — Corriger les incohérences
 
-*Ta priorité 0, deuxième point : « corriger les incohérences ».*
+*Ma priorité 0, deuxième point : « corriger les incohérences ».*
 Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet disent la même chose.
 
 ### S2.1 — Un seul chemin pour vérifier son adresse e-mail
@@ -175,7 +187,7 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 
 ### S2.2 — Finir la connexion Google, retirer la connexion sans mot de passe
 
-- **Décision reçue le 2026-09-23** : Google est terminé et affiché, à condition de n'engager aucune dépense ; le
+- **Décision prise le 2026-09-23** : Google est terminé et affiché, à condition de n'engager aucune dépense ; le
   lien de connexion sans mot de passe est retiré du code et des documents.
 - **Ce que ça change** : le visiteur voit un bouton « continuer avec Google » qui l'amène vraiment dans son
   compte. La connexion sans mot de passe disparaît du code, de l'accueil et des fichiers de description.
@@ -184,8 +196,8 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Comment on saura que c'est fini** : un vrai compte Google ouvre AliTché depuis le bouton, une fermeture du
   navigateur puis une réouverture remettent le candidat dans son parcours, et le mot « magique » n'apparaît plus
   dans l'application. Plus une ligne ajoutée à la liste des chemins de connexion qui ne sont plus proposés.
-- **Taille** : une journée de mon côté, et elle est faite. Les deux manipulations qui restent sont sur tes écrans,
-  elles ne coûtent rien.
+- **Taille** : une journée de travail technique, et elle est faite. Les deux manipulations qui restent se font dans deux
+  consoles en ligne, chez Google et chez le service d'authentification ; elles ne coûtent rien.
 - **Ce qui est fait dans le dépôt (23/09/2026)** : le bouton « Continuer avec Google » apparaît sur l'écran de
   connexion, « S'inscrire avec Google » sur l'écran de création de compte, et les deux reviennent par le chemin
   `/auth/callback` qui existait déjà dans le code sans jamais être emprunté. La fonction qui envoyait un lien de
@@ -199,14 +211,13 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   l'identifiant client et la clé secrète donnés par Google, puis activer le fournisseur. Juste à côté, dans
   Authentication → « URL Configuration » : « Site URL » = `https://ali-ce-i6it.vercel.app`, et dans « Redirect
   URLs » ajouter `https://ali-ce-i6it.vercel.app/auth/callback` ainsi que `http://localhost:5173/auth/callback`
-  pour travailler sur ta machine. L'adresse `pldbjuprxqmuxwqtjgnq.supabase.co` a été relue aujourd'hui sur le site
+  pour travailler sur la machine de développement. L'adresse `pldbjuprxqmuxwqtjgnq.supabase.co` a été relue aujourd'hui sur le site
   en ligne ; si le projet venait à être recréé, elle change, et c'est elle qu'il faut recopier mot pour mot chez
   Google.
 - **À savoir avant les cinq tests de la semaine** : tant que les deux réglages ci-dessus ne sont pas faits, le
-  bouton est visible et un clic mène sur une page d'erreur de Google. Ce n'est pas cassé de mon côté, c'est
-  inachevé du leur. Deux issues possibles : tu fais les deux réglages avant de lancer les tests — c'est une
-  dizaine de minutes —, ou tu me dis de retirer le bouton jusqu'à ce que ce soit réglé, et c'est une ligne à
-  enlever.
+  bouton est visible et un clic mène sur une page d'erreur de Google. Rien n'est cassé dans le dépôt, c'est inachevé dans les
+  consoles. Deux issues possibles : faire les deux réglages avant de lancer les tests — c'est une dizaine de
+  minutes —, ou faire retirer le bouton jusqu'à ce qu'ils soient faits, et c'est une ligne à enlever.
 - **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`,
   `src/components/auth/GoogleAuthButton.tsx`, `src/components/auth/LoginForm.tsx`,
   `src/components/auth/RegisterForm.tsx`, `src/pages/AuthCallback.tsx`, `README.md` (touche à S2.3).
@@ -228,7 +239,7 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 
 - **Ce que ça change** : le projet pèse ce qu'il pèse vraiment. Aujourd'hui, le suivi de versions enregistre
   10 723 fichiers, dont 10 579 de bibliothèques et 25 d'un serveur abandonné que rien n'appelle.
-- **Pourquoi maintenant** : ton principe 7 (modularité) et le bon sens : on ne peut pas faire évoluer
+- **Pourquoi maintenant** : mon principe 7 (modularité) et le bon sens : on ne peut pas faire évoluer
   proprement ce qu'on ne peut pas relire.
 - **Comment on saura que c'est fini** : moins de 300 fichiers suivis ; le serveur abandonné est soit documenté
   comme abandonné, soit retiré, à une condition : rien de ce qui fonctionne aujourd'hui ne disparaît.
@@ -262,7 +273,7 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 
 # Sprint 3 — Rendre le parcours fluide
 
-*Ta priorité 1 : inscrire → profil → orientation → résultats → recommandations → parcours → formation →
+*Ma priorité 1 : inscrire → profil → orientation → résultats → recommandations → parcours → formation →
 progression, sans avoir l'impression de passer d'une application à l'autre.*
 Ce sprint ne démarre pas tant que les cinq parcours du sprint 1 ne sont pas racontés : on fluidifie ce que les gens
 ont réellement essayé, pas ce qu'on imagine.
@@ -282,7 +293,7 @@ ont réellement essayé, pas ce qu'on imagine.
 
 - **Ce que ça change** : un candidat qui a commencé le test sur le téléphone d'un cousin le reprend chez lui, à la
   question où il était, sans tout refaire.
-- **Pourquoi maintenant** : ton étape 7 suppose que le candidat peut revenir. La reprise existe pour le test,
+- **Pourquoi maintenant** : mon étape 7 suppose que le candidat peut revenir. La reprise existe pour le test,
   jamais vue rendue ; elle n'existe pas pour le parcours.
 - **Comment on saura que c'est fini** : on ferme à une étape, on rouvre trois jours plus tard, on retombe dessus.
   Sur un autre appareil, avec le même compte, idem.
@@ -293,7 +304,7 @@ ont réellement essayé, pas ce qu'on imagine.
 
 - **Ce que ça change** : après l'inscription, le candidat voit une étape courte où il dit qui il est — situation,
   âge, niveau, pays, ce qu'il vise — et le test part de là.
-- **Pourquoi maintenant** : ton parcours compte une étape « profil initial » avant l'orientation. Aujourd'hui,
+- **Pourquoi maintenant** : mon parcours compte une étape « profil initial » avant l'orientation. Aujourd'hui,
   après l'inscription, on entre directement dans le questionnaire, et la situation de départ n'est que la première
   question du test.
 - **Comment on saura que c'est fini** : l'étape existe, elle est courte (cinq informations au plus), elle reste
@@ -306,10 +317,10 @@ ont réellement essayé, pas ce qu'on imagine.
 
 - **Ce que ça change** : au lieu de « nous vous recommandons ce domaine », AliTché dit « ce domaine parce que tes
   réponses sur tel sujet, parce que tu vis telle situation, et parce que cela demande telles compétences ».
-- **Pourquoi maintenant** : c'est ton chapitre 10 et ton principe 4. C'est aussi ce qui sépare un produit crédible
+- **Pourquoi maintenant** : c'est mon chapitre 10 et mon principe 4. C'est aussi ce qui sépare un produit crédible
   d'une boîte noire, et un parent qui finance une formation veut une raison.
 - **Comment on saura que c'est fini** : sur les résultats et sur le parcours, trois phrases nomment ce qui a pesé,
-  avec les mots du candidat, pas notre vocabulaire interne. Vérifié sur les cinq parcours du sprint 1 : la personne
+  avec les mots du candidat, pas le vocabulaire interne du produit. Vérifié sur les cinq parcours du sprint 1 : la personne
   retrouve sa logique.
 - **Taille** : une semaine.
 - **Où ça se joue** : `src/utils/occupationMatcher.ts`, `src/components/results/`,
@@ -319,7 +330,7 @@ ont réellement essayé, pas ce qu'on imagine.
 
 - **Ce que ça change** : aujourd'hui, partager l'adresse d'un résultat envoie l'autre personne sur l'accueil.
   Après : elle voit le profil partagé, si et seulement si le candidat a choisi de le rendre visible.
-- **Pourquoi maintenant** : ton étape 11 (valorisation) et ta règle sur le contrôle de ce qui est visible. Un lien
+- **Pourquoi maintenant** : mon étape 11 (valorisation) et ma règle sur le contrôle de ce qui est visible. Un lien
   qui ne porte rien est aussi un lien qu'on n'a pas le droit d'envoyer à un recruteur.
 - **Comment on saura que c'est fini** : un lien ouvert sur un autre appareil, sans être connecté, affiche le profil
   exporté. Un second lien, non partagé, est refusé. Les deux cas sont capturés.
@@ -330,16 +341,16 @@ ont réellement essayé, pas ce qu'on imagine.
 
 - **Ce que ça change** : en arrivant, le candidat lit où il en est, ce qu'il a fait, ce qui reste, et la prochaine
   étape — pas une accumulation de statistiques.
-- **Pourquoi maintenant** : c'est ton chapitre 9, presque mot pour mot, et ton principe 2.
-- **Comment on saura que c'est fini** : le tableau de bord répond aux six questions que tu listes, en six éléments
+- **Pourquoi maintenant** : c'est mon chapitre 9, presque mot pour mot, et mon principe 2.
+- **Comment on saura que c'est fini** : le tableau de bord répond aux six questions que je liste, en six éléments
   visibles. Une personne du sprint 1, interrogée, désigne la bonne prochaine étape sans hésiter.
 - **Taille** : une semaine.
 - **Où ça se joue** : `src/components/dashboard/Dashboard.tsx`.
 
 ### S3.7 — Tester avec dix personnes hors de l'équipe, avant le 30 novembre 2026
 
-- **Ce que ça change** : on sait enfin si « ma voie » se comprend sans nous.
-- **Pourquoi maintenant** : c'est ta phase B, et la condition que tu as posée toi-même le 2026-09-23. Sans ces dix
+- **Ce que ça change** : on sait enfin si « ma voie » se comprend sans explication.
+- **Pourquoi maintenant** : c'est ma phase B, et la condition que je me suis posée le 2026-09-23. Sans ces dix
   retours, les sprints 4 et 5 reposent sur des suppositions.
 - **Comment on saura que c'est fini** : dix personnes, dix comptes rendus écrits, et pour chacune : a-t-elle
   compris son profil, a-t-elle trouvé la recommandation juste, a-t-elle ouvert un parcours, où a-t-elle lâché.
@@ -350,7 +361,7 @@ ont réellement essayé, pas ce qu'on imagine.
 
 # Sprint 4 — Connecter les données entre elles
 
-*Ta priorité 2 : le questionnaire identifie, le profil conserve, le système recommande, la formation développe,
+*Ma priorité 2 : le questionnaire identifie, le profil conserve, le système recommande, la formation développe,
 la progression actualise, le profil valorise.*
 
 ### S4.1 — Garder les réponses, et pouvoir les relire
@@ -379,7 +390,7 @@ la progression actualise, le profil valorise.*
 ### S4.3 — La progression dans un module met à jour le profil
 
 - **Ce que ça change** : finir une étape d'un parcours se voit ailleurs que dans la liste des modules.
-- **Pourquoi maintenant** : c'est le maillon manquant de ta chaîne « formation suivie → compétence développée →
+- **Pourquoi maintenant** : c'est le maillon manquant de ma chaîne « formation suivie → compétence développée →
   compétence validée ».
 - **Comment on saura que c'est fini** : cocher un module sur un appareil change le tableau de bord et le profil sur
   un autre, avec un seul chiffre quelque part, pas deux qui se contredisent.
@@ -391,7 +402,7 @@ la progression actualise, le profil valorise.*
 - **Ce que ça change** : AliTché peut dire « tu as développé trois compétences, il t'en manque deux pour ton
   objectif ».
 - **Pourquoi maintenant** : les 51 modules portent bien des compétences, mais ce sont des libellés libres dans une
-  fiche. Rien ne les compte, rien ne les valide, rien ne les compare à un objectif. Or c'est le coeur de tes
+  fiche. Rien ne les compte, rien ne les valide, rien ne les compare à un objectif. Or c'est le coeur de mes
   chapitres compétences et projet professionnel.
 - **Comment on saura que c'est fini** : une liste de compétences unique, chaque module et chaque métier rattaché à
   cette liste, le profil affiche les siennes et l'écart avec son objectif.
@@ -403,8 +414,8 @@ la progression actualise, le profil valorise.*
 
 - **Ce que ça change** : le candidat décide, information par information, ce qui est privé, ce qui est partagé à un
   accompagnateur, ce qui est visible d'un recruteur.
-- **Pourquoi maintenant** : ton chapitre 24 pose la règle — un recruteur n'accède pas automatiquement à tout — et
-  ton principe 8 le redit. Il vaut mieux poser la structure tôt que la greffer sur dix mille profils.
+- **Pourquoi maintenant** : mon chapitre 24 pose la règle — un recruteur n'accède pas automatiquement à tout — et
+  mon principe 8 le redit. Il vaut mieux poser la structure tôt que la greffer sur dix mille profils.
 - **Comment on saura que c'est fini** : trois niveaux de visibilité dans le produit, un écran de contrôle dans le
   profil, et la vérification que ce qui est privé ne sort pas par le lien partagé de S3.5.
 - **Taille** : une semaine.
@@ -415,9 +426,9 @@ la progression actualise, le profil valorise.*
 
 # Sprint 5 — Relier les modules à des formations réelles
 
-*Ta priorité 3, telle que tu l'as tranchée le 2026-09-23 : orienter d'abord. Les contenus viendront ensuite,
-proposés par les centres de formation et les universités et référencés par nous. Quant à écrire nous-mêmes des
-modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
+*Ma priorité 3, telle que je l'ai tranchée le 2026-09-23 : orienter d'abord. Les contenus viendront ensuite,
+proposés par les centres de formation et les universités et référencés par AliTché. Quant à produire des modules
+en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 
 ### S5.1 — Dire à l'écran où se suit la formation, et comment s'y inscrire
 
@@ -437,7 +448,7 @@ modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 
 - **Ce que ça change** : derrière un module du parcours, il y a une école, un centre ou une bourse réels, avec une
   adresse qui mène à eux. Le candidat qui veut suivre ce module sait où aller.
-- **Pourquoi maintenant** : c'est ce que ton produit sait déjà faire, et il ne le fait qu'à moitié : le catalogue
+- **Pourquoi maintenant** : c'est ce que mon produit sait déjà faire, et il ne le fait qu'à moitié : le catalogue
   contient 165 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
 - **Comment on saura que c'est fini** : pour les domaines prioritaires, chaque module du parcours affiche au moins
   une formation réelle, vérifiée ligne à ligne (S2.6), avec son lieu, sa durée et son adresse officielle.
@@ -448,7 +459,7 @@ modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 
 - **Ce que ça change** : finir un module produit quelque chose de durable : une compétence marquée développée, puis
   validée.
-- **Pourquoi maintenant** : c'est la boucle de ton chapitre 4 — profil, analyse, orientation, action, apprentissage,
+- **Pourquoi maintenant** : c'est la boucle de mon chapitre 4 — profil, analyse, orientation, action, apprentissage,
   validation, progression, valorisation. Sans validation, la boucle s'arrête avant la fin.
 - **Comment on saura que c'est fini** : un exercice final par module, une validation enregistrée, et elle
   réapparaît dans le profil et dans l'explication d'une recommandation (S3.4).
@@ -459,7 +470,7 @@ modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 
 - **Ce que ça change** : un parcours n'est pas figé à la sortie du test. Le candidat peut y ajouter une formation
   repérée plus tard, et le parcours se recalcule.
-- **Pourquoi maintenant** : ton principe 1, le parcours avant les fonctionnalités, et ton étape 8.
+- **Pourquoi maintenant** : mon principe 1, le parcours avant les fonctionnalités, et mon étape 8.
 - **Comment on saura que c'est fini** : un parcours modifié garde son historique, la durée affichée correspond aux
   modules réellement présents, et rien de ce qui était validé n'est perdu.
 - **Taille** : une semaine.
@@ -480,11 +491,11 @@ modules, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 | E5 | accessibilité clavier et contrastes | utilisable sans souris et en plein soleil |
 | E6 | une version anglaise de l'accueil | cohérente avec une ambition régionale, une fois la version française irréprochable |
 | E7 | écrire la politique de conservation des données | le produit peut toucher des mineurs : durée de garde, effacement à demande, sortie d'un mineur |
-| E8 | recevoir les contenus proposés par les centres et universités, et les référencer | deuxième temps de ta décision du 2026-09-23. Deux questions à trancher avant d'écrire une ligne : comment un établissement dépose un contenu, et qu'est-ce qui le rend digne d'être référencé chez nous |
+| E8 | recevoir les contenus proposés par les centres et universités, et les référencer | deuxième temps de ma décision du 2026-09-23. Deux questions à trancher avant d'écrire une ligne : comment un établissement dépose un contenu, et qu'est-ce qui le rend digne d'être référencé chez AliTché |
 
 # Plus tard — utile à l'évolution
 
-Ta phase C et le début de ta phase D.
+Ma phase C et le début de ma phase D.
 
 - catalogue de compétences partagé, certifications, portfolio, profil professionnel imprimable ;
 - espaces stages, emplois, missions et événements reliés au profil — aujourd'hui AliTché ne référence que des
@@ -495,7 +506,7 @@ Ta phase C et le début de ta phase D.
 
 # Vision — stratégique à long terme
 
-Tes phases E et F. Rien ici ne se code maintenant ; la place est gardée dans la façon de construire le reste.
+Mes phases E et F. Rien ici ne se code maintenant ; la place est gardée dans la façon de construire le reste.
 
 - espaces université, entreprise et recruteur, consultant, parent ou tuteur ;
 - suivi du salarié après le recrutement : intégration, évaluation, plan de développement, mobilité ;
@@ -504,7 +515,7 @@ Tes phases E et F. Rien ici ne se code maintenant ; la place est gardée dans la
 
 # Parking — intéressant, pertinence non démontrée
 
-Ton chapitre 19, complété par ce que le produit a déjà commencé à promettre sans que ce soit décidé.
+Mon chapitre 19, complété par ce que le produit a déjà commencé à promettre sans que ce soit décidé.
 
 - messagerie interne et réseau social entre candidats ;
 - marketplace complète et paiement en ligne — l'étiquette « Premium » appartient à ce bloc tant qu'une offre payante
@@ -519,45 +530,116 @@ Ton chapitre 19, complété par ce que le produit a déjà commencé à promettr
 
 ---
 
-# Ce que ce backlog attend de toi
+# Ce que ce backlog attend encore d'une décision de ma part
 
-**Reçu le 2026-09-23**, et déjà écrit dans les tâches concernées :
+**Tranché le 2026-09-23**, et déjà écrit dans les tâches concernées :
 
 - **S5.1** — orienter d'abord ; ensuite les centres et universités proposeront leurs contenus, référencés par
-  nous ; produire nous-mêmes des modules vient quand on en aura la capacité.
+  AliTché ; produire des modules en interne vient quand on en aura la capacité.
 - **S1.5 et « Premium »** — l'étiquette est retirée de l'écran, la distinction reste dans les données.
 - **S2.2** — la connexion Google est terminée et affichée, sans dépense ; le lien de connexion sans mot de passe
   est retiré.
 - **S1.6** — cinq personnes hors de l'équipe cette semaine. Le protocole est dans `docs/TESTS-USAGERS.md`.
 
-**Reste à me dire** :
+**Tranché le 2026-09-23 au soir, et fait :**
 
-- Les quatre onglets de l'accueil (« Orientation », « Métiers », « Écoles », « Mentors ») ne mènent nulle part
-  aujourd'hui. Est-ce qu'on les relie aux écrans qui existent déjà, ou est-ce qu'on les retire de la barre de
-  navigation ?
-- Un feu vert pour pousser les trois commits du 23/09 au soir : deux de code (S1.5 et S2.2) et un de
-  documentation. Rien de ce que change S1.5 ni S2.2 n'est en ligne tant que ce feu vert n'est pas donné.
+- **Les quatre onglets de l'accueil** (« Orientation », « Métiers », « Écoles », « Mentors ») : retirés. Ils
+  n'avaient aucune action derrière eux — un clic ne produisait rien, et aucune adresse du site ne les
+  correspondait. Les garder aurait entretenu l'idée qu'AliTché a quatre portes alors qu'il en a une. Retirés
+  du menu et du pied de page, poussés et vérifiés en ligne le 23/09 au soir. Les deux groupes du pied de page
+  qui subsistent, « Support » et « Légal », pointent vers des pages à écrire : c'est la tâche S1.5.
+- **Le mot que j'avais exclu est revenu à l'écran.** La phrase « Choisir et intégrer une filière alignée sur votre
+  domaine prioritaire » s'affiche sous « Objectifs long terme » depuis le 23/09/2026. Elle est remplacée par
+  « formation », et le contrôle qui veille déjà à ce que le mot ne revienne pas dans la phrase de profil regarde
+  désormais aussi les objectifs du parcours : `npm run verify` le refuse maintenant. Quatre titres d'écran avaient
+  par ailleurs perdu leurs accents — « Gerez votre parcours », « Modules termines », « Aucun profil trouve »,
+  « Quick wins - Demarrez maintenant » — ils sont remis, et le titre anglais s'écrit en français comme le reste.
+- **La poussée en ligne** : feu vert donné, onze commits poussés le 23/09 au soir, dont les deux de code
+  (S1.5 et S2.2). Ce qu'ils changent se voit maintenant sur `https://ali-ce-i6it.vercel.app`, vérifié dans le
+  fichier livré : le bouton Google y est, le mot « Premium » et les quatre onglets n'y sont plus.
 
-**Ce que je ne te redemanderai pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
+**Ce que je ne relance pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
 (les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,
 les compétences, l'état du catalogue) se règlent en travaillant. Je les traite comme des évidences — aligner
-le texte sur ce que le produit fait vraiment — sauf avis contraire de ta part.
+le texte sur ce que le produit fait vraiment — sauf si j'en décide autrement.
+
+# Le calendrier
+
+Les fenêtres ci-dessous sortent d'un calcul, pas d'une intuition : j'ai additionné les « Taille » inscrites dans
+les vingt-huit tâches, et j'ai fait suivre les sprints sans les chevaucher, puisque je suis seul à les mener.
+Les jours fériés et les jours où je ne fais pas ce travail ne sont pas retirés — c'est donc un calendrier
+d'avancement, pas une promesse de date.
+
+| Sprint | Taille totale | Fenêtre |
+|---|---|---|
+| Sprint 1 — Stabiliser | 21 jours | 23/09/2026 → 21/10/2026 |
+| Sprint 2 — Corriger les incohérences | 8 jours | 22/10/2026 → 02/11/2026 |
+| Sprint 3 — Rendre le parcours fluide | 26 jours | 03/11/2026 → 08/12/2026 |
+| Sprint 4 — Connecter les données entre elles | 26 jours | 09/12/2026 → 15/01/2027 |
+| Sprint 5 — Relier les modules à des formations réelles | 18 jours | 18/01/2027 → 10/02/2027 |
+
+**Un point que ce calcul rend visible, et que je dois trancher.** La tâche S3.7 demande dix personnes testées
+avant le 30/11/2026, alors que le sprint 3, tel qu'il se termine le 08/12, ne peut pas les avoir toutes
+commencées à cette date. Deux sorties propres : avancer les tests au début du sprint 3, ou reculer le 30/11.
+Ce n'est pas un détail d'agenda — la règle du backlog dit que les sprints 4 et 5 n'avancent pas avant six de ces
+dix retours écrits, donc la date des tests décide en réalité du démarrage du sprint 4.
 
 # Et ClickUp
 
-C'est fait le 2026-09-23, dans l'espace iNOVA LAB, dossier AliTché.
+ClickUp est le miroir, pas l'autorité. Ce que je fais, ce que je dois faire et ce qui est fait se lisent d'abord
+ici ; ClickUp sert à voir l'avancement dans le temps et à suivre mes activités jour par jour.
 
-- Six listes portent maintenant ce backlog : « Sprint 1 · Stabiliser », « Sprint 2 · Corriger les
-  incohérences », « Sprint 3 · Rendre le parcours fluide », « Sprint 4 · Connecter les données entre
-  elles », « Sprint 5 · Relier les modules à des formations réelles », et « Ensuite · important, mais ne
-  bloque pas ». Une carte par ligne de ce fichier : vingt-huit dans les cinq sprints, huit dans
-  « Ensuite ». Chacune rappelle son numéro, ce que ça change, ce qui prouvera que c'est fini, sa taille,
-  les fichiers concernés, et renvoie ici. Deux cartes portent l'étiquette « en cours » : S1.5 et S2.2.
-- Seules deux dates y ont été mises, parce que ce sont les deux seules écrites dans ce fichier : S1.4 et
-  S1.6 au 27/09/2026, pour les cinq tests de la semaine, et S3.7 au 30/11/2026. Le reste du calendrier est
-  à toi.
-- Les cartes de la découpe précédente n'ont pas été supprimées : vingt-sept d'entre elles, mesuré avant
-  d'écrire, et non dix-neuf comme je l'avais noté. Elles sont restées où elles étaient, dans six listes
-  renommées « Avant le cadrage · … ». Le connecteur ne sait pas supprimer une liste, donc ce tri se fait
-  dans l'interface ClickUp quand tu y passes : elles sont visibles mais ne se confondent plus avec le
-  travail à faire.
+**Ce que j'ai demandé le 2026-09-23 au soir, et qui change la forme du miroir.** Deux choses, et pas une seule :
+
+- **Un planning dans l'espace général**, pour planifier et suivre mes activités, au lieu de retrouver le travail
+  empilé en listes de tâches. C'est là que les dates se voient.
+- **Un dossier par module du chapitre 7 de mon document**, avec les fonctionnalités en cartes, et les
+  sous-fonctionnalités en sous-cartes quand une fonctionnalité en demande plusieurs. Ce qui est déjà développé
+  se reconnaît au statut, pas à une étiquette.
+
+**Où ça en est, mesuré le 23/09/2026 au soir.** La liste de planning existe : « Planning — suivre mes activités »,
+`https://app.clickup.com/1200430000008636/v/l/li/1200430000041935`. Quatre cartes y ont été écrites avant
+d'atteindre le plafond. La liste à recopier est écrite : `docs/MODULES.md` porte **84** fonctionnalités pour les dix
+modules, dont **26** développées, **10** engagées et **48** absentes — les trois nombres ont été comptés ligne à
+ligne dans les tableaux du fichier, et leur somme fait bien 84. Les dix modules attendent encore leur dossier. Ce qui
+est écrit dans ClickUp à cette heure, listé par une lecture du dépôt d'appels :
+
+| Ce qui existe | Identifiant | État |
+|---|---|---|
+| Espace iNOVA LAB | `1200430000025095` | en place |
+| Dossier AliTché | `1200430000030189` | en place, porte les six listes de sprint |
+| Liste « Planning — suivre mes activités » | `1200430000041935` | créée, quatre cartes écrites |
+| Liste « Sprint 1 · Stabiliser » | `1200430000041680` | en place, cartes du backlog |
+| Liste « Sprint 2 · Corriger les incohérences » | `1200430000041682` | en place |
+| Liste « Sprint 3 · Rendre le parcours fluide » | `1200430000041687` | en place |
+| Liste « Sprint 4 · Connecter les données entre elles » | `1200430000041688` | en place |
+| Liste « Sprint 5 · Relier les modules à des formations réelles » | `1200430000041689` | en place |
+| Liste « Ensuite · important, mais ne bloque pas » | `1200430000041690` | en place |
+
+**Pourquoi ça s'arrête là ce soir, et pas plus loin.** Le service de gestion de projet limite à cent appels par
+jour, et les lectures comptent comme les écritures. Le compteur est à cent sur cent depuis environ dix-neuf
+heures trente, heure locale, et il repart le 24/09/2026 vers 19 h 23. Ce n'est pas une panne : c'est un quota,
+et il se rouvre tout seul.
+
+**Ce que la reprise a à écrire, dans cet ordre, et seulement après avoir relu l'existant** — parce que les
+appels partis avant le plafond sont bien passés, et que réécrire sans lire ferait des doublons :
+
+1. Relire la liste de planning, puis compléter les cartes de jalons qui manquent (une par sprint, aux dates du
+   tableau ci-dessus).
+2. Créer les dix dossiers de module, à côté du dossier AliTché — un dossier ne peut pas en contenir un autre,
+   donc ils sont frères, pas enfants : « Module 1 · Orientation », « Module 2 · Profil utilisateur »,
+   « Module 3 · Parcours », « Module 4 · Formation et apprentissage », « Module 5 · Compétences »,
+   « Module 6 · Projet professionnel », « Module 7 · Opportunités », « Module 8 · Profil professionnel et
+   portfolio », « Module 9 · Évaluations et examens », « Module 10 · Suivi de l'employé ».
+3. Dans chacun, une liste « Fonctionnalités », et une carte par fonctionnalité de `docs/MODULES.md`, avec ses
+   sous-cartes quand le fichier en donne. Statut « achevé » pour ce qui est développé ; statut « à faire » pour
+   le reste ; « engagé » se lit dans la description, parce que le miroir ne connaît que deux statuts ici.
+4. Les cartes de la découpe précédente restent où elles sont, dans six listes renommées « Avant le cadrage · … » :
+   vingt-sept cartes, mesuré avant d'écrire. Le service ne sait pas supprimer une liste ; le tri se fait dans
+   l'interface quand j'y passe.
+
+Budget, sur les nombres ci-dessus : dix dossiers plus dix listes plus quatre-vingt-quatre cartes, cela fait
+**104 écritures**, et il faut y ajouter les relectures qui empêchent les doublons. À cent appels par jour, la
+découpe complète tient donc sur **deux jours au minimum**, module par module, dans l'ordre des modules. Le premier
+jour s'ouvre d'ailleurs à moitié fermé : le compteur se rouvre vers dix-neuf heures vingt-trois, heure locale,
+ce qui laisse une soirée de travail et non une journée.
