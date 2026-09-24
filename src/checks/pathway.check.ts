@@ -747,6 +747,8 @@ CROSS_OCCUPATIONS.forEach((occupation) => {
   check(occupation.skills.length > 0, `${occupation.id} : aucune compétence à développer`);
   check(occupation.studyPaths.length > 0, `${occupation.id} : aucune voie de formation`);
   check(occupation.context.length > 60, `${occupation.id} : contexte trop court pour être lisible`);
+  check(![occupation.title, occupation.context, ...occupation.skills, ...occupation.studyPaths].some((text) => /fili/i.test(text)),
+    `${occupation.id} : un libellé affiché de la fiche emploie le mot que j'ai exclu`);
 });
 
 DOMAIN_IDS.forEach((domainId) => {

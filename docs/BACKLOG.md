@@ -554,12 +554,24 @@ Mon chapitre 19, complété par ce que le produit a déjà commencé à promettr
   désormais aussi les objectifs du parcours : `npm run verify` le refuse maintenant. Le mot survivait aussi dans une
   réponse du questionnaire, « Une exploitation, une ferme, une filière agricole » ; elle dit maintenant « une
   coopérative agricole », et son identifiant comme ses poids n'ayant pas bougé, personne n'a eu à recommencer son
-  questionnaire. Huit textes d'écran avaient par ailleurs perdu leurs accents : « Gerez votre parcours », « Aucun
-  profil trouve », « Modules termines », « Quick wins - Demarrez maintenant », les trois verbes « Demarrer » du
-  parcours et le compteur « termines ». Ils sont remis, et le titre anglais s'écrit en français comme le reste.
+  questionnaire. Le mot tenait encore deux fois, et c'est le fichier livré en ligne qui me l'a dit : le contexte du
+  formateur technique, où « les filières professionnelles » devient « les formations professionnelles », et une voie
+  de formation de l'acheteur de récolte, « Formation Gestion de filière », qui n'est le nom d'aucune formation
+  réelle de notre catalogue — elle s'appelle maintenant « formation en gestion des productions agricoles ». La
+  vérification balaie désormais le titre, le contexte, les compétences et les voies de formation de chaque fiche :
+  le mot ne peut plus revenir par les données de métiers. Huit textes d'écran avaient par ailleurs perdu leurs
+  accents : « Gerez votre parcours », « Aucun profil trouve », « Modules termines », « Quick wins - Demarrez
+  maintenant », les trois verbes « Demarrer » du parcours et le compteur « termines ». Ils sont remis, et le titre
+  anglais s'écrit en français comme le reste.
 - **La poussée en ligne** : feu vert donné, onze commits poussés le 23/09 au soir, dont les deux de code
   (S1.5 et S2.2). Ce qu'ils changent se voit maintenant sur `https://ali-ce-i6it.vercel.app`, vérifié dans le
   fichier livré : le bouton Google y est, le mot « Premium » et les quatre onglets n'y sont plus.
+- **La poussée de ce soir, après les alertes de sauvegarde** : trois commits partis vers 22 h 40 — les messages de la
+  tâche S1.3, les documents à ma première personne avec la liste des dix modules, et les accents repris. Le fichier
+  servi en ligne a été relu au lieu de supposer que le dépôt suffisait : « Démarrer » y apparaît cinq fois avec son
+  accent et aucune fois sans, « Gains rapides » a remplacé « Quick wins », et les phrases neuves de S1.3 s'y lisent.
+  C'est cette relecture qui a démasqué les deux fiches de métier qui employaient encore le mot exclu ; elles
+  ferment la marche, dans le commit suivant.
 
 **Ce que je ne relance pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
 (les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,

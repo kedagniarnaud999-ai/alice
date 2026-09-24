@@ -100,12 +100,17 @@ s'écrit maintenant « Gains rapides », comme ce fichier l'appelle.
 
 Le même relevé, repris après coup dans les mêmes fichiers, ne laisse plus rien en suspens. Quatre verbes du parcours
 avaient eux aussi perdu leur accent : « Demarrer ce module », deux fois « Demarrer », et le compteur « termines »
-(`src/components/pathway/PathwayView.tsx:273`, `:335`, `:384`, `:463`). Ils l'ont repris. La dernière occurrence du
-mot exclu tenait dans une réponse du questionnaire : « Une exploitation, une ferme, une filière agricole »
-(`src/data/questions.ts:422`) — c'est le candidat qui la lit sur l'écran du module 1, et le contrôle du parcours ne
-regardait pas cette chaîne-là. La réponse s'écrit maintenant « une coopérative agricole ». Son identifiant et ses
-poids n'ont pas bougé : un candidat qui a déjà coché cette case garde le même résultat, personne n'a eu à
-recommencer son questionnaire.
+(`src/components/pathway/PathwayView.tsx:273`, `:335`, `:384`, `:463`). Ils l'ont repris. Le mot exclu survivait dans
+une réponse du questionnaire : « Une exploitation, une ferme, une filière agricole » (`src/data/questions.ts:422`) —
+c'est le candidat qui la lit sur l'écran du module 1, et le contrôle du parcours ne regardait pas cette chaîne-là. La
+réponse s'écrit maintenant « une coopérative agricole ». Son identifiant et ses poids n'ont pas bougé : un candidat
+qui a déjà coché cette case garde le même résultat, personne n'a eu à recommencer son questionnaire.
+Le fichier réellement servi en ligne, relu après la poussée, en gardait deux autres, dans les fiches de métiers : le
+contexte du formateur technique, où « les filières professionnelles » est devenu « les formations professionnelles »
+(`src/data/occupations.ts:256`), et une voie de formation de l'acheteur de récolte, « Formation Gestion de filière »
+(`:273`), qui ne correspond au nom d'aucune formation réelle de notre catalogue et que je remplace par « formation en
+gestion des productions agricoles ». Titre, contexte, compétences et voies de formation de chaque fiche sont passés
+au contrôle à présent : le mot ne peut plus revenir par les données de métiers.
 
 ---
 

@@ -253,7 +253,7 @@ export const CROSS_OCCUPATIONS: CrossOccupation[] = [
     id: 'formateur_technique_tvet',
     title: 'Formateur technique (TVET)',
     context:
-      "Les filières professionnelles manquent de formateurs qui ont réellement exercé le métier avant d'enseigner le geste.",
+      "Les formations professionnelles manquent de formateurs qui ont réellement exercé le métier avant d'enseigner le geste.",
     core: { ingenierie: 3, education: 3 },
     sectors: ['agriculture', 'logistique'],
     functions: ['relation', 'technique'],
@@ -270,7 +270,7 @@ export const CROSS_OCCUPATIONS: CrossOccupation[] = [
     sectors: ['logistique', 'finance'],
     functions: ['relation', 'terrain'],
     skills: ['Veille des prix', 'Négociation', 'Calibrage et lots', 'Encaissement', 'Séchage et stockage'],
-    studyPaths: ['BTS ou Licence Techniques commerciales agro', 'École de commerce — agrobusiness', 'Formation Gestion de filière'],
+    studyPaths: ['BTS ou Licence Techniques commerciales agro', 'École de commerce — agrobusiness', 'Formation en gestion des productions agricoles'],
     situations: ALL_SITUATIONS,
   },
   {
