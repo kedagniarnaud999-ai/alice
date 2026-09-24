@@ -126,6 +126,15 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   c'est rien. Si ce n'est pas rien, la correction part en tâche bloquante du même sprint.
 - **Taille** : deux jours.
 - **Où ça se joue** : `src/services/module.api.ts`, `src/services/profile.api.ts`, `supabase/`.
+- **Avancement (24/09/2026)** : la seule lecture qui pouvait trahir un voisin est fermée dans le code. La liste de
+  progression était demandée sans filtre côté navigateur (`getMyProgress`, `src/services/module.api.ts`) : elle est
+  maintenant demandée avec l'identifiant de la personne connectée, comme les trois autres lectures de ce fichier.
+  Un navigateur ne peut donc plus réclamer d'autres lignes que les siennes, même si le réglage de la base en ligne
+  avait été oublié quelque part. Ce que ça ne prouve pas : que la base en ligne porte bien les réglages écrits dans
+  `supabase/`. Un dépôt décrit une intention, pas l'état de ce qui est installé. C'est précisément le rôle des deux
+  comptes et des deux appareils.
+- **Ordre** : cette tâche passe avant les cinq sessions de test, pas après. Le reste à faire demande un clic sur un
+  lien de confirmation reçu dans ma boîte e-mail — je ne peux pas le faire à ma place depuis l'outil.
 
 ### S1.5 — Retirer les fausses promesses de l'interface
 

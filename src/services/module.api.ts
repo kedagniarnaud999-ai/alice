@@ -104,9 +104,15 @@ export class ModuleService {
   }
 
   async getMyProgress(): Promise<UserModuleProgress[]> {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      throw userError ?? new Error('Utilisateur non authentifié.');
+    }
+
     const { data, error } = await supabase
       .from('user_module_progress')
       .select('module_id,status,progress,started_at,completed_at,updated_at')
+      .eq('user_id', userData.user.id)
       .order('updated_at', { ascending: false });
 
     if (error) {

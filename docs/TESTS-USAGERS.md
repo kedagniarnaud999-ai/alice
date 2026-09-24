@@ -138,5 +138,8 @@ qui est hors de ma portée. À une personne qui demande « effacez tout de moi �
 adresse à supprimer à la main, et non que le bouton a tout réglé.
 
 La tâche S1.4 prouve, de son côté, qu'un compte ne se lit pas chez le voisin. **Elle est à faire avant la première
-session de test, pas après** : on n'installe pas cinq personnes réelles sur un réglage non contrôlé. À la date du
-24/09/2026, elle n'est pas faite.
+session de test, pas après** : on n'installe pas cinq personnes réelles sur un réglage non contrôlé. Avancée le
+24/09/2026 : la dernière lecture que le navigateur pouvait demander sans filtre — la liste de progression — est
+désormais demandée avec l'identifiant de la personne connectée. Le site ne dépend donc plus d'un réglage qu'on
+n'aurait pas vérifié. Ce qui reste à faire avant les sessions : les deux comptes réels sur deux appareils, et les
+captures qui disent que le second ne voit rien.
