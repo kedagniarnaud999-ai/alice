@@ -9,7 +9,6 @@ import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle, KeyRound, ShieldCheck, XCircle } from 'lucide-react';
 import { BrandMark } from '@/components/brand/BrandMark';
 import { AuthAlert } from '@/components/auth/AuthAlert';
-import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { describeAuthError, type AuthErrorDescription } from '@/utils/authErrors';
 
 const loginSchema = z.object({
@@ -157,8 +156,6 @@ export const LoginForm: React.FC = () => {
             )}
 
             <AuthAlert error={authError} />
-
-            <GoogleAuthButton label="Continuer avec Google" onError={setAuthError} />
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
