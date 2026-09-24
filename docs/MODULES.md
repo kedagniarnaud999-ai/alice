@@ -278,14 +278,17 @@ tableau, et le même libellé que la colonne de gauche — c'est ma plume, elle 
 Le statut « achevé » va sur les 26 lignes marquées **Développé**. Les 10 lignes **Engagé** et les 48 lignes
 **Absent** restent ouvertes, et la description de la carte reporte l'adresse « où ça se trouve » de la troisième
 colonne : une carte sans preuve en face n'est pas une carte, c'est un souhait. Total : 84 fonctionnalités comptées
-ce soir, dont 26 faites.
+le 23/09/2026 dans les tableaux ci-dessus, dont 26 faites.
 
 Le dépôt décide, ClickUp reflète. Une carte ne se ferme pas parce qu'elle est cochée là-bas ; elle se ferme quand sa
 ligne passe à **Développé** ici, et quand un écran ou un fichier le montre.
 
-Ce qui reste à trancher avant de copier ce fichier là-bas, à écrire à la place de mes réserves :
+Ce qui est tranché, et ce qui reste à trancher, à écrire à la place de mes réserves :
 
-- Les lignes d'un même module portent-elles un sous-dossier chacune, ou reste-t-on à plat sur 84 cartes ?
+- **Une ligne = une carte, pas un dossier** (tranché le 24/09/2026). ClickUp imbrique bien les dossiers, mais
+  l'outil par lequel je les écris n'accepte pas de dossier parent : sa fiche de paramètres ne propose que nom et
+  espace. Ce qu'il sait faire en revanche, c'accrocher une sous-carte à une carte — les fonctions de `MODULES.md`
+  qui en demandent plusieurs les auront, à l'intérieur de leur carte.
 - Le module 10 : dossier vide avec une seule carte « ne pas développer maintenant », ou pas de dossier du tout ?
 - Les trois écrans du produit qui ne demandent rien à personne — la page d'accueil et ses boutons sans destination,
   l'écran « Lien traité » que le courriel n'atteint jamais, et l'essai sans compte qui ne débouche pas sur un parcours

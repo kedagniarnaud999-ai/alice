@@ -214,10 +214,19 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   pour travailler sur la machine de développement. L'adresse `pldbjuprxqmuxwqtjgnq.supabase.co` a été relue aujourd'hui sur le site
   en ligne ; si le projet venait à être recréé, elle change, et c'est elle qu'il faut recopier mot pour mot chez
   Google.
-- **À savoir avant les cinq tests de la semaine** : tant que les deux réglages ci-dessus ne sont pas faits, le
-  bouton est visible et un clic mène sur une page d'erreur de Google. Rien n'est cassé dans le dépôt, c'est inachevé dans les
-  consoles. Deux issues possibles : faire les deux réglages avant de lancer les tests — c'est une dizaine de
-  minutes —, ou faire retirer le bouton jusqu'à ce qu'ils soient faits, et c'est une ligne à enlever.
+- **Tranché le 24/09/2026 pour les cinq tests de la semaine** : je n'ai pas de carte de débit à engager chez Google
+  aujourd'hui, et sans elle les deux réglages ci-dessus ne se font pas. Le bouton est donc **retiré des deux
+  écrans**, connexion et création de compte. Un clic y menait sur une page d'erreur de Google : c'était exactement le
+  genre de fausse promesse que la tâche S1.5 existe pour enlever, et la première chose qu'une personne venue tester
+  aurait touchée. Le code n'est pas perdu : `src/components/auth/GoogleAuthButton.tsx`, et la fonction
+  `loginWithGoogle` dans le contexte comme dans le service, restent dans le dépôt ; plus rien ne les affiche, donc
+  rien de ce côté ne part dans le fichier livré. Le jour où la carte est là, les réglages ci-dessus prennent une
+  dizaine de minutes et la remise à l'écran est de deux lignes, une par écran.
+- **Ce que je ne fais pas à la place** : pas d'étiquette « à venir » sur le bouton, et pas de LinkedIn. Une porte
+  étiquetée « à venir » reste une porte qu'on montre ; LinkedIn demanderait la même démarche de console, pour un
+  deuxième fournisseur à moitié ouvert, et ce n'est pas le réflexe d'un élève de terminale à Cotonou. Les cinq tests
+  portent sur le parcours, pas sur la façon d'entrer : l'entrée d'aujourd'hui est l'adresse e-mail et le mot de
+  passe, et elle fonctionne.
 - **Où ça se joue** : `src/services/auth.api.ts`, `src/contexts/AuthContext.tsx`,
   `src/components/auth/GoogleAuthButton.tsx`, `src/components/auth/LoginForm.tsx`,
   `src/components/auth/RegisterForm.tsx`, `src/pages/AuthCallback.tsx`, `README.md` (touche à S2.3).
@@ -641,11 +650,16 @@ appels partis avant le plafond sont bien passés, et que réécrire sans lire fe
 
 1. Relire la liste de planning, puis compléter les cartes de jalons qui manquent (une par sprint, aux dates du
    tableau ci-dessus).
-2. Créer les dix dossiers de module, à côté du dossier AliTché — un dossier ne peut pas en contenir un autre,
-   donc ils sont frères, pas enfants : « Module 1 · Orientation », « Module 2 · Profil utilisateur »,
+2. Créer les dix dossiers de module : « Module 1 · Orientation », « Module 2 · Profil utilisateur »,
    « Module 3 · Parcours », « Module 4 · Formation et apprentissage », « Module 5 · Compétences »,
    « Module 6 · Projet professionnel », « Module 7 · Opportunités », « Module 8 · Profil professionnel et
    portfolio », « Module 9 · Évaluations et examens », « Module 10 · Suivi de l'employé ».
+   **À quel niveau, et pourquoi.** ClickUp imbrique bien les dossiers — un dossier peut en contenir un autre, et
+   c'est ce que je veux à terme. Ce qui ne le peut pas, c'est l'outil par lequel j'écris là-bas : sa fiche de
+   paramètres n'accepte qu'un nom et un espace, sans dossier parent, et aucun appel plus général n'est ouvert pour
+   passer le champ manquant. Mesuré le 24/09/2026. Les dix dossiers sont donc posés au niveau de l'espace iNOVA LAB,
+   à côté du dossier AliTché, et je les range sous un dossier parent à la souris dans l'interface — une glissade par
+   dossier, une seule fois.
 3. Dans chacun, une liste « Fonctionnalités », et une carte par fonctionnalité de `docs/MODULES.md`, avec ses
    sous-cartes quand le fichier en donne. Statut « achevé » pour ce qui est développé ; statut « à faire » pour
    le reste ; « engagé » se lit dans la description, parce que le miroir ne connaît que deux statuts ici.

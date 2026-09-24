@@ -156,6 +156,14 @@ exactes à coller, adresse de retour comprise, sont écrites dans la tâche S2.2
 cinq tests de la semaine : avant ces réglages, un clic sur le bouton mène sur une page d'erreur de Google. Soit les deux réglages sont faits
 avant de lancer les tests, soit le bouton est retiré jusque-là.
 
+**Le 24/09/2026, deuxième ligne.** Les deux consoles ne se sont pas ouvertes : le parcours de réglage chez Google
+demande d'engager un moyen de paiement que je n'ai pas. Ce que vaut l'affirmation « c'est gratuit des deux côtés » :
+gratuit une fois la porte ouverte, pas forcément franchissable sans carte — c'est ce frottement-là, et lui seul, qui
+a arrêté la manœuvre. Deuxième issue donc retenue, celle que le paragraphe ci-dessus laissait ouverte : **le bouton
+est retiré des deux écrans**, connexion et création de compte. Le composant et la fonction restent dans le dépôt,
+rien ne les affiche, rien n'en part dans le fichier livré. Ce point reste ouvert tant que la console n'est pas
+réglée ; il se ferme en une dizaine de minutes le jour où elle l'est. → tâche S2.2.
+
 ---
 
 ## 7. Vérifier son adresse e-mail : deux chemins, un mort, aucun parcouru par une vraie personne

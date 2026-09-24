@@ -124,12 +124,19 @@ de la semaine, on décide au cas par cas : ceux qui veulent garder leur résulta
 du produit —, les autres demandent l'effacement.
 
 Un moyen d'effacer existe déjà : le bouton « Réinitialiser mes données » du tableau de bord demande la suppression
-à distance, puis vide ce qui est gardé sur le téléphone ou l'ordinateur. Ce qu'une lecture du code apprend, et
-qu'il faut savoir avant de promettre quoi que ce soit à une personne qui teste : si la suppression à distance
-échoue, le bouton ne le dit pas, l'écran revient à l'accueil comme si c'était fait, et les informations restent
-dans la base. C'est le défaut que la tâche S1.3 corrige — ne rien annoncer de réussi qui ne l'a pas été. Tant que
-ce n'est pas corrigé, une demande d'effacement se vérifie à la main, compte par compte, et ne se tient pas pour
-réglée.
+à distance, puis vide ce qui est gardé sur le téléphone ou l'ordinateur. Le défaut qu'une lecture du code révélait
+est corrigé et en ligne depuis la poussée du 23/09 au soir (tâche S1.3, vérifiée dans le fichier servi) : si le
+serveur n'a rien reçu, rien n'est effacé sur l'appareil, le message à l'écran le dit, et le bouton reste là pour
+relancer. On peut donc dire à une personne qui demande l'effacement soit que c'est fait, soit que ce n'est pas
+possible — plus jamais « fait » par défaut.
 
-La tâche S1.4 prouve, de son côté, qu'un compte ne se lit pas chez le voisin. C'est à faire avant la première
-session de test, pas après : on n'installe pas cinq personnes réelles sur un réglage non contrôlé.
+Ce que le bouton efface vraiment, lu dans le code : les réponses (`test_responses`, `src/services/profile.api.ts:100`),
+le profil (`profiles`, `src/services/profile.api.ts:109`), la progression des modules (`user_module_progress`,
+`src/services/module.api.ts:127`). Ce qu'il ne touche pas : **le compte lui-même** — l'adresse e-mail et le mot de
+passe restent enregistrés côté authentification, et la suppression du compte se demande dans la console en ligne,
+qui est hors de ma portée. À une personne qui demande « effacez tout de moi », on doit donc dire qu'il reste une
+adresse à supprimer à la main, et non que le bouton a tout réglé.
+
+La tâche S1.4 prouve, de son côté, qu'un compte ne se lit pas chez le voisin. **Elle est à faire avant la première
+session de test, pas après** : on n'installe pas cinq personnes réelles sur un réglage non contrôlé. À la date du
+24/09/2026, elle n'est pas faite.
