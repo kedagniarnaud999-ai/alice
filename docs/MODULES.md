@@ -266,19 +266,24 @@ pas être développé maintenant sans une décision explicite de moi.
 | Accompagner l'évolution professionnelle | **Absent** | La chaîne « Recrutement → Intégration → Évaluation → Formation → Développement → Évolution » n'a pas son premier maillon : AliTché ne sait pas qu'une personne a été recrutée. |
 | « Ne doit pas être développée maintenant sauf décision explicite » | **Absent** | Rien, et c'est conforme à ma consigne : aucun commencement de compte d'entreprise, aucun écran, rien de rangé de ce côté-là. Le modèle de données du serveur mis de côté (`backend/prisma/schema.prisma`) n'en garde pas non plus la trace. |
 
-Ce module ne demande aucune carte dans ClickUp avant que je décide de l'ouvrir. Je le liste quand même, pour une
-raison : son absence est la seule des dix à être un choix et non un retard, et il faut que cela se voie.
+Ce module a son dossier et une seule carte, qui dit « ne pas développer maintenant sans décision explicite de
+moi » (tranché le 24/09/2026). Je le liste pour une raison : son absence est la seule des dix à être un choix et
+non un retard, et il faut que cela se voie — une place déjà prise, plutôt qu'un vide qui ressemble à un oubli.
 
 ---
 ## Ce que ce fichier change dans ClickUp
 
 Dix dossiers, un par module, nommés comme mon chapitre 7. Une tâche par ligne de tableau, dans l'ordre du
-tableau, et le même libellé que la colonne de gauche — c'est ma plume, elle ne se réécrit pas.
+tableau, et le même libellé que la colonne de gauche — c'est ma plume, elle ne se réécrit pas. Une exception,
+tranchée le 24/09/2026 : le module 10 ne fait pas six cartes mais une seule, « ne pas développer maintenant sans
+décision explicite de moi ».
 
-Le statut « achevé » va sur les 26 lignes marquées **Développé**. Les 10 lignes **Engagé** et les 48 lignes
+Le statut « achevé » va sur les 26 lignes marquées **Développé**. Les 10 lignes **Engagé** et les lignes
 **Absent** restent ouvertes, et la description de la carte reporte l'adresse « où ça se trouve » de la troisième
 colonne : une carte sans preuve en face n'est pas une carte, c'est un souhait. Total : 84 fonctionnalités comptées
-le 23/09/2026 dans les tableaux ci-dessus, dont 26 faites.
+le 23/09/2026 dans les tableaux ci-dessus, dont 26 faites ; et **79 cartes** à poser une fois les six lignes du
+module 10 repliées en une — 26 achevées, 10 engagées, 43 ouvertes pour absence. S'y ajoute, dans le planning du
+sprint 1 et non dans un dossier de module, la carte unique des trois écrans qui promettent sans tenir.
 
 Le dépôt décide, ClickUp reflète. Une carte ne se ferme pas parce qu'elle est cochée là-bas ; elle se ferme quand sa
 ligne passe à **Développé** ici, et quand un écran ou un fichier le montre.
@@ -289,7 +294,12 @@ Ce qui est tranché, et ce qui reste à trancher, à écrire à la place de mes 
   l'outil par lequel je les écris n'accepte pas de dossier parent : sa fiche de paramètres ne propose que nom et
   espace. Ce qu'il sait faire en revanche, c'accrocher une sous-carte à une carte — les fonctions de `MODULES.md`
   qui en demandent plusieurs les auront, à l'intérieur de leur carte.
-- Le module 10 : dossier vide avec une seule carte « ne pas développer maintenant », ou pas de dossier du tout ?
-- Les trois écrans du produit qui ne demandent rien à personne — la page d'accueil et ses boutons sans destination,
-  l'écran « Lien traité » que le courriel n'atteint jamais, et l'essai sans compte qui ne débouche pas sur un parcours
-  — méritent-ils une carte chacun dans le module où ils se trouvent ?
+- **Le module 10 a son dossier, avec une seule carte dedans** (tranché le 24/09/2026). Pas de dossier vide, pas
+  d'absence : un dossier à son nom et une carte qui dit « ne pas développer maintenant sans décision explicite de
+  moi ». Son absence de développement reste visible comme un choix, et la place est déjà prise pour le jour où je
+  l'ouvre.
+- **Les trois écrans qui ne demandent rien à personne font une seule carte, pas trois** (tranché le 24/09/2026) :
+  la page d'accueil et ses boutons sans destination, l'écran « Lien traité » que le courriel n'atteint jamais, et
+  l'essai sans compte qui ne débouche pas sur un parcours. Ils ne sont pas trois défauts mais un seul — des
+  endroits où l'interface promet sans tenir — et c'est déjà ce que dit la tâche S1.5 du backlog. La carte est
+  posée à côté de S1.5, dans le planning du sprint 1, plutôt qu'éparpillée dans trois dossiers de modules.

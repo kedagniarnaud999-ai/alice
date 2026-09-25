@@ -174,6 +174,10 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   s'est arrêtée, ou a mal compris une recommandation. Chaque blocage repéré devient une tâche du sprint suivant.
 - **Taille** : une semaine en parallèle des autres tâches.
 - **Où ça se joue** : dans le produit en ligne, pas sur une machine de développement.
+- **Tranché le 24/09/2026 : la date tient.** Les cinq sessions restent promises pour cette semaine, donc au plus
+  tard le dimanche 27/09/2026. Ce qui doit passer avant, c'est S1.4 : on n'installe pas cinq personnes réelles sur
+  un réglage non contrôlé. Moins de trois comptes rendus écrits dimanche = on n'en conclut rien, et la tâche reste
+  ouverte.
 
 ---
 
@@ -365,7 +369,7 @@ ont réellement essayé, pas ce qu'on imagine.
 - **Taille** : une semaine.
 - **Où ça se joue** : `src/components/dashboard/Dashboard.tsx`.
 
-### S3.7 — Tester avec dix personnes hors de l'équipe, avant le 30 novembre 2026
+### S3.7 — Tester avec dix personnes hors de l'équipe, à partir du 3 novembre 2026
 
 - **Ce que ça change** : on sait enfin si « ma voie » se comprend sans explication.
 - **Pourquoi maintenant** : c'est ma phase B, et la condition que je me suis posée le 2026-09-23. Sans ces dix
@@ -374,6 +378,10 @@ ont réellement essayé, pas ce qu'on imagine.
   compris son profil, a-t-elle trouvé la recommandation juste, a-t-elle ouvert un parcours, où a-t-elle lâché.
 - **Taille** : continu, à partir de la fin du sprint 1.
 - **Règle** : les sprints 4 et 5 ne démarrent pas avant six de ces dix retours écrits.
+- **Tranché le 24/09/2026 : les dix tests sont avancés au début du sprint 3, pas laissés à la fin.** L'ancienne
+  date butoir du 30/11 tombait à huit jours de la fin du sprint 3 (08/12) et ne laissait aucune marge pour que
+  six retours écrits existent avant le démarrage du sprint 4. En commençant le 03/11, les six retours peuvent
+  être là avant la fin novembre, et le sprint 4 n'attend pas.
 
 ---
 
@@ -611,11 +619,12 @@ d'avancement, pas une promesse de date.
 | Sprint 4 — Connecter les données entre elles | 26 jours | 09/12/2026 → 15/01/2027 |
 | Sprint 5 — Relier les modules à des formations réelles | 18 jours | 18/01/2027 → 10/02/2027 |
 
-**Un point que ce calcul rend visible, et que je dois trancher.** La tâche S3.7 demande dix personnes testées
-avant le 30/11/2026, alors que le sprint 3, tel qu'il se termine le 08/12, ne peut pas les avoir toutes
-commencées à cette date. Deux sorties propres : avancer les tests au début du sprint 3, ou reculer le 30/11.
-Ce n'est pas un détail d'agenda — la règle du backlog dit que les sprints 4 et 5 n'avancent pas avant six de ces
-dix retours écrits, donc la date des tests décide en réalité du démarrage du sprint 4.
+**Un point que ce calcul avait rendu visible, tranché le 24/09/2026.** La tâche S3.7 demandait dix personnes
+testées avant le 30/11/2026, alors que le sprint 3, tel qu'il se termine le 08/12, ne pouvait pas les avoir toutes
+commencées à cette date. Des deux sorties propres — avancer les tests au début du sprint 3, ou reculer le 30/11 —
+c'est la première qui est retenue : les dix tests démarrent le 03/11. Ce n'était pas un détail d'agenda, puisque la
+règle du backlog dit que les sprints 4 et 5 n'avancent pas avant six de ces dix retours écrits : la date des tests
+décide en réalité du démarrage du sprint 4.
 
 # Et ClickUp
 
