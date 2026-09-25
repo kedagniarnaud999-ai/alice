@@ -1,7 +1,7 @@
 # Les dix modules d'AliTché, et ce que le code fait vraiment
 
-Demain je construis, dans ClickUp, un dossier par module de mon chapitre 7, et dans chaque dossier une tâche par
-fonctionnalité, avec un statut « achevé » pour ce qui est vraiment développé. Ce fichier est la liste que j'y pose.
+Ce que je construis dans ClickUp tient en une phrase : un dossier par acteur de mon architecture cible, une seule liste de
+backlog pour le pôle des individus, et le planning ailleurs que dans l'application. Ce fichier est la liste que j'y pose.
 ClickUp n'est qu'un miroir : le texte qui fait foi est ici, et ce qui tranche est le dépôt.
 
 Rien dans ce fichier n'est sorti de mon imagination. Chaque ligne d'un tableau reprend une demande écrite de mes
@@ -273,31 +273,52 @@ non un retard, et il faut que cela se voie — une place déjà prise, plutôt q
 ---
 ## Ce que ce fichier change dans ClickUp
 
-Dix dossiers, un par module, nommés comme mon chapitre 7. Une tâche par ligne de tableau, dans l'ordre du
-tableau, et le même libellé que la colonne de gauche — c'est ma plume, elle ne se réécrit pas. Une exception,
-tranchée le 24/09/2026 : le module 10 ne fait pas six cartes mais une seule, « ne pas développer maintenant sans
-décision explicite de moi ».
+Quatre dossiers, un par acteur de mon architecture cible — `Module Individus`, `Universités`,
+`consultants-employabilité`, `Entreprises` — et une liste dans chacun. La première s'appelle « Backlog — Individus » et
+reçoit mes 79 cartes ; les trois autres s'appellent « Cadrage — … » et ne reçoivent que des décisions, pas du code à
+écrire, parce que la Phase E de `docs/CADRAGE-PRODUIT.md` pose sa condition : un espace ne se développe que quand son
+cas d'usage est défini. Le planning n'est pas dans l'application AliTché, il est dans `Project management`.
 
-Le statut « achevé » va sur les 26 lignes marquées **Développé**. Les 10 lignes **Engagé** et les lignes
-**Absent** restent ouvertes, et la description de la carte reporte l'adresse « où ça se trouve » de la troisième
-colonne : une carte sans preuve en face n'est pas une carte, c'est un souhait. Total : 84 fonctionnalités comptées
-le 23/09/2026 dans les tableaux ci-dessus, dont 26 faites ; et **79 cartes** à poser une fois les six lignes du
-module 10 repliées en une — 26 achevées, 10 engagées, 43 ouvertes pour absence. S'y ajoute, dans le planning du
-sprint 1 et non dans un dossier de module, la carte unique des trois écrans qui promettent sans tenir.
+Une ligne de tableau = une carte, dans l'ordre du tableau, avec le libellé de la colonne de gauche pour titre — c'est ma
+plume, elle ne se réécrit pas. Une exception, tranchée le 24/09/2026 : le module 10 ne fait pas six cartes mais une
+seule, « ne pas développer maintenant sans décision explicite de moi ».
+
+Chaque carte s'écrit « En tant que [rôle], je souhaite [capacité], afin de [bénéfice] ». Le rôle désigne la zone du
+produit, le bénéfice justifie la carte. Les neuf lignes de mes tableaux qui sont entre guillemets ne sont pas des
+fonctionnalités : ce sont des paroles de mon cadrage, et leurs cartes prennent la forme « Vérifier la parole … ».
+
+Le statut « achevé » va sur les 26 lignes marquées **Développé**. Les 10 lignes **Engagé** portent l'étiquette
+`en cours`, les 43 lignes **Absent** portent `non commencé`, et les neuf paroles portent aussi `parole à vérifier`.
+Chaque carte porte en plus l'étiquette de son module, de `module 1 orientation` à `module 10 employé` : les 79 cartes
+tiennent dans une seule liste, sans quoi les dix modules ne seraient plus filtrables. La description de la carte reporte
+toujours l'adresse « où ça se trouve » de la troisième colonne : une carte sans preuve en face n'est pas une carte,
+c'est un souhait. Total : 84 fonctionnalités comptées le 23/09/2026 dans les tableaux ci-dessus, dont 26 faites ; et
+**79 cartes** à poser une fois les six lignes du module 10 repliées en une — 26 achevées, 10 engagées, 43 ouvertes pour
+absence. S'y ajoute, dans le planning du sprint 1 et non dans le backlog, la carte unique des trois écrans qui
+promettent sans tenir.
 
 Le dépôt décide, ClickUp reflète. Une carte ne se ferme pas parce qu'elle est cochée là-bas ; elle se ferme quand sa
 ligne passe à **Développé** ici, et quand un écran ou un fichier le montre.
 
+Où en est le miroir, compté le 25/09/2026 à 18h40 : **39 cartes posées sur 79**. Les modules 1, 2, 3 et 4 sont
+complets, soit 36 cartes, et le module 5 s'est arrêté à sa troisième ligne. Les quarante cartes qui manquent sont, dans
+l'ordre : les cinq lignes restantes du module 5 — la première étant « Suivre leur niveau » —, les huit du module 6, les
+neuf du module 7, les dix du module 8, les sept du module 9 et l'unique carte du module 10. Le connecteur ClickUp ne
+passe que 100 appels par jour, lectures comprises ; la reprise se fait quand ce compteur se remet à zéro, et elle
+repart de la ligne que je viens d'écrire pour ne pas poser deux fois la même carte.
+
 Ce qui est tranché, et ce qui reste à trancher, à écrire à la place de mes réserves :
 
-- **Une ligne = une carte, pas un dossier** (tranché le 24/09/2026). ClickUp imbrique bien les dossiers, mais
-  l'outil par lequel je les écris n'accepte pas de dossier parent : sa fiche de paramètres ne propose que nom et
-  espace. Ce qu'il sait faire en revanche, c'accrocher une sous-carte à une carte — les fonctions de `MODULES.md`
-  qui en demandent plusieurs les auront, à l'intérieur de leur carte.
-- **Le module 10 a son dossier, avec une seule carte dedans** (tranché le 24/09/2026). Pas de dossier vide, pas
-  d'absence : un dossier à son nom et une carte qui dit « ne pas développer maintenant sans décision explicite de
-  moi ». Son absence de développement reste visible comme un choix, et la place est déjà prise pour le jour où je
-  l'ouvre.
+- **Des dossiers par acteur, pas par module** (tranché le 25/09/2026). Mes dix modules ne deviennent pas dix dossiers :
+  les dossiers suivent les quatre pôles de mon architecture cible, et les 79 cartes se posent toutes dans la liste du
+  pôle des individus, puisque c'est lui qui les porte. Les modules ne disparaissent pas pour autant — chacun devient une
+  étiquette sur la carte, et c'est elle qui permet de filtrer. Ce que l'outil par lequel j'écris ne sait pas faire :
+  créer un Space, une vue, un champ personnalisé, un statut, ni supprimer une liste ou un dossier — renommer reste le
+  seul classement sans casse. Il sait en revanche accrocher une sous-carte à une carte.
+- **Le module 10 tient en une seule carte** (tranché le 24/09/2026, reposé le 25/09). Il n'a plus de dossier qui lui
+  soit propre depuis que les dossiers suivent les acteurs : sa carte unique — « ne pas développer maintenant sans
+  décision explicite de moi » — reste une ligne ouverte du backlog des individus, tenue à l'écart par son étiquette. Son
+  absence de développement reste visible comme un choix, et la place est déjà prise pour le jour où je l'ouvre.
 - **Les trois écrans qui ne demandent rien à personne font une seule carte, pas trois** (tranché le 24/09/2026) :
   la page d'accueil et ses boutons sans destination, l'écran « Lien traité » que le courriel n'atteint jamais, et
   l'essai sans compte qui ne débouche pas sur un parcours. Ils ne sont pas trois défauts mais un seul — des
