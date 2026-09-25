@@ -219,7 +219,7 @@ export const TestFlow: React.FC<TestFlowProps> = ({ onComplete }) => {
         {currentQuestion.optional && (
           <div className="mt-3 flex justify-center">
             <Button variant="ghost" size="sm" onClick={handleSkip} disabled={isSaving}>
-              Cette question ne me concerne pas — passer
+              Cette question ne me concerne pas, je la passe
             </Button>
           </div>
         )}
