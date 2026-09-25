@@ -46,6 +46,24 @@ complet et en déduit qu'AliTché conserve son histoire. Ce n'est pas ce que fai
 mémoire est mince. Et « comprendre pourquoi » tient sur trois raisons par domaine : c'est peu, mais c'est vrai, et
 c'est la seule partie du produit où une recommandation se justifie devant quelqu'un.
 
+Deux choses relevées le 25/09/2026 en relisant l'écran question par question. La première est réparée et en ligne :
+les libellés du test se lisaient comme des abréviations de base de données (« S / Scientifique », « Encadrer /
+manager une équipe », « Je veux changer de métier — je suis en reconversion »). Vingt et un libellés d'option, deux
+énoncés de question et une description de section réécrits en phrase entière, plus le bouton « passer » une question
+(`src/components/test/TestFlow.tsx:222`) : vingt-cinq chaînes au total, sans barre ni tiret. Et la première question
+ne nommait que le jeune diplômé : celui qui a fini sa formation
+il y a un an ou deux et cherche encore ne se reconnaissait dans aucune des quatre situations, et partait sans profil.
+Aucun identifiant, aucun jeu de valeurs, aucun poids n'a bougé, donc la version du barème reste à 6 et personne n'a eu
+à refaire son questionnaire.
+
+La seconde n'est pas réparée, parce qu'elle n'est pas du texte. La question qui demande « quelles compétences
+avez-vous déjà développées dans votre métier actuel ? » ne s'affiche qu'en reconversion
+(`src/data/questions.ts:80`). L'adulte qui a un métier et veut évoluer, lui, ne l'a jamais sous les yeux : on lui
+demande ce qu'il veut devenir sans jamais lui demander ce qu'il sait déjà faire. C'est exactement le trou du module 2
+vu depuis le module 1. La fermer change le nombre de questions que cette situation traverse, donc son plafond et son
+barème, donc la version du barème, donc tous les profils rangés depuis ce soir-là. Je ne la ferme pas sans l'avoir
+décidé, et je la signale pour ça.
+
 ---
 
 ## Module 2 — Profil utilisateur

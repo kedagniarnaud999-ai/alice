@@ -522,7 +522,7 @@ export const orientationQuestions: Question[] = [
   {
     id: 'q_missions_refuse',
     stage: 'interests',
-    text: 'Quelles missions ne voulez-vous PAS faire, cinq ans durant ? (2 max)',
+    text: "Quelles missions ne voulez-vous surtout pas faire, cinq ans durant ? (2 max)",
     sectionDescription:
       "Écarter ce qu'on ne veut pas faire renseigne autant que choisir : une mission refusée est retirée, pas seulement peu marquée.",
     type: 'multiple',

@@ -10,7 +10,7 @@ l'ouvre, je la remplis, elle est finie. Je n'ai pas à me demander laquelle j'ai
 | Fiche | Public visé | Ce qui compte dans cette session |
 |---|---|---|
 | `session-1.md` | un lycéen | est-ce qu'on comprend le questionnaire à 17 ans, sans parent à côté |
-| `session-2.md` | un jeune diplômé | est-ce que la première réponse proposée à la première question lui va |
+| `session-2.md` | quelqu'un qui cherche un emploi après sa formation, fraîchement ou depuis des mois | est-ce que la réponse proposée à la première question le couvre, y compris s'il a fini son école il y a longtemps |
 | `session-3.md` | un adulte en reconversion | est-ce qu'il se reconnaît quelque part, ou s'il se croit hors cible |
 | `session-4.md` | quelqu'un avec peu de connexion | ce qui a été trop lent pour être supportable, et ce qui a paru cassé alors que c'était lent |
 | `session-5.md` | quelqu'un sur téléphone | ce qui passe sous le bord de l'écran, ce qu'on ne touche pas du premier coup |

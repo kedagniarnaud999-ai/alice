@@ -1,4 +1,4 @@
-# Fiche de test n° 2 — un jeune diplômé
+# Fiche de test n° 2 — quelqu'un qui cherche un emploi après sa formation
 
 *Tâche S1.6 du backlog. Les cinq sessions sont promises pour cette semaine, donc au plus tard le dimanche
 27/09/2026. Moins de trois fiches remplies dimanche : on n'en conclut rien et la tâche reste ouverte.*
@@ -74,6 +74,8 @@ revient en arrière changer une réponse.*
 - Réponses qu'elle est revenue changer :
 - Le moment où elle a failli abandonner, s'il y en a un :
 - Première question (celle sur sa situation) : est-ce qu'une des quatre réponses lui allait ? laquelle, ou aucune :
+- Si elle a choisi « J'ai terminé une formation et je cherche un emploi… » : est-ce que le bout de phrase « ou
+  depuis plusieurs mois » la concernait, ou est-ce qu'elle a trouvé ça bizarre à cet endroit :
 
 ## Étape 4 — « Regarde ce qui s'affiche et dis-moi à quoi ça te fait penser »
 
