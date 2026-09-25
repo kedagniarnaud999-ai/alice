@@ -57,7 +57,7 @@ export const ForgotPassword: React.FC = () => {
                 </p>
               )}
               <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
-                Retour a la connexion
+                Retour à la connexion
               </a>
             </div>
           ) : (
@@ -91,7 +91,7 @@ export const ForgotPassword: React.FC = () => {
 
               <p className="mt-6 text-center text-sm text-gray-600">
                 <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
-                  Retour a la connexion
+                  Retour à la connexion
                 </a>
               </p>
             </>

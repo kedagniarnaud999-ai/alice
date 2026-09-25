@@ -50,7 +50,7 @@ export const VerifyEmailSent: React.FC = () => {
 
           {email && (
             <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              Adresse concernee : <strong>{email}</strong>
+              Adresse concernée : <strong>{email}</strong>
             </div>
           )}
 
@@ -88,7 +88,7 @@ export const VerifyEmailSent: React.FC = () => {
           ) : (
             <div className="space-y-3">
               <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-                <strong>Astuce :</strong> verifiez aussi vos spams et confirmez que l'URL de
+                <strong>Astuce :</strong> vérifiez aussi vos spams et confirmez que l'URL de
                 redirection Supabase pointe bien vers <code>/auth/callback</code>.
               </div>
               <button
@@ -103,7 +103,7 @@ export const VerifyEmailSent: React.FC = () => {
                 href={`/login${email ? `?email=${encodeURIComponent(email)}` : ''}`}
                 className="block pt-2 font-medium text-primary-600 hover:text-primary-700"
               >
-                Retour a la connexion
+                Retour à la connexion
               </a>
             </div>
           )}
