@@ -318,12 +318,41 @@ promettent sans tenir.
 Le dépôt décide, ClickUp reflète. Une carte ne se ferme pas parce qu'elle est cochée là-bas ; elle se ferme quand sa
 ligne passe à **Développé** ici, et quand un écran ou un fichier le montre.
 
-Où en est le miroir, compté le 25/09/2026 à 18h40 : **39 cartes posées sur 79**. Les modules 1, 2, 3 et 4 sont
-complets, soit 36 cartes, et le module 5 s'est arrêté à sa troisième ligne. Les quarante cartes qui manquent sont, dans
-l'ordre : les cinq lignes restantes du module 5 — la première étant « Suivre leur niveau » —, les huit du module 6, les
-neuf du module 7, les dix du module 8, les sept du module 9 et l'unique carte du module 10. Le connecteur ClickUp ne
-passe que 100 appels par jour, lectures comprises ; la reprise se fait quand ce compteur se remet à zéro, et elle
-repart de la ligne que je viens d'écrire pour ne pas poser deux fois la même carte.
+Où en est le miroir, compté le 26/09/2026 à 12h10 : **les 79 cartes sont parties**. Elles étaient 39 hier,
+relues dans la liste avant d'écrire. Les quarante qui manquaient ont été envoyées ce matin, dans l'ordre des
+tableaux : 5 au module 5, 8 au module 6, 9 au module 7, 10 au module 8, 7 au module 9, et la carte unique du
+module 10. Chaque envoi a rendu un identifiant de succès. Contrôle d'arithmétique sur les cartes envoyées :
+10 portent le statut « achevé », 4 l'étiquette `en cours`, 26 l'étiquette `non commencé`, 6 l'étiquette
+`parole à vérifier`, ce qui complète exactement mes 26 « Développé », mes 10 « Engagé » et mes 43 « Absent »
+pour 79 cartes. **Ce total n'est pas encore relu** : le connecteur s'est arrêté à 100 appels sur 100 à 12h04,
+lectures comprises, et son compteur ne se remet à zéro que vers 11h53 demain. Rien ici n'est déclaré fini tant
+que la relecture n'a pas été faite.
+
+Hors du backlog des individus, dans le même workspace, le miroir porte maintenant deux choses de plus. D'une
+part **une carte de décision dans chacune des trois listes de cadrage** — Universités et centres de
+formations, Consultants et centres d'employabilité, Entreprises et recruteurs, les trois listes étaient vides ;
+ces cartes demandent ma décision d'ouverture et rappellent la condition de la Phase E, aucune ne porte de
+travail de code. D'autre part **quatre cartes de session de test confirmées** dans la liste « sprint planning »
+du dossier Action Items (n° 1 à 4), et **deux à contrôler** : « Session de test n° 5 » et la carte unique des
+trois écrans qui promettent sans tenir. L'une des deux a été refusée pour compteur épuisé, et la relecture qui
+devait dire laquelle est tombée dans le même appel perdu. Sur quarante-neuf envois, quarante-huit ont été
+acceptés.
+
+Le reste à faire est mécanique et tient en trois points. Un : relire la liste du backlog et les quatre listes
+secondaires, et vérifier que le total rendu est bien 79. Deux : créer les deux cartes de planning dont la
+réception n'est pas contrôlée, en repartant des textes déjà écrits, pour ne pas les réinventer. Trois :
+corriger un écart relevé pendant la relecture et antérieur à cette poussée — la carte `123tcvwggxk`
+(« Conserver les résultats dans son profil », module 1) porte `en cours` mais aucune étiquette de module, donc
+elle échappe au filtre par module.
+
+Un point de méthode, relevé par la même occasion : la liste « sprint planning » ne contient aucune tâche de mon
+sprint 1, seulement dix tâches de démonstration en anglais. La carte des trois écrans y est donc posée, mais pas
+littéralement à côté de S1.5 ; la rapprocher est une opération de glisser-déposer dans l'interface, et non une
+carte à recréer.
+
+Le connecteur ClickUp ne passe que 100 appels par jour, lectures comprises ; la reprise se fait quand ce
+compteur se remet à zéro, et elle repart de la ligne que je viens d'écrire pour ne pas poser deux fois la
+même carte.
 
 Ce qui est tranché, et ce qui reste à trancher, à écrire à la place de mes réserves :
 
