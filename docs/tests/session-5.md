@@ -1,7 +1,7 @@
 # Fiche de test n° 5 — quelqu'un sur téléphone
 
-*Tâche S1.6 du backlog. Les cinq sessions sont promises pour cette semaine, donc au plus tard le dimanche
-27/09/2026. Moins de trois fiches remplies dimanche : on n'en conclut rien et la tâche reste ouverte.*
+*Tâche S1.6 du backlog. Report acté le 01/10/2026 : le 27/09 est passé sans session. Cette fiche se remplit quand
+l'écran qui propose les métiers aura été refondu et sera en ligne, et la date de reprise se fixera à ce moment-là.*
 
 Site à faire essayer : https://ali-ce-i6it.vercel.app — le site en ligne, jamais une version de travail.
 Ce qu'on teste, c'est ce qu'un candidat verrait ce soir.

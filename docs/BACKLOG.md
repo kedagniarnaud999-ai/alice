@@ -174,10 +174,17 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   s'est arrêtée, ou a mal compris une recommandation. Chaque blocage repéré devient une tâche du sprint suivant.
 - **Taille** : une semaine en parallèle des autres tâches.
 - **Où ça se joue** : dans le produit en ligne, pas sur une machine de développement.
-- **Tranché le 24/09/2026 : la date tient.** Les cinq sessions restent promises pour cette semaine, donc au plus
-  tard le dimanche 27/09/2026. Ce qui doit passer avant, c'est S1.4 : on n'installe pas cinq personnes réelles sur
-  un réglage non contrôlé. Moins de trois comptes rendus écrits dimanche = on n'en conclut rien, et la tâche reste
-  ouverte.
+- **Tranché le 01/10/2026 : la date est reportée, et je le dis tel quel.** Le dimanche 27/09/2026 est passé sans
+  qu'aucune des cinq personnes ait été installée sur le site. Ce n'est pas un réglage qui a manqué : c'est moi qui
+  n'ai pas tenu le créneau. Je reporte, pour une raison qui tient en une phrase. Entre-temps j'ai constaté que
+  l'écran qui propose les métiers n'en montre que trois alors que le domaine en compte jusqu'à vingt-huit, et je
+  vais le refondre. Faire tester maintenant reviendrait à mesurer un écran que je suis sur le point de changer :
+  les blocages relevés ne s'appliqueraient plus à rien.
+- **Ce qui est acquis malgré tout** : le parcours complet, du questionnaire au résultat puis au minimum qui suit le
+  résultat — voir son domaine, ses métiers, un parcours de modules — est opérationnel en ligne. C'est exactement ce
+  que les cinq fiches devaient éprouver ; ce n'est pas annulé, c'est remis à plus tard.
+- **Ce qui débloque** : la nouvelle date se fixe quand l'écran des métiers refondu est en ligne. Les cinq fiches de
+  test sont déjà écrites, dans le dossier des tests, et attendent.
 
 ---
 

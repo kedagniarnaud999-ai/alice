@@ -338,12 +338,17 @@ trois écrans qui promettent sans tenir. L'une des deux a été refusée pour co
 devait dire laquelle est tombée dans le même appel perdu. Sur quarante-neuf envois, quarante-huit ont été
 acceptés.
 
-Le reste à faire est mécanique et tient en trois points. Un : relire la liste du backlog et les quatre listes
-secondaires, et vérifier que le total rendu est bien 79. Deux : créer les deux cartes de planning dont la
-réception n'est pas contrôlée, en repartant des textes déjà écrits, pour ne pas les réinventer. Trois :
-corriger un écart relevé pendant la relecture et antérieur à cette poussée — la carte `123tcvwggxk`
-(« Conserver les résultats dans son profil », module 1) porte `en cours` mais aucune étiquette de module, donc
-elle échappe au filtre par module.
+**Relecture faite le 01/10/2026, et les trois points sont réglés.** Un : la liste est comptée carte par carte, le
+total rendu est bien **79**, et l'arithmétique tient — 26 cartes au statut « achevé », 10 à l'étiquette `en cours`,
+43 à l'étiquette `non commencé`, et 9 qui portent en plus `parole à vérifier`. Cela correspond exactement à mes
+26 « Développé », mes 10 « Engagé » et mes 43 « Absent ». Deux : les deux cartes dont la réception n'était pas
+contrôlée existent bien — « Session de test n° 5 » et « Retirer les trois écrans qui promettent sans tenir ». Trois
+: la carte « Conserver les résultats dans son profil » porte désormais l'étiquette `module 1 orientation`, donc elle
+ne glisse plus sous le filtre par module.
+
+Une écriture de plus, commandée par la décision du même jour : les cinq cartes de session de test ne disent plus
+« au plus tard le dimanche 27/09/2026 ». La tâche S1.6 est reportée, la reprise se fixe quand l'écran qui propose
+les métiers sera refondu et en ligne, et c'est ce texte qui se lit maintenant sur chacune des cinq cartes.
 
 Un point de méthode, relevé par la même occasion : la liste « sprint planning » ne contient aucune tâche de mon
 sprint 1, seulement dix tâches de démonstration en anglais. La carte des trois écrans y est donc posée, mais pas

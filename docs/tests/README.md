@@ -42,7 +42,8 @@ dans les dix personnes de S3.7.
 - Trois personnes sur cinq bloquées au même endroit → tâche bloquante du sprint en cours, traitée avant
   d'ajouter quoi que ce soit d'autre.
 - Chaque blocage repéré devient une tâche du sprint suivant, avec la fiche en preuve.
-- Moins de trois fiches remplies le dimanche 27/09/2026 → on ne conclut rien, et S1.6 reste ouverte.
+- Le 27/09/2026 est passé sans qu'aucune session ne soit faite : report acté le 01/10/2026, tant que l'écran qui
+  propose les métiers n'est pas refondu et en ligne. La règle des trois fiches sur cinq reste la même à la reprise.
 
 ## Où elles se voient aussi
 
