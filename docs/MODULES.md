@@ -6,12 +6,14 @@ ClickUp n'est qu'un miroir : le texte qui fait foi est ici, et ce qui tranche es
 
 Rien dans ce fichier n'est sorti de mon imagination. Chaque ligne d'un tableau reprend une demande écrite de mes
 mains dans `docs/CADRAGE-PRODUIT.md`, chapitre 7, parfois mot pour mot. Je n'ajoute qu'une chose : l'état réel,
-fonctionnalité par fonctionnalité. Tout a été relu dans le code le 23/09/2026, et les chiffres sont comptés le même
-soir : **51** modules de formation au catalogue, **11** domaines de carrière, **31** questions, **4** situations de
-départ, **45** métiers documentés, **165** lignes d'écoles, de formations et de bourses. Les quatre premiers sont
-les nombres que rendent les deux contrôles du dépôt (`npm run verify`) ; les deux derniers, je les ai comptés dans
-leurs fichiers, `src/data/occupations.ts` et `src/data/opportunities.ts`. Partout ailleurs j'écris un nombre, je dis
-où je l'ai compté.
+fonctionnalité par fonctionnalité. Tout a été relu dans le code le 23/09/2026.
+
+Depuis, je ne compte plus à la main. Les nombres du produit — 51 modules de formation au catalogue, 11 domaines de
+carrière, 31 questions, 4 situations de départ, 45 métiers documentés, 165 lignes d'écoles, de formations et de
+bourses — se lisent à un seul endroit, `docs/CONTENU-PRODUIT.md`, et une troisième vérification automatique les
+recompte dans le code à chaque `npm run verify`. Elle rougit si la fiche s'écarte du catalogue, et elle rougit aussi
+si un document comme celui-ci écrit un chiffre que la mesure ne rend pas. Partout ailleurs je dis où je l'ai compté ;
+ici, la réponse est : nulle part, c'est le contrôle qui compte.
 
 Trois états, pas un de plus :
 

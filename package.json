@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "verify": "vite build --ssr src/checks/pathway.check.ts --outDir .verify --logLevel warn && vite build --ssr src/checks/signal.check.ts --outDir .verify/signal --logLevel warn && node .verify/pathway.check.js && node .verify/signal/signal.check.js",
+    "verify": "vite build --ssr src/checks/pathway.check.ts --outDir .verify --logLevel warn && vite build --ssr src/checks/signal.check.ts --outDir .verify/signal --logLevel warn && vite build --ssr src/checks/contenu.check.ts --outDir .verify/contenu --logLevel warn && node .verify/pathway.check.js && node .verify/signal/signal.check.js && node .verify/contenu/contenu.check.js",
     "preview": "vite preview",
     "vercel-build": "npm run build"
   },
