@@ -92,9 +92,9 @@ export function functionView(result: ProfileResult, domainId: FunctionalDomainId
       recommended: false,
       closedReason:
         underAxis.length === 0
-          ? 'Aucun métier de ce domaine ne travaille sur cet axe pour vous aujourd’hui.'
+          ? 'Aucun métier de ce domaine ne travaille sur cette fonction pour vous aujourd’hui.'
           : underAxis.length < MIN_FUNCTION_OPENINGS
-            ? 'Cet axe n’ouvre qu’un seul métier dans ce domaine : rien à choisir derrière.'
+            ? 'Cette fonction ne fait qu’un seul métier dans ce domaine : rien à choisir derrière.'
             : null,
     };
   });

@@ -156,7 +156,7 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({
         <span className="mt-1 block text-sm text-gray-600">{option.blurb}</span>
         <span className="mt-1 block text-xs text-gray-500">
           {option.closedReason ??
-            `${option.openings.length} métier(s) de ce domaine travaillent sur cet axe.`}
+            `${option.openings.length} métier(s) de ce domaine travaillent sur cette fonction.`}
         </span>
       </>
     );
