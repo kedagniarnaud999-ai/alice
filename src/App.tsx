@@ -70,6 +70,14 @@ type AppState =
   | 'profile';
 type TrialState = 'welcome' | 'test' | 'loading' | 'results' | 'domain' | 'focus';
 
+/**
+ * La fonction sous laquelle le candidat a rangé son choix, et la raison qu'il en
+ * a donnée, suivent le ciblage. Elles n'entrent dans aucun calcul : le parcours
+ * reste taillé sur le domaine, les fiches et les axes.
+ */
+const withFunctionChoice = (draft: Targeting, choice?: FunctionChoice): Targeting =>
+  choice ? { ...draft, functionId: choice.functionId, functionRationale: choice.rationale } : draft;
+
 function App() {
   return (
     <Suspense fallback={<LoadingScreen message="Chargement de l'écran..." />}>
@@ -173,15 +181,16 @@ const TrialExperience = () => {
           result={profileResult}
           domainId={openDomainId}
           onBack={() => setTrialState('results')}
-          onChoose={(domainId) => {
-            setFocusDraft(focusFromResult(profileResult, domainId));
+          onChoose={(domainId, choice) => {
+            const draft = focusFromResult(profileResult, domainId);
+            setFocusDraft(draft ? withFunctionChoice(draft, choice) : null);
             setTrialState('focus');
           }}
-          onChooseOccupation={(occupationId) => {
-            setFocusDraft(
+          onChooseOccupation={(occupationId, choice) => {
+            const draft =
               focusFromOccupation(profileResult, occupationId, openDomainId) ??
-                focusFromResult(profileResult, openDomainId)
-            );
+              focusFromResult(profileResult, openDomainId);
+            setFocusDraft(draft ? withFunctionChoice(draft, choice) : null);
             setTrialState('focus');
           }}
         />
@@ -354,14 +363,6 @@ const WorkspaceApp = () => {
     storageManager.savePathway(generatedPathway);
     setAppState('pathway');
   };
-
-  /**
-   * La fonction sous laquelle le candidat a rangé son choix, et la raison qu'il en
-   * a donnée, suivent le ciblage. Elles n'entrent dans aucun calcul : le parcours
-   * reste taillé sur le domaine, les fiches et les axes.
-   */
-  const withFunctionChoice = (draft: Targeting, choice?: FunctionChoice): Targeting =>
-    choice ? { ...draft, functionId: choice.functionId, functionRationale: choice.rationale } : draft;
 
   /** L'étape d'engagement, pré-remplie par une fiche : `false` quand rien n'est préparable. */
   const openFocusFromOccupation = (
