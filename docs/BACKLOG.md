@@ -331,6 +331,25 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Où ça se joue** : `src/data/opportunities.ts`.
 ---
 
+### S2.7 — Écrire en français ce que le catalogue affiche en anglais
+
+- **Ce que ça change** : un candidat francophone lit aujourd'hui des noms de formations et de bourses écrits en
+  anglais, sur l'écran même où AliTché lui parle de son avenir. Mesuré le 02/10/2026 : sur les 165 lignes du
+  catalogue, 40 portent un nom écrit en anglais — 26 formations dont le diplôme se nomme « Bachelor in … », et 14
+  bourses dont le nom tout entier est en anglais. Un premier comptage en annonçait 51 : il passait par un test de
+  mots anglais qui attrapait aussi des lignes françaises commençant par « Master professionnel ». Deux exemples
+  trouvés en relisant : « Bachelor in Accountancy — ESM » et « VLIR-UOS awards scholarships to study in Vlanders
+  Belgium », cette dernière contenant de plus une coquille sur le nom de la région.
+- **Pourquoi maintenant** : la tâche S2.6 oblige à relire le catalogue ligne par ligne. Autant corriger la langue
+  de chaque ligne au moment où on la contrôle, plutôt que d'y revenir dans six mois.
+- **Comment on saura que c'est fini** : chaque ligne est soit écrite en français, soit laissée dans sa langue
+  d'origine parce que ce nom est le nom officiel de la chose, et ce choix est alors dit à l'écran par un
+  complément en français. La coquille sur la région flamande est corrigée. Aucune ligne ne se présente comme un
+  texte brut que personne n'a relu.
+- **Taille** : se fait avec S2.6, ligne par ligne, sans séance supplémentaire pour la plupart des cas.
+- **Où ça se joue** : `src/data/opportunities.ts`, champ des noms de lignes.
+---
+
 # Sprint 3 — Rendre le parcours fluide
 
 *Ma priorité 1 : inscrire → profil → orientation → résultats → recommandations → parcours → formation →
@@ -647,6 +666,29 @@ Mon chapitre 19, complété par ce que le produit a déjà commencé à promettr
   après la poussée, donc la comparaison ne pouvait rien trouver de neuf, et mes recherches de textes accentués
   échouaient à cause de l'accent de ma propre requête, pas de l'absence du texte. La référence se prend avant de
   pousser, et une recherche qui échoue se teste d'abord sur le fichier construit ici.
+
+**Ouvert le 2026-10-02, et à trancher par moi : que doit contenir le champ « voies de formation ».**
+
+D'abord une rectification à ma charge. Dans l'aperçu que j'ai donné sur l'écran d'un domaine, j'ai annoncé
+« cinquante-cinq noms écrits à la main, dont sept seulement retrouvent une école derrière ». Le recomptage, fait
+deux fois et indépendamment ce soir, donne un autre ordre de grandeur : 134 mentions dans les fiches de métiers et
+44 dans les fiches de domaines, soit 168 noms distincts. Sur cette base élargie, onze noms retrouvent une ligne du
+catalogue de façon certaine, trente-deux se ressemblent sans être certains, et le reste ne retrouve rien. Mon
+chiffre du matin était donc faux, et je l'avais avancé sans le revérifier.
+
+Le vrai problème n'est pas celui que je dénonçais. Il n'y a pas d'écoles inventées derrière ces noms : presque tous
+ne sont pas des lieux. Le champ mélange trois choses différentes sans le dire : des établissements, des noms de
+diplômes (« Licence Informatique », « BTS Transport et logistique »), et des thèmes (« Santé publique et
+épidémiologie »). Une ligne sans réponse dans le catalogue n'est donc pas un lien cassé, c'est souvent un diplôme,
+ce qui est légitime. Et aujourd'hui ce champ s'affiche comme une seule ligne de texte, sans lien nulle part : ce
+que j'ai écrit là ne conduit le candidat nulle part, alors que c'est précisément la matière du parcours qu'il
+réclame après avoir validé un métier.
+
+Ma décision à prendre, en trois volets : est-ce que « voies de formation » doit ne contenir que des lieux, ou
+garder les trois natures en les distinguant à l'écran ; est-ce que cette ligne devient cliquable vers les écoles et
+les formations du catalogue, ce qui est le troisième pas de l'écran domaine ; et que faire des 40 lignes du
+catalogue dont le nom est écrit en anglais, qui sont la tâche S2.7, et des six écoles qui n'apparaissent que dans
+le nom d'une formation sans jamais avoir de ligne d'établissement à leur propre nom.
 
 **Ce que je ne relance pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
 (les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,
