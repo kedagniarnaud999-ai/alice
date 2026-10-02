@@ -207,12 +207,15 @@ doublon, construite depuis ce que mes 51 modules disent déjà.
 
 Deux choses qui ne sont pas dans mon document mais qui décident de ce que les autres croient.
 
-**Ce que le fichier de présentation du dépôt affirme.** Un serveur avec une authentification par jeton, un
-gestionnaire de base de données séparé, une connexion Google. **Ce que le produit fait.** L'application parle à
-la base de données depuis le navigateur du candidat. Le serveur décrit existe dans le dépôt, sous dossier
-`backend/`, et rien ne l'appelle. Un partenaire, un recruteur, ou un outil d'intelligence artificielle qui lit
-ce fichier ne décrit pas le même produit que celui qui est en ligne. Proposition : le réécrire depuis le code, en français (tâche
-S2.3), et ranger le serveur abandonné (tâche S2.4).
+**Ce que le fichier de présentation du dépôt affirmait.** Un serveur avec une authentification par jeton, un
+gestionnaire de base de données séparé, une connexion Google, vingt-trois questions et six dimensions. **Ce que le produit
+fait.** L'application parle à la base de données depuis le navigateur du candidat. Le serveur décrit existait dans
+le dépôt sous dossier `backend/`, et rien ne l'appelait. C'est traité le 02/10/2026 : `README.md` est réécrit depuis
+le code, en français et à la première personne, les nombres du produit ne sont plus recopiés dans la fiche
+d'identité mais relus dans `docs/CONTENU-PRODUIT.md`, et le contrôle `src/checks/contenu.check.ts` lit désormais ce
+`README.md` comme les documents de `docs/`. Un partenaire, un recruteur ou un outil d'intelligence artificielle qui
+ouvre le dépôt lit donc aujourd'hui le produit qui est en ligne. Reste le serveur abandonné lui-même, et les
+vingt-deux autres fichiers Markdown hérités de la racine : tâche S2.4.
 
 **Le catalogue.** 165 lignes d'écoles, formations et bourses. 151 portent une date de vérification, mais ces
 151 dates ne forment que deux lots : 74 lignes datées du 21/09/2026, 77 du 22/09/2026. Ce n'est pas 151
@@ -238,7 +241,7 @@ non vérifié — ce qui est l'inverse de promettre, et ne coûte rien.
 | 6 | Google et le lien de connexion | **oui — c'est ce qu'on annonce aux visiteurs** | prise : Google affiché, lien sans mot de passe retiré ; restent les deux réglages en console | S2.2 |
 | 7 | la vérification de l'adresse e-mail | non | en attente | S2.1 |
 | 8 | les compétences comme élément central | non, mais ça décide du sprint 4 | en attente | S4.4 |
-| 9 | ce que le dépôt affirme, et l'état du catalogue | non | en attente | S2.3, S2.4, S2.6 |
+| 9 | ce que le dépôt affirme, et l'état du catalogue | non | en partie faite : la fiche d'identité du dépôt est réécrite depuis le code (02/10/2026), le rangement et la relecture du catalogue restent | S2.4, S2.6 |
 
 Les deux réponses qui bloquaient le planning sont tombées. Restent cinq points non tranchés : le 1 se règle en
 écrivant la correspondance, les 3, 7, 8 et 9 se règlent en travaillant, et je les traite comme des évidences

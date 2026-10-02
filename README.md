@@ -1,211 +1,146 @@
-# Ali Ce - Orientation & Career Development Platform
+# AliTché, fiche d'identité du dépôt
 
-## About Ali Ce
+Ce fichier décrit le produit qui existe aujourd'hui, pas celui qu'on avait imaginé au départ. Tout ce que j'y
+écris se montre à l'écran en dix minutes sur `https://ali-ce-i6it.vercel.app`. Ce qui n'est pas encore vrai y est
+écrit comme non vérifié, plutôt que passé sous silence.
 
-Ali Ce is a professional EdTech and Career Development platform focused on orientation, upskilling, employability, and career positioning, primarily for young people and professionals in Africa (Francophone context).
+## Ce qu'AliTché fait
 
-## Features
+AliTché est une application web d'orientation et de parcours, pensée pour la francophonie africaine. Une personne
+répond à un questionnaire, voit les domaines de carrière que ses réponses dessinent et dans quel ordre elle s'en
+rapproche, ouvre la fiche d'un domaine pour comprendre ce que ce métier-là exige vraiment, choisit une direction,
+reçoit un parcours de modules à suivre dans un ordre qui tient, puis découvre où se former : établissements,
+formations et bourses.
 
-### 🔐 Authentication System
-- JWT-based authentication
-- Google OAuth integration
-- Email verification
-- Password reset functionality
-- Protected routes
-- Auto-refresh tokens
+Le travail à faire se lit dans `docs/BACKLOG.md`. Le cadrage qui fait foi est `docs/CADRAGE-PRODUIT.md` : c'est
+lui que le dépôt doit servir, et non l'inverse. Le planning se tient hors de l'application, dans l'outil de
+suivi d'activité.
 
-### 📝 Psychometric Orientation Test
-- 23 targeted questions evaluating 6 key dimensions
-- Real-time analysis and profiling
-- No "right or wrong" answers - authentic self-assessment
-- Progress saving and recovery
+## Ce qui ne fait pas partie du produit
 
-### 6 Evaluation Dimensions
-1. **Cognitive & Working Profile** - How you think, learn, and solve problems
-2. **Passion & Motivation** - What gives you energy and engagement
-3. **Natural Talents** - Abilities recognized by others
-4. **Centers of Interest** - Domains and sectors of attraction
-5. **Personal Reality & Constraints** - Time, tools, learning conditions
-6. **Career Stage / Positioning** - Current professional situation
+Il n'y a pas de serveur applicatif à moi. Le navigateur parle directement au service qui tient la base de
+données, la fabrication des comptes et le stockage des images. De ce service, le produit n'utilise que trois
+tables : les profils, les réponses au questionnaire et la progression dans les modules. Chacune est fermée par des
+règles de sécurité qui limitent la lecture et l'écriture au propriétaire du compte.
 
-### Personalized Results
-- Dominant profile identification
-- Natural talents assessment
-- Motivation drivers analysis
-- Primary interests mapping
-- Career positioning insights
-- Feasibility assessment
-- Clear next actions
+Le dossier `backend/` est l'amorce abandonnée d'un serveur avec jetons et base PostgreSQL gérée à la main. Rien
+dans l'application ne l'appelle. Le fichier `src/services/api.client.ts` est le client de ce serveur : personne ne
+l'importe. La variable `VITE_API_URL` n'est lue nulle part, même si elle traîne encore dans un fichier de réglages
+locaux. Vingt-deux autres fichiers Markdown dorment à la racine du dépôt, pour la plupart des guides de déploiement
+écrits pour des plate-formes que le projet n'utilise plus. Ranger tout cela sans rien casser est la tâche S2.4 du
+backlog.
 
-### Learning Pathways
-- Customized learning tracks
-- Quick-win modules
-- Long-term goals
-- Progressive milestones
-- Skills-based recommendations
+## Les écrans, dans l'ordre où on les traverse
 
-### 👤 User Profile Management
-- Avatar upload (JPG, PNG, WebP)
-- Profile editing
-- Progress tracking
-- Personal dashboard
+| On est ici | Adresse | Ce qu'on y voit |
+| --- | --- | --- |
+| Accueil public | `/` | ce que fait AliTché, et l'entrée vers l'essai ou vers son compte |
+| Essai sans compte | `/trial` | l'écran d'avant-questionnaire, le questionnaire, puis les résultats en mode invité avec l'invitation à créer un compte pour garder la direction choisie |
+| Questionnaire | `/app` après connexion | les questions, une par écran, avec la barre de progression et la reprise là où on s'était arrêté |
+| Résultats | `/app` | le classement des domaines de carrière approchés, le profil psychologique et le profil de compétences, et les deux façons de poursuivre |
+| Fiche d'un domaine | `/app` | ce que le domaine demande, les métiers qui l'exigent, les terrains où on le pratique, et les écoles, formations et bourses qui s'y rattachent |
+| Écran de direction | `/app` | le métier visé, la spécialisation retenue, et le parcours qui se construit dessus |
+| Parcours | `/app` | les modules dans l'ordre, la progression enregistrée module par module, et l'avertissement quand une progression n'a pas pu partir sur le compte |
+| Tableau de bord | `/app` | où on en est, ce qui reste à faire, et l'entrée vers le profil |
+| Profil | `/app` | la photo, le nom que l'on corrige, l'adresse e-mail en lecture seule, et l'effacement de ses données |
+| Compte | `/login`, `/register` | adresse e-mail et mot de passe |
+| Adresse à confirmer | `/verify-email`, `/verify-email-sent` | l'écran qui dit quoi faire du lien reçu, et celui qui prévient quand le lien a expiré |
+| Mot de passe | `/forgot-password`, `/reset-password` | la demande de nouveau mot de passe et sa saisie |
+| Retour d'un fournisseur externe | `/auth/callback` | le chemin est en place, le bouton qui l'empruntait est retiré de l'écran, voir S2.2 |
 
-## Technology Stack
+Une limite à dire franchement : l'espace connecté tient tous ses écrans sur la seule adresse `/app` et change
+d'écran sans changer l'adresse. C'est le travail S3.1, « une adresse par étape », qui doit y remédier.
 
-### Frontend
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite 5
-- **Styling**: Tailwind CSS 3.4
-- **Routing**: React Router 6
-- **HTTP Client**: Axios 1.6
-- **Icons**: Lucide React
-- **Design System**: Custom components (Button, Card, Badge, ProgressBar)
+## Ce que contient le produit
 
-### Backend
-- **Runtime**: Node.js + Express 4.18
-- **Language**: TypeScript 5.3
-- **Database**: PostgreSQL 14+ with Prisma ORM 5.9
-- **Authentication**: JWT + Passport.js + Google OAuth2
-- **Email**: Nodemailer 6.9
-- **File Upload**: Multer 1.4
-- **Security**: Helmet, CORS, Rate Limiting
+Les nombres du produit, qu'il s'agisse des questions, des domaines de carrière, des métiers, des axes, des
+modules ou des chances de formation, se lisent à un seul endroit : `docs/CONTENU-PRODUIT.md`. Je ne les recopie
+pas ici. C'est justement parce qu'ils étaient écrits à quatre endroits différents qu'ils ont commencé à se
+contredire. Une vérification automatique les recompte dans le catalogue et rougit si un document du dépôt écrit un
+chiffre que le catalogue ne donne pas.
 
-## Getting Started
+## Faire tourner le projet sur sa machine
 
-### Prerequisites
-- Node.js 18+ and npm
-- PostgreSQL 14+ (for backend)
+Il faut Node.js. Sur le poste de développement, la version 24 est installée et convient.
 
-### Quick Start
-
-#### 1. Frontend Setup
 ```bash
-# Install dependencies
 npm install
+```
 
-# Create .env file (manually on Windows)
-# Add: VITE_API_URL=http://localhost:5000/api
+Deux réglages vont dans un fichier `.env.local` à la racine, et ce sont les deux seules choses que l'application
+attend :
 
-# Start development server
+```
+VITE_SUPABASE_URL=https://l-adresse-de-votre-projet.supabase.co
+VITE_SUPABASE_ANON_KEY=la-cle-publique-du-projet
+```
+
+Les clés du projet en ligne ne sont pas dans le dépôt et je ne les recopie pas ici : elles vivent dans les
+variables de l'environnement de la plate-forme d'hébergement. Sans ces deux réglages, l'application n'affiche aucun
+écran du produit. Elle affiche à la place un écran de configuration qui nomme la variable manquante et dit pourquoi
+elle est refusée. C'est voulu : mieux vaut cet écran qu'un produit qui fonctionne à moitié en silence.
+
+```bash
 npm run dev
 ```
 
-Frontend runs on: `http://localhost:5173`
+Le serveur de développement écoute sur `http://localhost:5173`. Sur certaines machines, y compris celle-ci, il ne
+répond qu'en adressage IPv6 et le navigateur ou un outil de contrôle ne le voit pas : lancer alors
+`npm run dev -- --host 127.0.0.1` pour qu'il écoute aussi sur l'adresse utilisée partout ailleurs.
 
-#### 2. Backend Setup
-```bash
-cd backend
+## Les trois commandes qui veillent sur le dépôt
 
-# Install dependencies
-npm install
+| Commande | Ce qu'elle refuse |
+| --- | --- |
+| `npm run verify` | Trois contrôles. Le premier construit un profil pour chacune des quatre situations de départ et vérifie que le parcours rendu tient debout : des modules qui existent, des durées cohérentes, le bon nombre de questions. Le deuxième veille sur la qualité du signal : la part du score qui vient d'une question où le candidat nomme lui-même son domaine ne doit pas dépasser ce que j'ai admis, domaine par domaine et en cumulé. Le troisième recompte le catalogue et relit `docs/CONTENU-PRODUIT.md` ainsi que les autres documents du dépôt. |
+| `npm run lint` | Le style de code, avec zéro avertissement toléré. Elle ne tourne pas aujourd'hui : le dépôt déclare l'outil dans `package.json` mais ne porte aucun fichier de configuration, alors la commande sort en erreur avant de regarder un seul fichier. Écrire cette configuration fait partie de la tâche S2.4. |
+| `npm run build` | La compilation TypeScript puis l'assemblage des fichiers du site. C'est exactement ce que la mise en ligne exécute. |
 
-# Configure environment variables
-# Copy env.example to .env and fill in:
-# - DATABASE_URL
-# - JWT_SECRET
-# - EMAIL credentials (optional for dev)
-# - GOOGLE_CLIENT_ID/SECRET (optional)
+Quand tout va bien, `npm run verify` écrit trois fois « Tous les contrôles passent. ». Ces contrôles se lisent
+dans `src/checks/`. Ils se conduisent comme des tests : on les lance avant de pousser, et après avoir touché un
+nombre du catalogue.
 
-# Run database migrations
-npx prisma migrate dev
+## Mise en ligne
 
-# Seed database with learning modules
-npm run seed
+Le site est hébergé sur Vercel et lié au dépôt. Une poussée sur `master` part en production en moins de cinq
+minutes. La commande exécutée par la plate-forme est `vercel-build`, qui appelle `npm run build`. Le fichier
+`vercel.json` ne fait qu'une seule chose : renvoyer toutes les adresses vers `index.html`, pour que `/login` ou
+`/app` s'ouvrent directement et pas seulement depuis l'accueil. Épingler une version ancienne de Node dans les
+réglages de la plate-forme a déjà cassé le build : on garde le choix par défaut.
 
-# Start backend server
-npm run dev
-```
+## Ce qui n'est pas encore vrai
 
-Backend runs on: `http://localhost:5000`
+Je préfère l'écrire ici que le découvrir plus tard.
 
-### Full Setup Guide
+L'isolement d'un compte par rapport à un autre n'a jamais été prouvé par deux vrais comptes sur deux appareils :
+c'est la tâche S1.4, et le code est en ligne pour ça. Cinquante liens sur les cent cinquante et une lignes
+vérifiées du catalogue mènent à un site agrégateur plutôt qu'à l'établissement lui-même, et les dates de
+vérification forment deux lots plutôt que cent cinquante et une relectures : c'est la tâche S2.6. La connexion par
+compte externe est retirée de l'écran parce que son réglage chez le fournisseur exige une carte de paiement que je
+n'ai pas encore : c'est la tâche S2.2, et le code reste dans le dépôt. Deux fausses promesses tiennent encore dans
+l'interface : c'est la tâche S1.5. Le dépôt, enfin, enregistre des bibliothèques et un serveur mort : c'est S2.4.
 
-See [SETUP.md](SETUP.md) for detailed installation instructions.
+Ce qu'AliTché ne fait pas, et ne fait pas exprès : tenir un emploi du temps, délivrer une certification, donner un
+espace à un employeur, ni mettre en relation avec quelqu'un. Ces chantiers existent dans le cadrage, à des niveaux
+qui ne sont pas « maintenant ».
 
-### Frontend-Backend Integration
+## Les documents du dépôt
 
-See [FRONTEND_INTEGRATION.md](FRONTEND_INTEGRATION.md) for:
-- Authentication flows
-- API services documentation
-- Routing structure
-- Token management
-- Debugging tips
+| Fichier | Ce qu'il tient |
+| --- | --- |
+| `docs/CADRAGE-PRODUIT.md` | L'autorité produit : ce que je veux construire, par quelle priorité, à quel niveau. |
+| `docs/BACKLOG.md` | Le travail à faire, en sprints, écrit en français et sans sigles. |
+| `docs/MODULES.md` | Les dix modules attendus et, fonctionnalité par fonctionnalité, ce que le code rend vraiment. |
+| `docs/CONTENU-PRODUIT.md` | Les nombres du produit, mesurés et non recopiés. |
+| `docs/ECARTS-PRODUIT-CODE.md` | Les points où le cadrage et le produit ne disent pas la même chose, et leur suivi. |
+| `docs/TESTS-USAGERS.md` | Le protocole des sessions de test avec des personnes hors de l'équipe. |
+| `docs/tests/` | La fiche de test et ce que chaque session a donné. |
+| `docs/hors-usage-2026-09-23/` | Ce que j'ai rangé sans le détruire : l'ancienne méthode et ses documents. |
 
-## Project Structure
+Trois textes en anglais antérieurs au cadrage attendent le même rangement : `docs/Ali_Ce_Product_Overview_Public.md`,
+`docs/PRD_Ali_Ce_Private.md` et `docs/PRD_Ali_Ce_Private.html`.
 
-```
-alice/
-├── src/                          # Frontend source
-│   ├── components/
-│   │   ├── auth/                 # Login, Register, ProtectedRoute
-│   │   ├── profile/              # AvatarUpload
-│   │   ├── ui/                   # Reusable UI components
-│   │   ├── test/                 # Test flow components
-│   │   ├── results/              # Results dashboard
-│   │   ├── pathway/              # Learning pathway views
-│   │   └── dashboard/            # User dashboard
-│   ├── contexts/
-│   │   └── AuthContext.tsx       # Global auth state
-│   ├── services/
-│   │   ├── api.client.ts         # Axios client with interceptors
-│   │   ├── auth.api.ts           # Auth API service
-│   │   ├── profile.api.ts        # Profile API service
-│   │   └── module.api.ts         # Learning modules API
-│   ├── pages/
-│   │   ├── VerifyEmail.tsx
-│   │   ├── ForgotPassword.tsx
-│   │   ├── ResetPassword.tsx
-│   │   ├── ProfileSettings.tsx
-│   │   └── AuthCallback.tsx      # OAuth callback
-│   ├── data/
-│   │   └── questions.ts          # Test questions database
-│   ├── types/
-│   │   └── test.ts               # TypeScript interfaces
-│   ├── utils/
-│   │   ├── testAnalyzer.ts       # Scoring engine
-│   │   ├── pathwayEngine.ts      # Pathway recommendations
-│   │   └── storageManager.ts     # LocalStorage management
-│   ├── App.tsx                   # Main app with routing
-│   └── main.tsx                  # Entry point
-│
-├── backend/                      # Backend API
-│   ├── src/
-│   │   ├── routes/               # API routes
-│   │   ├── services/             # Business logic
-│   │   ├── middleware/           # Auth, upload, errors
-│   │   ├── config/               # Database, passport
-│   │   ├── scripts/              # Seed script
-│   │   └── server.ts             # Express server
-│   ├── prisma/
-│   │   └── schema.prisma         # Database schema
-│   ├── uploads/                  # Uploaded avatars
-│   └── README.md                 # Backend documentation
-│
-├── SETUP.md                      # Installation guide
-├── FRONTEND_INTEGRATION.md       # Frontend-backend docs
-└── README.md                     # This file
-```
+## Licence et auteur
 
-## Design Philosophy
-
-- **Trustworthy & Professional**: Modern, clean interface
-- **Supportive, Not Judgmental**: Empowering language
-- **Action-Oriented**: Clear next steps
-- **Realistic & Pragmatic**: No overpromises
-- **Culturally Relevant**: Adapted to African Francophone context
-
-## Core Principles
-
-1. **No rigid personality types** - Identify tendencies, not categories
-2. **Transparent scoring** - Explainable results
-3. **Evolutionary profiles** - Users can grow and change
-4. **Feasibility first** - Realistic assessments based on constraints
-5. **Employability focus** - Market-relevant recommendations
-
-## License
-
-Proprietary - All rights reserved
-
-## Contact
-
-For more information about Ali Ce, please visit our website or contact our team.
+Le code de ce dépôt est propriétaire, tous droits réservés. Le projet est conduit par son fondateur, dont
+l'adresse et le compte GitHub figurent dans l'historique des commits et dans l'adresse du dépôt.

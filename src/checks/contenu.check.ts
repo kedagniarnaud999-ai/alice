@@ -25,12 +25,21 @@ const FIN = 'COMPTEURS : fin';
 
 /** Les documents vivants du dépôt : `hors-usage-*` décrit un état périmé, il n'est pas tenu. */
 const documents = Object.fromEntries(
-  Object.entries(
-    import.meta.glob('../../docs/**/*.md', { query: '?raw', import: 'default', eager: true }) as Record<
-      string,
-      string
-    >
-  ).filter(([chemin]) => !chemin.includes('hors-usage'))
+  [
+    ...Object.entries(
+      import.meta.glob('../../docs/**/*.md', { query: '?raw', import: 'default', eager: true }) as Record<
+        string,
+        string
+      >
+    ),
+    // La fiche d'identité du dépôt nomme des nombres du produit : elle est tenue comme les documents.
+    ...Object.entries(
+      import.meta.glob('../../README.md', { query: '?raw', import: 'default', eager: true }) as Record<
+        string,
+        string
+      >
+    ),
+  ].filter(([chemin]) => !chemin.includes('hors-usage'))
 );
 
 const reelle = (o: Opportunity): boolean => o.source !== 'demo';
@@ -269,7 +278,8 @@ Object.keys(documents)
   });
 
 HORS_CATALOGUE.forEach((e) => {
-  const corps = documents[`../../docs/${e.fichier}`];
+  const chemin = Object.keys(documents).find((c) => c.endsWith(`/${e.fichier}`));
+  const corps = chemin ? documents[chemin] : undefined;
   if (!corps || !new RegExp(`\\b${e.nombre}\\s+${e.mot}\\b`).test(corps)) {
     failures.push(
       `src/checks/contenu.check.ts assume « ${e.nombre} ${e.mot} » dans ${e.fichier} (${e.raison}) alors que ce chiffre n'y apparaît plus : retire cette ligne.`

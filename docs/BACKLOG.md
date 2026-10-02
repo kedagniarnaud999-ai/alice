@@ -263,6 +263,15 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   montrer à l'écran dans les dix minutes.
 - **Taille** : une journée.
 - **Où ça se joue** : `README.md`.
+- **Ce qui est fait dans le dépôt (02/10/2026)** : `README.md` est entièrement réécrit en français, à la première
+  personne, et décrit le produit qui est en ligne : le navigateur parle directement au service qui tient la base,
+  les comptes et les images, et le serveur abandonné est nommé comme tel plutôt que présenté comme une pièce du
+  produit. Les écrans y sont listés par adresse, avec la limite franchement écrite que tout l'espace connecté tient
+  sur `/app` sans changer d'adresse (c'est le travail S3.1). Les nombres du produit ne sont plus recopiés là : la
+  fiche renvoie à `docs/CONTENU-PRODUIT.md`, et `src/checks/contenu.check.ts` lit désormais ce `README.md` comme il
+  lit les documents de `docs/`, donc un chiffre qui divergerait du catalogue y fait rougir la vérification. Ce que
+  la tâche laisse non montré : le téléversement de la photo de profil, qui est écrit dans le code mais que je n'ai
+  pas encore fait avec une vraie image sur un vrai compte.
 
 ### S2.4 — Ranger le dépôt
 
@@ -274,6 +283,12 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   comme abandonné, soit retiré, à une condition : rien de ce qui fonctionne aujourd'hui ne disparaît.
 - **Taille** : deux jours, à faire une suppression à la fois, avec vérification entre chaque.
 - **Où ça se joue** : `node_modules/`, `backend/`, `.gitignore`, `src/services/api.client.ts`.
+- **Mesuré le 02/10/2026** : `npm run lint` ne peut pas tourner du tout. Le dépôt déclare ESLint et ses modules
+  complémentaires dans `package.json`, mais ne porte aucun fichier de configuration, nulle part : la commande sort
+  en erreur avant d'avoir regardé un seul fichier, en disant avoir cherché cette configuration dans le dossier du
+  serveur abandonné puis dans ses dossiers parents. Écrire cette configuration fait donc partie du rangement. En
+  attendant, les deux gardes qui comptent vraiment sont le contrôle de types (`npm run build` commence par `tsc`,
+  muet quand tout va bien) et `npm run verify` avec ses trois contrôles.
 
 ### S2.5 — Écrire ce que contient AliTché, à un seul endroit
 
@@ -285,6 +300,12 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   automatique qui rougit si le texte et la réalité divergent.
 - **Taille** : deux jours.
 - **Où ça se joue** : `src/data/`, `src/checks/`.
+- **Ce qui est fait dans le dépôt (02/10/2026)** : `docs/CONTENU-PRODUIT.md` tient les nombres du produit, et le
+  bloc de compteurs qu'il contient n'est pas écrit à la main : c'est la mesure qui l'a imprimé. Une troisième
+  vérification automatique, `src/checks/contenu.check.ts`, recompte le catalogue à chaque `npm run verify`, compare
+  les trente-huit compteurs, relit les onze lignes du tableau par domaine et scanne chaque chiffre suivi de «
+  question », « module », « domaine », « métier » ou « axe » dans les documents vivants du dépôt et dans le
+  `README.md`. Le garde-fou a été éprouvé en cassant le texte de trois façons différentes : chacune rougit.
 
 ### S2.6 — Relire le catalogue, ligne par ligne
 
