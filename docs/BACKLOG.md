@@ -541,7 +541,7 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 | E1 | rattacher les chances réelles aux métiers, pas au seul domaine | un candidat qui vise un métier croisé voit les formations de ce métier |
 | E2 | compléter l'offre hors Bénin et les formations qui manquent | l'orientation ne s'arrête plus à la frontière |
 | E3 | rendre la recherche d'écoles utilisable | on cherche par métier, pays, durée, frais |
-| E4 | alléger le premier affichage | le site s'ouvre sur une connexion faible : 214 kilo-octets compressés aujourd'hui |
+| E4 | alléger le premier affichage | le site s'ouvre sur une connexion faible : 164 kilo-octets compressés depuis le 2026-10-02, contre 214 avant ; restent les trois catalogues à sortir du fichier de départ |
 | E5 | accessibilité clavier et contrastes | utilisable sans souris et en plein soleil |
 | E6 | une version anglaise de l'accueil | cohérente avec une ambition régionale, une fois la version française irréprochable |
 | E7 | écrire la politique de conservation des données | le produit peut toucher des mineurs : durée de garde, effacement à demande, sortie d'un mineur |
@@ -626,6 +626,17 @@ Mon chapitre 19, complété par ce que le produit a déjà commencé à promettr
   accent et aucune fois sans, « Gains rapides » a remplacé « Quick wins », et les phrases neuves de S1.3 s'y lisent.
   C'est cette relecture qui a démasqué les deux fiches de métier qui employaient encore le mot exclu ; elles
   ferment la marche, dans le commit suivant.
+- **La poussée du 2026-10-02, sur le poids du site** : le fichier que reçoit quelqu'un qui arrive pour la première
+  fois pesait 782 603 octets, et il contenait tout, y compris les quatorze écrans qu'un visiteur ne voit pas le
+  premier jour. Chacun de ces écrans a maintenant son propre fichier, téléchargé au moment où l'on y arrive. Le
+  fichier de départ servi en ligne pèse 550 616 octets, 164 kilo-octets une fois comprimé, contre 214 avant.
+  Vérifié sur le fichier servi, non sur le dépôt : le message d'attente « Chargement de l'écran » s'y lit, le titre
+  « Votre profil AliTché » a quitté le fichier de départ pour celui de l'écran des résultats, et la page de
+  connexion télécharge son propre fichier sans prendre le catalogue des chances avec. Console vide. Deux pièges de
+  vérification m'ont fait annoncer un déploiement fantôme : ma copie de référence du nom de fichier avait été prise
+  après la poussée, donc la comparaison ne pouvait rien trouver de neuf, et mes recherches de textes accentués
+  échouaient à cause de l'accent de ma propre requête, pas de l'absence du texte. La référence se prend avant de
+  pousser, et une recherche qui échoue se teste d'abord sur le fichier construit ici.
 
 **Ce que je ne relance pas** : les cinq écarts non tranchés du fichier `docs/ECARTS-PRODUIT-CODE.md`
 (les six dimensions, les briques de formation déjà annoncées, le chemin de vérification de l'adresse e-mail,
