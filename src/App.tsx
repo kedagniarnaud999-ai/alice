@@ -1,24 +1,10 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { HomePage } from '@/components/home/HomePage';
 import { WelcomeScreen } from '@/components/test/WelcomeScreen';
-import { TestFlow } from '@/components/test/TestFlow';
-import { ResultsDashboard } from '@/components/results/ResultsDashboard';
-import { DomainDetail } from '@/components/results/DomainDetail';
-import { FocusFlow } from '@/components/focus/FocusFlow';
-import { PathwayView } from '@/components/pathway/PathwayView';
-import { Dashboard } from '@/components/dashboard/Dashboard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { LoginForm } from '@/components/auth/LoginForm';
-import { RegisterForm } from '@/components/auth/RegisterForm';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { VerifyEmail } from '@/pages/VerifyEmail';
-import { VerifyEmailSent } from '@/pages/VerifyEmailSent';
-import { ForgotPassword } from '@/pages/ForgotPassword';
-import { ResetPassword } from '@/pages/ResetPassword';
-import { AuthCallback } from '@/pages/AuthCallback';
-import { ProfileSettings } from '@/pages/ProfileSettings';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
 import { CrossOccupation, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { focusFromResult } from '@/utils/domainFocus';
@@ -28,6 +14,47 @@ import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProfileResult, Targeting, TestResponse, FunctionalDomainId } from '@/types/test';
+
+/**
+ * Les écrans après le premier chargement partent dans leur propre fichier : le paquet reçu avant
+ * le premier écran ne porte plus le catalogue des chances ni les fiches de parcours.
+ */
+const TestFlow = lazy(() => import('@/components/test/TestFlow').then((m) => ({ default: m.TestFlow })));
+const ResultsDashboard = lazy(() =>
+  import('@/components/results/ResultsDashboard').then((m) => ({ default: m.ResultsDashboard }))
+);
+const DomainDetail = lazy(() =>
+  import('@/components/results/DomainDetail').then((m) => ({ default: m.DomainDetail }))
+);
+const FocusFlow = lazy(() => import('@/components/focus/FocusFlow').then((m) => ({ default: m.FocusFlow })));
+const PathwayView = lazy(() =>
+  import('@/components/pathway/PathwayView').then((m) => ({ default: m.PathwayView }))
+);
+const Dashboard = lazy(() => import('@/components/dashboard/Dashboard').then((m) => ({ default: m.Dashboard })));
+const ProfileSettings = lazy(() =>
+  import('@/pages/ProfileSettings').then((m) => ({ default: m.ProfileSettings }))
+);
+const LoginForm = lazy(() => import('@/components/auth/LoginForm').then((m) => ({ default: m.LoginForm })));
+const RegisterForm = lazy(() =>
+  import('@/components/auth/RegisterForm').then((m) => ({ default: m.RegisterForm }))
+);
+const VerifyEmail = lazy(() => import('@/pages/VerifyEmail').then((m) => ({ default: m.VerifyEmail })));
+const VerifyEmailSent = lazy(() =>
+  import('@/pages/VerifyEmailSent').then((m) => ({ default: m.VerifyEmailSent }))
+);
+const ForgotPassword = lazy(() =>
+  import('@/pages/ForgotPassword').then((m) => ({ default: m.ForgotPassword }))
+);
+const ResetPassword = lazy(() => import('@/pages/ResetPassword').then((m) => ({ default: m.ResetPassword })));
+const AuthCallback = lazy(() => import('@/pages/AuthCallback').then((m) => ({ default: m.AuthCallback })));
+
+/**
+ * La barrière est posée autour de l'écran, jamais autour de l'écran qui le choisit :
+ * pendant qu'un fichier se télécharge, l'état du parcours reste en place.
+ */
+const Screen = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={<LoadingScreen message="Chargement de l'écran..." />}>{children}</Suspense>
+);
 
 type AppState =
   | 'home'
@@ -44,26 +71,28 @@ type TrialState = 'welcome' | 'test' | 'loading' | 'results' | 'domain' | 'focus
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<PublicHome />} />
-      <Route path="/trial" element={<TrialExperience />} />
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
-      <Route
-        path="/app"
-        element={
-          <ProtectedRoute>
-            <WorkspaceApp />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<LoadingScreen message="Chargement de l'écran..." />}>
+      <Routes>
+        <Route path="/" element={<PublicHome />} />
+        <Route path="/trial" element={<TrialExperience />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegisterForm />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/verify-email-sent" element={<VerifyEmailSent />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <WorkspaceApp />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 
@@ -125,7 +154,11 @@ const TrialExperience = () => {
   }
 
   if (trialState === 'test') {
-    return <TestFlow onComplete={handleComplete} />;
+    return (
+      <Screen>
+        <TestFlow onComplete={handleComplete} />
+      </Screen>
+    );
   }
 
   if (trialState === 'loading') {
@@ -134,40 +167,45 @@ const TrialExperience = () => {
 
   if (trialState === 'domain' && profileResult && openDomainId) {
     return (
-      <DomainDetail
-        result={profileResult}
-        domainId={openDomainId}
-        onBack={() => setTrialState('results')}
-        onChoose={(domainId) => {
-          setFocusDraft(focusFromResult(profileResult, domainId));
-          setTrialState('focus');
-        }}
-      />
+      <Screen>
+        <DomainDetail
+          result={profileResult}
+          domainId={openDomainId}
+          onBack={() => setTrialState('results')}
+          onChoose={(domainId) => {
+            setFocusDraft(focusFromResult(profileResult, domainId));
+            setTrialState('focus');
+          }}
+        />
+      </Screen>
     );
   }
 
   if (trialState === 'focus' && profileResult && focusDraft) {
     return (
-      <FocusFlow
-        result={profileResult}
-        draft={focusDraft}
-        onChange={setFocusDraft}
-        onBack={() => setTrialState('domain')}
-        confirmLabel="Créer mon compte pour démarrer ce parcours"
-        onConfirm={(draft) => {
-          // L'engagement pris avant le compte doit passer la création : le profil
-          // local part tel quel dans le premier saveProfile après l'inscription.
-          const chosen = { ...profileResult, targeting: draft };
-          setProfileResult(chosen);
-          storageManager.saveProfileResult(chosen);
-          navigate('/register?from=trial');
-        }}
-        onBuildOnDomains={() => navigate('/register?from=trial')}
-      />
+      <Screen>
+        <FocusFlow
+          result={profileResult}
+          draft={focusDraft}
+          onChange={setFocusDraft}
+          onBack={() => setTrialState('domain')}
+          confirmLabel="Créer mon compte pour démarrer ce parcours"
+          onConfirm={(draft) => {
+            // L'engagement pris avant le compte doit passer la création : le profil
+            // local part tel quel dans le premier saveProfile après l'inscription.
+            const chosen = { ...profileResult, targeting: draft };
+            setProfileResult(chosen);
+            storageManager.saveProfileResult(chosen);
+            navigate('/register?from=trial');
+          }}
+          onBuildOnDomains={() => navigate('/register?from=trial')}
+        />
+      </Screen>
     );
   }
 
   return (
+    <Screen>
       <ResultsDashboard
         result={profileResult ?? undefined}
         guestMode
@@ -180,6 +218,7 @@ const TrialExperience = () => {
           setTrialState('domain');
         }}
       />
+    </Screen>
   );
 };
 
@@ -489,7 +528,7 @@ const WorkspaceApp = () => {
     return <LoadingScreen message="Chargement de votre profil..." />;
   }
 
-  return (
+  const screens = (
     <div className="min-h-screen">
       {appState === 'home' && (
         <HomePage
@@ -558,6 +597,8 @@ const WorkspaceApp = () => {
       {appState === 'profile' && <ProfileSettings />}
     </div>
   );
+
+  return <Screen>{screens}</Screen>;
 };
 
 export default App;
