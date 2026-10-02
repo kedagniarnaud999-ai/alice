@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Award, BookOpen, Briefcase, ExternalLink, Layers, School, TrendingUp } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, Briefcase, ChevronDown, ExternalLink, Layers, School, TrendingUp } from 'lucide-react';
 import { ProfileResult } from '@/types/test';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { matchOccupations, OccupationBand, OccupationMatch, OCCUPATION_BAND_BADGE, OCCUPATION_BAND_LABEL } from '@/utils/occupationMatcher';
 import { buildTrackForOccupation } from '@/utils/pathwayEngine';
+import { linkStudyPaths } from '@/utils/studyPathLinks';
 import { ChipFilter, ChipOption } from '@/components/ui/ChipFilter';
 import {
   DEMO_OPPORTUNITY_NOTICE,
@@ -179,6 +180,42 @@ const foregroundOpportunities = (ranked: Opportunity[]): Opportunity[] => {
   return picked;
 };
 
+/** Une ligne du catalogue, affichée à l'identique où qu'on la rencontre sur la fiche. */
+const OpportunityLine: React.FC<{ opportunity: Opportunity }> = ({ opportunity }) => {
+  const KindIcon = KIND_ICON[opportunity.kind];
+  return (
+    <li className="flex items-start gap-2">
+      <KindIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-600" />
+      <div className="text-sm text-gray-700">
+        {opportunity.url ? (
+          <a
+            href={opportunity.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-start gap-1 font-medium text-primary-700 underline-offset-2 hover:underline"
+          >
+            {opportunity.label}
+            <ExternalLink className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+          </a>
+        ) : (
+          <span className="font-medium">{opportunity.label}</span>
+        )}
+        <span className="text-xs text-gray-500">
+          {' '}
+          · {KIND_LABEL[opportunity.kind]}
+          {opportunity.delivery ? ` · ${OPPORTUNITY_DELIVERY_LABEL[opportunity.delivery]}` : ''}
+          {opportunity.country !== 'multi' ? ` · ${opportunity.country}` : ''}
+        </span>
+        {isDemoOpportunity(opportunity) && (
+          <Badge variant="warning" size="sm" className="ml-2 align-middle">
+            Démo
+          </Badge>
+        )}
+      </div>
+    </li>
+  );
+};
+
 const OccupationCard: React.FC<{
   match: OccupationMatch;
   isSelected: boolean;
@@ -187,11 +224,15 @@ const OccupationCard: React.FC<{
   kindFilter: OpportunityKind | 'all';
 }> = ({ match, isSelected, onSelect, selectLabel, kindFilter }) => {
   const { occupation, band, cores, coreGaps, bestSector } = match;
+  const [allOpportunities, setAllOpportunities] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
   const track = buildTrackForOccupation(occupation);
   const covered = new Set((track?.modules ?? []).flatMap((module) => module.skills));
   const gaps = occupation.skills.filter((skill) => !covered.has(skill));
   const opportunities = visibleOpportunities(occupation, kindFilter);
-  const shownOpportunities = foregroundOpportunities(opportunities);
+  const shownOpportunities = allOpportunities ? opportunities : foregroundOpportunities(opportunities);
+  const links = linkStudyPaths(occupation, opportunities);
+  const linkedCount = links.filter((entry) => entry.matches.length > 0).length;
 
   return (
     <div
@@ -241,9 +282,49 @@ const OccupationCard: React.FC<{
             <span className="font-medium">Compétences à développer :</span> {gaps.join(', ')}.
           </p>
         )}
-        <p>
-          <span className="font-medium">Voies de formation :</span> {occupation.studyPaths.join(' · ')}
-        </p>
+      </div>
+
+      <div className="mt-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Voies de formation</p>
+        <ul className="mt-2 space-y-1.5">
+          {links.map((entry) =>
+            entry.matches.length === 0 ? (
+              <li key={entry.path} className="text-sm text-gray-700">
+                {entry.path}
+              </li>
+            ) : (
+              <li key={entry.path}>
+                <button
+                  type="button"
+                  aria-expanded={openPath === entry.path}
+                  onClick={() => setOpenPath(openPath === entry.path ? null : entry.path)}
+                  className="inline-flex items-start gap-1.5 text-left text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
+                >
+                  <ChevronDown
+                    className={`mt-1 h-3.5 w-3.5 flex-shrink-0 transition-transform ${
+                      openPath === entry.path ? 'rotate-180' : ''
+                    }`}
+                    aria-hidden="true"
+                  />
+                  {entry.path}
+                </button>
+                {openPath === entry.path && (
+                  <ul className="mt-1.5 space-y-2 border-l-2 border-primary-200 pl-3">
+                    {entry.matches.map((opportunity) => (
+                      <OpportunityLine key={opportunity.id} opportunity={opportunity} />
+                    ))}
+                  </ul>
+                )}
+              </li>
+            )
+          )}
+        </ul>
+        {linkedCount > 0 && linkedCount < links.length && (
+          <p className="mt-2 text-xs text-gray-500">
+            {links.length - linkedCount} nom(s) de cette fiche désignent un diplôme ou un thème, pas encore une
+            école de notre catalogue : ils restent écrits, sans lien.
+          </p>
+        )}
       </div>
 
       <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
@@ -258,46 +339,25 @@ const OccupationCard: React.FC<{
           </p>
         ) : (
           <ul className="mt-2 space-y-2">
-            {shownOpportunities.map((opportunity) => {
-              const KindIcon = KIND_ICON[opportunity.kind];
-              return (
-                <li key={opportunity.id} className="flex items-start gap-2">
-                  <KindIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-600" />
-                  <div className="text-sm text-gray-700">
-                    {opportunity.url ? (
-                      <a
-                        href={opportunity.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-start gap-1 font-medium text-primary-700 underline-offset-2 hover:underline"
-                      >
-                        {opportunity.label}
-                        <ExternalLink className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
-                      </a>
-                    ) : (
-                      <span className="font-medium">{opportunity.label}</span>
-                    )}
-                    <span className="text-xs text-gray-500">
-                      {' '}
-                      · {KIND_LABEL[opportunity.kind]}
-                      {opportunity.delivery ? ` · ${OPPORTUNITY_DELIVERY_LABEL[opportunity.delivery]}` : ''}
-                      {opportunity.country !== 'multi' ? ` · ${opportunity.country}` : ''}
-                    </span>
-                    {isDemoOpportunity(opportunity) && (
-                      <Badge variant="warning" size="sm" className="ml-2 align-middle">
-                        Démo
-                      </Badge>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
+            {shownOpportunities.map((opportunity) => (
+              <OpportunityLine key={opportunity.id} opportunity={opportunity} />
+            ))}
           </ul>
         )}
-        {opportunities.length > shownOpportunities.length && (
-          <p className="mt-2 text-xs text-gray-500">
-            + {opportunities.length - shownOpportunities.length} autre(s) offre(s) reliée(s) à ce métier.
-          </p>
+        {opportunities.length > OPPORTUNITIES_PER_CARD && (
+          <button
+            type="button"
+            onClick={() => setAllOpportunities((value) => !value)}
+            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary-700 underline-offset-2 hover:underline"
+          >
+            {allOpportunities
+              ? 'Réduire la liste'
+              : `Voir les ${opportunities.length} offres reliées à ce métier`}
+            <ChevronDown
+              className={`h-3.5 w-3.5 ${allOpportunities ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            />
+          </button>
         )}
       </div>
 

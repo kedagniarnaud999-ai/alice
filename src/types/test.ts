@@ -130,6 +130,17 @@ export interface Targeting {
   flagshipDomainId: FunctionalDomainId;
   occupationIds: string[];
   specializationIds: string[];
+  /**
+   * La fonction sous laquelle le candidat a rangé son choix. Facultative : un
+   * ciblage pris avant ce niveau n'en a pas. Elle ne pèse sur aucun score, elle
+   * remet seulement le filtre où le candidat l'avait laissé.
+   */
+  functionId?: FunctionRoleId;
+  /**
+   * Sa réponse au « pourquoi ce choix ? », en une phrase. Matière première pour
+   * corriger le questionnaire, jamais une condition pour avancer.
+   */
+  functionRationale?: string;
 }
 
 export interface ProfileResult {

@@ -92,13 +92,19 @@ export const PSYCH_ROLE_AFFINITY: Record<string, Partial<Record<FunctionRoleId, 
   intuitive: { conception: 1 },
 };
 
+/**
+ * Le niveau « fonction » de l'entonnoir (domaine → fonction → métier). Ces six
+ * axes traversent tous les domaines : ils sont nommés comme dans un organigramme,
+ * jamais comme un secteur, pour que « Études, chiffres et contrôle » ne se lise
+ * pas comme la concurrence du domaine « Finance et comptabilité ».
+ */
 export const ROLE_LABELS: Record<FunctionRoleId, string> = {
-  coordination: 'Coordonner et piloter',
-  analyse: 'Analyser et modéliser',
-  technique: 'Construire et réparer',
-  relation: 'Conseiller et convaincre',
-  conception: 'Imaginer et concevoir',
-  terrain: 'Exécuter sur le terrain',
+  coordination: 'Pilotage et gestion de projet',
+  analyse: 'Études, chiffres et contrôle',
+  technique: 'Technique et production',
+  relation: 'Conseil, vente et relations',
+  conception: 'Création et conception',
+  terrain: 'Opérations et exécution',
 };
 
 export const FUNCTION_ROLE_IDS: FunctionRoleId[] = Object.keys(ROLE_LABELS) as FunctionRoleId[];

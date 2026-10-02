@@ -1,13 +1,23 @@
 import { MODULE_CATALOG, LearningModule } from '@/data/modules';
 import { FUNCTIONAL_DOMAINS_BY_ID, ALL_DOMAIN_IDS } from '@/data/domains';
 import { PSYCH_TRAITS, FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
-import { CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
+import { CHOICE_RATIONALES, FUNCTION_PROFILE_LIST } from '@/data/functions';
+import { CROSS_OCCUPATIONS, CrossOccupation, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { SPECIALIZATIONS, SPECIALIZATIONS_BY_ID, specializationsForDomain } from '@/data/specializations';
 import { OPPORTUNITIES, opportunitiesForOccupation, opportunitiesForDomain } from '@/data/opportunities';
 import type { OpportunityKind } from '@/data/opportunities';
 import { orientationQuestions, ASSESSMENT_VERSION } from '@/data/questions';
 import { TestAnalyzer, getVisibleQuestions } from '@/utils/testAnalyzer';
-import { domainOccupations, domainOpenings, flagshipCandidates, focusFromResult } from '@/utils/domainFocus';
+import { domainOccupations, domainOpenings, flagshipCandidates, focusFromOccupation, focusFromResult } from '@/utils/domainFocus';
+import {
+  composeRationale,
+  functionView,
+  MAX_RATIONALE_CHARS,
+  MAX_RATIONALE_NOTE_CHARS,
+  MIN_FUNCTION_OPENINGS,
+  RECOMMENDED_FUNCTION_COUNT,
+} from '@/utils/functionFocus';
+import { linkStudyPaths, matchStudyPath, normalizeLabel } from '@/utils/studyPathLinks';
 import {
   MAX_TARGETED_OPENINGS,
   MAX_TARGETED_SPECIALIZATIONS,
@@ -21,7 +31,7 @@ import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine, buildTrackForOccupation, fromTargeting } from '@/utils/pathwayEngine';
 import type { LearningTrack } from '@/utils/pathwayEngine';
-import type { CareerSituation, FunctionRoleId, FunctionalDomainId, ProfileResult, Question, QuestionOption, TestResponse } from '@/types/test';
+import type { CareerSituation, FunctionRoleId, FunctionalDomainId, ProfileResult, Question, QuestionOption, Targeting, TestResponse } from '@/types/test';
 
 const DIFFICULTY_LEVEL: Record<LearningModule['difficulty'], number> = {
   Debutant: 0,
@@ -1134,6 +1144,195 @@ DOMAIN_IDS.forEach((domainId) => {
   check(ranking.excluded.some((match) => match.occupation.id === sample.id),
     `${sample.id} : écarté par l'exclusion de ${domainId} sans figurer parmi les fiches exclues`);
 });
+
+/**
+ * Écran 1 : la fiche du domaine montre maintenant chaque métier avec un bouton
+ * « Choisir ce métier ». Un bouton qui ouvre une étape refusée par l'entonnoir est
+ * plus trompeur qu'une absence de bouton, donc le brouillon produit ici doit passer
+ * la validation telle quelle.
+ */
+const isAnchoredIn = (occupation: CrossOccupation, domainId: FunctionalDomainId): boolean =>
+  (occupation.core[domainId] ?? 0) > 0;
+
+DOMAIN_IDS.forEach((domainId) => {
+  const profile = new TestAnalyzer(walkForCores(soleCore(domainId), 0)).analyze();
+  const { openings } = domainOpenings(profile, domainId);
+
+  openings.forEach((match) => {
+    const occupation = match.occupation;
+    const draft = focusFromOccupation(profile, occupation.id, domainId);
+    check(draft !== null,
+      `${domainId} : « ${occupation.title} » s’affiche avec un bouton qui n’ouvre aucune étape`);
+    if (!draft) return;
+
+    check(
+      isAnchoredIn(occupation, domainId)
+        ? draft.flagshipDomainId === domainId
+        : isAnchoredIn(occupation, draft.flagshipDomainId),
+      `${domainId} : « ${occupation.title} » part en engagement sur un domaine que la fiche n’exige pas`
+    );
+    check(draft.occupationIds.length === 1 && draft.occupationIds[0] === occupation.id,
+      `${domainId} : « ${occupation.title} » ouvre l’étape avec une autre cible que la fiche cliquée`);
+    check(validateFocus(draft, profile) === null,
+      `${domainId} : « ${occupation.title} » ouvre une étape que l’entonnoir refuse (${
+        validateFocus(draft, profile) ?? '—'
+      })`);
+    check(resolveFocus(draft).occupations.length === 1,
+      `${domainId} : « ${occupation.title} » ne résout aucune fiche réelle une fois en engagement`);
+  });
+});
+
+const unanchoredDraft = focusFromOccupation(funnel, 'metier_inexistant_du_catalogue');
+check(unanchoredDraft === null, 'Une fiche inconnue du catalogue ouvre quand même une étape d’engagement');
+
+/**
+ * Le niveau fonction ne doit avaler aucun métier. Un candidat qui range les
+ * débouchés de son domaine par fonction doit retrouver les mêmes fiches que celui
+ * qui ne range rien : le filtre est une façon de lire, pas un tri qui écarte.
+ * Une fonction recommandée doit en ouvrir deux ou plus — une seule, c'est un
+ * cul-de-sac présenté comme un choix.
+ */
+let thinnestRecommendation = RECOMMENDED_FUNCTION_COUNT;
+DOMAIN_IDS.forEach((domainId) => {
+  const profile = new TestAnalyzer(walkForCores(soleCore(domainId), 0)).analyze();
+  const view = functionView(profile, domainId);
+  const { openings } = domainOpenings(profile, domainId);
+
+  check(view.options.length === FUNCTION_ROLE_IDS.length,
+    `${domainId} : le niveau fonction ne rend pas les six fonctions`);
+  check(
+    view.recommended.length > 0 && view.recommended.length <= RECOMMENDED_FUNCTION_COUNT,
+    `${domainId} : ${view.recommended.length} fonction(s) recommandée(s), entre une et trois attendues`
+  );
+  thinnestRecommendation = Math.min(thinnestRecommendation, view.recommended.length);
+
+  const thinPicks = view.recommended.filter(
+    (option) => option.openings.length < MIN_FUNCTION_OPENINGS
+  );
+  check(thinPicks.length === 0,
+    `${domainId} : recommandé sans assez de métiers derrière (${thinPicks.map((option) => option.id).join(', ')})`);
+
+  view.options.forEach((option) => {
+    check(
+      option.openings.length >= MIN_FUNCTION_OPENINGS || option.closedReason !== null,
+      `${domainId} / ${option.id} : fonction écartée de la recommandation sans raison à afficher`
+    );
+    option.openings.forEach((match) =>
+      check(match.occupation.functions.includes(option.id),
+        `${domainId} / ${option.id} : « ${match.occupation.title} » rangé sous une fonction qu’il ne déclare pas`)
+    );
+  });
+
+  const reachable = new Set(
+    view.options.flatMap((option) => option.openings.map((match) => match.occupation.id))
+  );
+  openings.forEach((match) =>
+    check(reachable.has(match.occupation.id),
+      `${domainId} : « ${match.occupation.title} » disparaît dès que les métiers sont rangés par fonction`)
+  );
+  check(reachable.size === openings.length,
+    `${domainId} : ${reachable.size} métier(s) joignables par fonction pour ${openings.length} que le domaine ouvre`);
+});
+
+notes.push(
+  `domaines contrôlés : ${DOMAIN_IDS.length}, la plus petite recommandation tient à ${thinnestRecommendation} fonction(s)`
+);
+
+/**
+ * La nuance que l'entonnoir est en train de montrer tient dans les mots : une
+ * fonction qui porterait exactement le nom d'un domaine rendrait les deux
+ * niveaux indiscernables, et c'est précisément ce que le candidat doit éviter.
+ */
+const DOMAIN_LABELS = new Set(DOMAIN_IDS.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label));
+FUNCTION_PROFILE_LIST.forEach((entry) =>
+  check(!DOMAIN_LABELS.has(entry.label),
+    `« ${entry.label} » : une fonction porte le nom exact d’un domaine`)
+);
+
+const rationaleLabel = (id: string): string =>
+  CHOICE_RATIONALES.find((entry) => entry.id === id)?.label ?? '';
+
+/**
+ * Le « pourquoi ce choix ? » : trois choses à tenir. L'ordre des clics ne doit pas
+ * changer la phrase (sinon rien ne sera comparable d'un profil à l'autre), une
+ * réponse vide ne doit rien inventer, et la phrase ne doit jamais déborder ce que
+ * le stockage garde — une justification coupée est une réponse déformée.
+ */
+check(
+  composeRationale(['test_missed', 'vu_around'], 'un métier debout') ===
+    composeRationale(['vu_around', 'test_missed'], 'un métier debout'),
+  'Deux cases cochées dans un ordre autre produisent une phrase autre : les justifications ne seront pas comparables'
+);
+check(composeRationale([], '   ') === undefined,
+  'Une justification vide part quand même dans le payload');
+check(
+  (composeRationale(
+    CHOICE_RATIONALES.map((entry) => entry.id),
+    'a'.repeat(MAX_RATIONALE_NOTE_CHARS)
+  ) ?? '').length <= MAX_RATIONALE_CHARS,
+  'Toutes les cases cochées avec une note pleine débordent la phrase gardée : elle serait coupée sans que l’écran le dise'
+);
+
+/** Ces deux champs partent dans la colonne JSONB : ce que le candidat a choisi de dire ne doit pas s'évaporer à la relecture. */
+const declaredTargeting: Targeting = {
+  ...focusFromResult(funnel, funnel.topDomainIds[0]),
+  functionId: 'coordination',
+  functionRationale: composeRationale(['vu_around', 'test_missed'], 'un métier debout'),
+};
+const declared = normalizeProfileResult(JSON.parse(JSON.stringify({ ...funnel, targeting: declaredTargeting })));
+check(declared?.targeting?.functionId === 'coordination',
+  'La fonction retenue ne survit pas au payload : le filtre du candidat s’efface à la relecture');
+check(
+  declared?.targeting?.functionRationale ===
+    `${rationaleLabel('vu_around')} · ${rationaleLabel('test_missed')} · un métier debout`,
+  'La justification arrive déformée à la relecture du profil'
+);
+
+const driftedTargeting: Targeting = { ...declaredTargeting, functionId: 'marketing' as FunctionRoleId };
+const drifted = normalizeProfileResult(JSON.parse(JSON.stringify({ ...funnel, targeting: driftedTargeting })));
+check(drifted?.targeting?.functionId === undefined,
+  'Un axe absent de la nomenclature survit à la relecture : la clé morte reviendrait à l’écran');
+
+/**
+ * Écran 2 : les noms écrits à la main dans « voies de formation » deviennent
+ * cliquables quand le catalogue connaît ce nom. Un lien inventé envoie le candidat
+ * sur une école qui n’a rien à voir avec ce qu’il lisait, donc la reconnaissance
+ * doit rester dans le réservoir qu’on lui donne et ne pas promettre plus que le nom.
+ */
+const pathLinks = CROSS_OCCUPATIONS.flatMap((occupation) =>
+  linkStudyPaths(occupation, opportunitiesForOccupation(occupation))
+);
+const linkedPathCount = pathLinks.filter((entry) => entry.matches.length > 0).length;
+notes.push(
+  `${CROSS_OCCUPATIONS.reduce((n, o) => n + o.studyPaths.length, 0)} noms de « voies de formation », ${linkedPathCount} reliés à une ligne du catalogue`
+);
+
+CROSS_OCCUPATIONS.forEach((occupation) => {
+  const pool = opportunitiesForOccupation(occupation);
+  const poolIds = new Set(pool.map((opportunity) => opportunity.id));
+  linkStudyPaths(occupation, pool).forEach((entry) => {
+    check(entry.matches.length <= 3,
+      `${occupation.id} : « ${entry.path} » prétend couvrir ${entry.matches.length} lignes, la fiche ne montre plus le métier`);
+    check(entry.matches.every((opportunity) => poolIds.has(opportunity.id)),
+      `${occupation.id} : « ${entry.path} » mène à une offre que ce métier ne porte pas`);
+  });
+});
+
+/**
+ * Un mot qui nomme une famille entière de diplômes ne distingue personne : « Licence
+ * AES ou GPA » prétendait rejoindre huit formations, toutes commencées par « Licence ».
+ */
+check(
+  OPPORTUNITIES.every((opportunity) => matchStudyPath('Licence AES ou GPA', opportunity) === 0),
+  'Un nom de voie tenu par un seul mot commun relie vers des formations qui ne sont pas la sienne'
+);
+
+/** Et le lien certain doit survivre : sinon un durcissement vide l’écran sans qu’on s’en aperçoive. */
+const esas = OPPORTUNITIES.find((opportunity) => normalizeLabel(opportunity.label).includes('assistants sociaux'));
+check(
+  esas !== undefined && matchStudyPath('École supérieure des assistants sociaux', esas) > 0,
+  'Un nom d’école écrit tel quel dans le catalogue ne relie plus rien : la reconnaissance s’est éteinte'
+);
 
 const fixedResponses = walkForCores(CROSS_OCCUPATIONS[0].core, 0);
 check(

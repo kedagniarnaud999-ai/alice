@@ -9,9 +9,6 @@ import { Badge } from '@/components/ui/Badge';
 import { FunctionalDomainId } from '@/types/test';
 import { MAX_TARGETED_OPENINGS } from '@/utils/focusSelection';
 
-/** Assez de place pour choisir vraiment, pas assez pour relancer le survol. */
-const OPENINGS_PER_STEP = 6;
-
 interface OccupationStepProps {
   domainId: FunctionalDomainId;
   matches: OccupationMatch[];
@@ -29,12 +26,11 @@ export const OccupationStep: React.FC<OccupationStepProps> = ({
   selectedIds,
   onToggle,
 }) => {
-  const shown = matches.slice(0, OPENINGS_PER_STEP);
   const full = selectedIds.length >= MAX_TARGETED_OPENINGS;
 
   return (
     <div className="mt-3 space-y-2">
-      {shown.map((match) => {
+      {matches.map((match) => {
         const checked = selectedIds.includes(match.occupation.id);
         const locked = full && !checked;
         const core = match.cores.find((entry) => entry.id === domainId);
@@ -74,11 +70,6 @@ export const OccupationStep: React.FC<OccupationStepProps> = ({
         );
       })}
 
-      {matches.length > shown.length && (
-        <p className="text-xs text-gray-500">
-          + {matches.length - shown.length} autre(s) débouché(s) de ce domaine, classés après ceux-ci.
-        </p>
-      )}
       {full && (
         <p className="flex items-center gap-1 text-xs text-gray-500">
           <Check className="h-3.5 w-3.5 text-primary-600" />

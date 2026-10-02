@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, Award, BookOpen, ChevronDown, ExternalLink, Layers, School } from 'lucide-react';
-import { FunctionalDomainId, ProfileResult } from '@/types/test';
+import { FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -9,7 +9,16 @@ import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { specializationsForDomain } from '@/data/specializations';
 import { domainOpenings } from '@/utils/domainFocus';
 import {
+  composeRationale,
+  FunctionChoice,
+  FunctionOption,
+  MAX_RATIONALE_NOTE_CHARS,
+  openingsForFunction,
+  functionView,
+} from '@/utils/functionFocus';
+import {
   OccupationBand,
+  OccupationMatch,
   OCCUPATION_BAND_BADGE,
   OCCUPATION_BAND_LABEL,
 } from '@/utils/occupationMatcher';
@@ -23,9 +32,7 @@ import {
   OPPORTUNITY_DELIVERY_LABEL,
 } from '@/data/opportunities';
 import { MODULE_DIFFICULTY_LABELS } from '@/data/modules';
-
-/** Même plafond d'attention que l'écran de résultats : trois fiches à la fois. */
-const OPENINGS_PER_SCREEN = 3;
+import { ChoiceReasonForm } from './ChoiceReasonForm';
 
 type PanelKey = 'specializations' | 'training' | 'schools' | 'funding';
 
@@ -54,7 +61,9 @@ interface DomainDetailProps {
   domainId: FunctionalDomainId;
   onBack: () => void;
   /** Omise tant que l'entonnoir de ciblage n'est pas là : aucun bouton mort. */
-  onChoose?: (domainId: FunctionalDomainId) => void;
+  onChoose?: (domainId: FunctionalDomainId, choice?: FunctionChoice) => void;
+  /** Même réserve : valider un métier depuis cette fiche n'existe que si l'étape d'après est branchée. */
+  onChooseOccupation?: (occupationId: string, choice?: FunctionChoice) => void;
 }
 
 /**
@@ -63,9 +72,19 @@ interface DomainDetailProps {
  * d'emblée parce qu'ils décident à eux seuls ; le reste attend un clic, pour que
  * le candidat lise au lieu de survoler.
  */
-export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, onBack, onChoose }) => {
+export const DomainDetail: React.FC<DomainDetailProps> = ({
+  result,
+  domainId,
+  onBack,
+  onChoose,
+  onChooseOccupation,
+}) => {
   const [bandFilter, setBandFilter] = useState<OccupationBand | 'all'>('all');
   const [openPanels, setOpenPanels] = useState<PanelKey[]>([]);
+  const [functionId, setFunctionId] = useState<FunctionRoleId | null>(null);
+  const [showOtherFunctions, setShowOtherFunctions] = useState(false);
+  const [rationaleTags, setRationaleTags] = useState<string[]>([]);
+  const [rationaleNote, setRationaleNote] = useState('');
   const domain = FUNCTIONAL_DOMAINS_BY_ID[domainId];
   const score = result.domains.find((entry) => entry.id === domainId);
 
@@ -73,6 +92,8 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
     () => domainOpenings(result, domainId),
     [result, domainId]
   );
+  /** Répartition des débouchés du domaine sous les six fonctions, recommandation comprise. */
+  const view = useMemo(() => functionView(result, domainId), [result, domainId]);
   /** La cause d'une fiche sans débouché s'affiche en noms de domaines, pas en clés. */
   const blockedLabels = blockedBy.map((id) => FUNCTIONAL_DOMAINS_BY_ID[id].label);
 
@@ -85,13 +106,123 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
     list.some(isDemoOpportunity)
   );
 
-  const visible = openings.filter((match) => bandFilter === 'all' || match.band === bandFilter);
-  const shown = visible.slice(0, OPENINGS_PER_SCREEN);
+  /** Une fonction retenue restreint la liste : c'est tout ce que le filtre promet, pas un tri de plus. */
+  const scoped = functionId ? openingsForFunction(view, functionId) : openings;
+  const visible = scoped.filter((match) => bandFilter === 'all' || match.band === bandFilter);
+  /** Les fiches qui exigent ce domaine, puis celles qui n'en font qu'un terrain : le domaine ouvre, il ne suffit pas. */
+  const anchored = visible.filter((match) => match.cores.some((entry) => entry.id === domainId));
+  const terrain = visible.filter((match) => !match.cores.some((entry) => entry.id === domainId));
+
+  /** Ce qui part avec l'engagement : la fonction sous laquelle le candidat a rangé son choix, et sa raison s'il l'a dite. */
+  const choice: FunctionChoice | undefined = functionId
+    ? { functionId, rationale: composeRationale(rationaleTags, rationaleNote) }
+    : undefined;
+
+  /** Changer de fonction, ou la retirer : la raison portée sur l'ancienne ne suit pas. */
+  const applyFunction = (id: FunctionRoleId | null) => {
+    setFunctionId(id);
+    setRationaleTags([]);
+    setRationaleNote('');
+  };
+
+  /** Reprendre la même fonction, c'est encore la retirer. */
+  const pickFunction = (id: FunctionRoleId) => applyFunction(functionId === id ? null : id);
+
+  const toggleRationaleTag = (id: string) =>
+    setRationaleTags((current) =>
+      current.includes(id) ? current.filter((entry) => entry !== id) : [...current, id]
+    );
 
   const togglePanel = (key: PanelKey) =>
     setOpenPanels((current) =>
       current.includes(key) ? current.filter((entry) => entry !== key) : [...current, key]
     );
+
+  const pickedFunction = functionId
+    ? view.options.find((option) => option.id === functionId) ?? null
+    : null;
+
+  const renderFunction = (option: FunctionOption) => {
+    const active = functionId === option.id;
+    const blocked = option.openings.length === 0;
+    const body = (
+      <>
+        <span className="flex flex-wrap items-center justify-between gap-2">
+          <span className="font-medium text-gray-900">{option.label}</span>
+          <Badge variant={option.recommended ? 'primary' : 'default'} size="sm">
+            {option.fit}%
+          </Badge>
+        </span>
+        <span className="mt-1 block text-sm text-gray-600">{option.blurb}</span>
+        <span className="mt-1 block text-xs text-gray-500">
+          {option.closedReason ??
+            `${option.openings.length} métier(s) de ce domaine travaillent sur cet axe.`}
+        </span>
+      </>
+    );
+
+    if (blocked) {
+      /** Rien derrière : la ligne se lit, elle ne se clique pas. */
+      return (
+        <div key={option.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-80">
+          {body}
+        </div>
+      );
+    }
+
+    return (
+      <button
+        key={option.id}
+        type="button"
+        aria-pressed={active}
+        onClick={() => pickFunction(option.id)}
+        className={`w-full rounded-lg border p-3 text-left transition-colors ${
+          active ? 'border-primary-300 bg-primary-50' : 'border-gray-200 hover:bg-gray-50'
+        }`}
+      >
+        {body}
+      </button>
+    );
+  };
+
+  const renderOpening = (match: OccupationMatch) => {
+    const core = match.cores.find((entry) => entry.id === domainId);
+    return (
+      <div key={match.occupation.id} className="rounded-lg border border-gray-200 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h3 className="font-semibold text-gray-900">{match.occupation.title}</h3>
+          <Badge variant={OCCUPATION_BAND_BADGE[match.band]} size="sm">
+            {OCCUPATION_BAND_LABEL[match.band]}
+          </Badge>
+        </div>
+        <p className="mt-1 text-sm leading-6 text-gray-600">{match.occupation.context}</p>
+        <p className="mt-2 flex items-start gap-2 text-sm text-gray-700">
+          <Layers className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-600" />
+          <span>
+            {core
+              ? `Ce métier exige ce domaine de vous : vous êtes à ${core.score}%.`
+              : 'Ce métier utilise ce domaine comme terrain, sur une autre compétence clé.'}
+          </span>
+        </p>
+        {match.coreGaps.length > 0 && (
+          <p className="mt-1 text-xs text-gray-500">
+            À consolider pour ce poste : {match.coreGaps.map((gap) => gap.label).join(', ')}.
+          </p>
+        )}
+        {onChooseOccupation && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={() => onChooseOccupation(match.occupation.id, choice)}
+          >
+            Choisir ce métier
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -119,6 +250,58 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
           </CardContent>
         </Card>
 
+        {openings.length > 0 && (
+          <Card padding="lg">
+            <CardContent>
+              <h2 className="text-lg font-semibold text-gray-900">
+                La fonction où vous vous rangez
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Le domaine dit où l’on travaillerait, la fonction dit dans quel service. Gardez-en une
+                pour ne lire que les métiers de {domain.label} qui s’appuient dessus&nbsp;; passez cette
+                étape si vous préférez voir toute la liste.
+              </p>
+
+              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Les {view.recommended.length} fonctions qui vous correspondent le mieux ici
+              </p>
+              <div className="mt-2 space-y-2">{view.recommended.map(renderFunction)}</div>
+
+              {view.others.length > 0 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowOtherFunctions((current) => !current)}
+                    aria-expanded={showOtherFunctions}
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800"
+                  >
+                    {showOtherFunctions
+                      ? 'Réduire les autres fonctions'
+                      : `Voir les ${view.others.length} autres fonctions`}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${showOtherFunctions ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                  {showOtherFunctions && (
+                    <div className="mt-2 space-y-2">{view.others.map(renderFunction)}</div>
+                  )}
+                </>
+              )}
+
+              {pickedFunction && (
+                <ChoiceReasonForm
+                  subject={pickedFunction.label}
+                  tagIds={rationaleTags}
+                  note={rationaleNote}
+                  maxNoteChars={MAX_RATIONALE_NOTE_CHARS}
+                  onToggleTag={toggleRationaleTag}
+                  onNote={setRationaleNote}
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         <Card padding="lg">
           <CardContent>
             <h2 className="text-lg font-semibold text-gray-900">Les débouchés de ce domaine</h2>
@@ -138,10 +321,29 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
               </p>
             ) : (
               <>
-                <p className="mt-1 text-sm text-gray-600">
-                  {openings.length} métier(s) que ce domaine porte, les croisements les plus exigés
-                  d’abord.
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  {pickedFunction ? (
+                    <>
+                      Les {scoped.length} métier(s) de ce domaine qui travaillent{' '}
+                      <span className="font-medium text-gray-900">« {pickedFunction.label} »</span>.
+                    </>
+                  ) : (
+                    <>
+                      Les {openings.length} métiers que ce domaine vous ouvre, classés selon ce qu’ils
+                      en exigent de vous. Choisissez celui que vous voulez viser : la suite vous
+                      demandera sur quel axe vous appuyer.
+                    </>
+                  )}
                 </p>
+                {pickedFunction && (
+                  <button
+                    type="button"
+                    onClick={() => applyFunction(null)}
+                    className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800"
+                  >
+                    Reprendre les {openings.length} métiers du domaine
+                  </button>
+                )}
                 <ChipFilter
                   label="Portée"
                   options={BAND_FILTERS}
@@ -149,48 +351,30 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
                   onChange={(value) => setBandFilter(value as OccupationBand | 'all')}
                 />
 
-                <div className="mt-4 space-y-3">
-                  {shown.length === 0 ? (
-                    <p className="text-sm text-gray-600">
-                      Aucun débouché de ce domaine dans cette bande pour vous aujourd’hui. Changez de
-                      filtre, ou revenez après avoir consolidé un domaine fragile.
-                    </p>
-                  ) : (
-                    shown.map((match) => {
-                      const core = match.cores.find((entry) => entry.id === domainId);
-                      return (
-                        <div key={match.occupation.id} className="rounded-lg border border-gray-200 p-4">
-                          <div className="flex flex-wrap items-start justify-between gap-3">
-                            <h3 className="font-semibold text-gray-900">{match.occupation.title}</h3>
-                            <Badge variant={OCCUPATION_BAND_BADGE[match.band]} size="sm">
-                              {OCCUPATION_BAND_LABEL[match.band]}
-                            </Badge>
-                          </div>
-                          <p className="mt-1 text-sm leading-6 text-gray-600">{match.occupation.context}</p>
-                          <p className="mt-2 flex items-start gap-2 text-sm text-gray-700">
-                            <Layers className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-600" />
-                            <span>
-                              {core
-                                ? `Ce métier exige ce domaine de vous : vous êtes à ${core.score}%.`
-                                : 'Ce métier utilise ce domaine comme terrain, sur une autre compétence clé.'}
-                            </span>
-                          </p>
-                          {match.coreGaps.length > 0 && (
-                            <p className="mt-1 text-xs text-gray-500">
-                              À consolider pour ce poste :{' '}
-                              {match.coreGaps.map((gap) => gap.label).join(', ')}.
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-
-                {visible.length > shown.length && (
-                  <p className="mt-3 text-xs text-gray-500">
-                    + {visible.length - shown.length} autre(s) débouché(s) dans ce filtre.
+                {visible.length === 0 ? (
+                  <p className="mt-4 text-sm text-gray-600">
+                    Aucun débouché de ce domaine dans cette bande pour vous aujourd’hui. Changez de
+                    filtre, ou revenez après avoir consolidé un domaine fragile.
                   </p>
+                ) : (
+                  <>
+                    {anchored.length > 0 && (
+                      <div className="mt-4 space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          {anchored.length} métier(s) qui exigent ce domaine de vous
+                        </p>
+                        {anchored.map((match) => renderOpening(match))}
+                      </div>
+                    )}
+                    {terrain.length > 0 && (
+                      <div className="mt-5 space-y-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          {terrain.length} autre(s) métier(s) du secteur, où ce domaine sert de terrain
+                        </p>
+                        {terrain.map((match) => renderOpening(match))}
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -324,7 +508,7 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({ result, domainId, on
         )}
 
         {onChoose && (
-          <Button size="lg" className="w-full" onClick={() => onChoose(domainId)}>
+          <Button size="lg" className="w-full" onClick={() => onChoose(domainId, choice)}>
             Choisir ce domaine et cibler mon parcours
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

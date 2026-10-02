@@ -4,6 +4,7 @@ import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { ASSESSMENT_VERSION } from '@/data/questions';
 import { domainOccupations } from '@/utils/domainFocus';
+import { MAX_RATIONALE_CHARS } from '@/utils/functionFocus';
 import {
   MAX_TARGETED_OPENINGS,
   MAX_TARGETED_SPECIALIZATIONS,
@@ -24,6 +25,21 @@ const asStringList = (value: unknown): string[] =>
 /** Une fiche retirée ou renommée du catalogue ne doit pas survivre à la relecture. */
 const asKnownOccupationId = (value: unknown): string | undefined =>
   typeof value === 'string' && OCCUPATIONS_BY_ID[value] ? value : undefined;
+
+/** Un axe renommé de la nomenclature fonctionnelle ne doit pas survivre en clé morte. */
+const asFunctionAxis = (value: unknown): FunctionRoleId | undefined =>
+  typeof value === 'string' && (FUNCTION_ROLE_IDS as string[]).includes(value)
+    ? (value as FunctionRoleId)
+    : undefined;
+
+/** La raison donnée par le candidat est une phrase libre : on la borne, on ne l'invente pas. */
+const asRationale = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const trimmed = value.trim().replace(/\s+/g, ' ');
+  return trimmed.length > 0 ? trimmed.slice(0, MAX_RATIONALE_CHARS) : undefined;
+};
 
 /**
  * Un profil vient de Supabase ou de localStorage : il peut dater d'une version
@@ -119,6 +135,11 @@ function asTargeting(value: unknown, result: ProfileResult): Targeting | undefin
     .slice(0, MAX_TARGETED_SPECIALIZATIONS);
 
   const draft: Targeting = { flagshipDomainId, occupationIds, specializationIds };
+  const functionId = asFunctionAxis(source.functionId);
+  if (functionId) draft.functionId = functionId;
+  const rationale = asRationale(source.functionRationale);
+  if (rationale) draft.functionRationale = rationale;
+
   return validateFocus(draft, result) === null ? draft : undefined;
 }
 

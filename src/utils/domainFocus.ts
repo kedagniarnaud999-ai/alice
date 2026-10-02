@@ -1,5 +1,5 @@
 import { DomainScore, FunctionalDomainId, ProfileResult, Targeting } from '@/types/test';
-import { CrossOccupation, CROSS_OCCUPATIONS } from '@/data/occupations';
+import { CrossOccupation, CROSS_OCCUPATIONS, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { specializationsForDomain } from '@/data/specializations';
 import { matchOccupations, OccupationMatch } from '@/utils/occupationMatcher';
 
@@ -110,6 +110,54 @@ export function focusFromResult(result: ProfileResult, domainId: FunctionalDomai
   return {
     flagshipDomainId: domainId,
     occupationIds,
+    specializationIds: specialization ? [specialization.id] : [],
+  };
+}
+
+/**
+ * L'engagement pris depuis UNE fiche : le domaine phare est celui que ce métier
+ * exige le plus chez ce candidat, parmi ceux que ses réponses n'ont pas fermés, et
+ * le premier axe qui couvre cette fiche arrive pré-coché.
+ *
+ * `null` quand la fiche ne tient plus sur aucun domaine ouvert : l'écran garde alors
+ * le parcours bâti sur le métier seul, plutôt que d'ouvrir une étape que
+ * `validateFocus` refuserait sans que le candidat puisse y faire quoi que ce soit.
+ */
+export function focusFromOccupation(
+  result: ProfileResult,
+  occupationId: string,
+  preferredDomainId?: FunctionalDomainId
+): Targeting | null {
+  const occupation = OCCUPATIONS_BY_ID[occupationId];
+  if (!occupation) return null;
+
+  const scoreOf = new Map(result.domains.map((entry) => [entry.id, entry]));
+  const open = (id: FunctionalDomainId): boolean => {
+    const domain = scoreOf.get(id);
+    return (occupation.core[id] ?? 0) > 0 && domain !== undefined && !domain.excluded;
+  };
+
+  // Le domaine d'où l'on clique passe avant le plus exigeant : personne n'aime voir
+  // la porte par laquelle il est entré changer sous son choix.
+  const flagship = preferredDomainId && open(preferredDomainId)
+    ? preferredDomainId
+    : (Object.keys(occupation.core) as FunctionalDomainId[]).filter(open).sort(
+        (a, b) =>
+          (occupation.core[b] ?? 0) - (occupation.core[a] ?? 0) ||
+          (scoreOf.get(b)?.normalized ?? 0) - (scoreOf.get(a)?.normalized ?? 0)
+      )[0];
+  if (!flagship) return null;
+
+  const { openings } = domainOpenings(result, flagship);
+  if (!openings.some((match) => match.occupation.id === occupationId)) return null;
+
+  const specialization = specializationsForDomain(flagship).find((entry) =>
+    entry.occupationIds.includes(occupationId)
+  );
+
+  return {
+    flagshipDomainId: flagship,
+    occupationIds: [occupationId],
     specializationIds: specialization ? [specialization.id] : [],
   };
 }

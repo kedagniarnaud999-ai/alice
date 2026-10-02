@@ -7,7 +7,8 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { pathwayEngine, PersonalizedPathway } from '@/utils/pathwayEngine';
 import { CrossOccupation, OCCUPATIONS_BY_ID } from '@/data/occupations';
-import { focusFromResult } from '@/utils/domainFocus';
+import { focusFromOccupation, focusFromResult } from '@/utils/domainFocus';
+import { FunctionChoice } from '@/utils/functionFocus';
 import { resolveFocus } from '@/utils/focusSelection';
 import { storageManager } from '@/utils/storageManager';
 import { profileService } from '@/services/profile.api';
@@ -176,6 +177,13 @@ const TrialExperience = () => {
             setFocusDraft(focusFromResult(profileResult, domainId));
             setTrialState('focus');
           }}
+          onChooseOccupation={(occupationId) => {
+            setFocusDraft(
+              focusFromOccupation(profileResult, occupationId, openDomainId) ??
+                focusFromResult(profileResult, openDomainId)
+            );
+            setTrialState('focus');
+          }}
         />
       </Screen>
     );
@@ -229,6 +237,8 @@ const WorkspaceApp = () => {
   const [profileResult, setProfileResult] = useState<ProfileResult | null>(null);
   const [openDomainId, setOpenDomainId] = useState<FunctionalDomainId | null>(null);
   const [focusDraft, setFocusDraft] = useState<Targeting | null>(null);
+  /** L'étape d'engagement s'ouvre depuis deux écrans : le retour doit rendre l'autre. */
+  const [focusReturn, setFocusReturn] = useState<AppState>('domain');
   const [pathway, setPathway] = useState<PersonalizedPathway | null>(null);
   const [moduleProgress, setModuleProgress] = useState<UserModuleProgress[]>([]);
   const [initializing, setInitializing] = useState(true);
@@ -345,10 +355,38 @@ const WorkspaceApp = () => {
     setAppState('pathway');
   };
 
+  /**
+   * La fonction sous laquelle le candidat a rangé son choix, et la raison qu'il en
+   * a donnée, suivent le ciblage. Elles n'entrent dans aucun calcul : le parcours
+   * reste taillé sur le domaine, les fiches et les axes.
+   */
+  const withFunctionChoice = (draft: Targeting, choice?: FunctionChoice): Targeting =>
+    choice ? { ...draft, functionId: choice.functionId, functionRationale: choice.rationale } : draft;
+
+  /** L'étape d'engagement, pré-remplie par une fiche : `false` quand rien n'est préparable. */
+  const openFocusFromOccupation = (
+    occupationId: string,
+    from: AppState,
+    via?: FunctionalDomainId,
+    choice?: FunctionChoice
+  ): boolean => {
+    if (!profileResult) return false;
+    const draft = focusFromOccupation(profileResult, occupationId, via);
+    if (!draft) return false;
+    setFocusDraft(withFunctionChoice(draft, choice));
+    setFocusReturn(from);
+    setAppState('focus');
+    return true;
+  };
+
   const handleStartPathway = (occupationId?: string) => {
     if (!profileResult) return;
 
     const occupation = occupationId ? OCCUPATIONS_BY_ID[occupationId] : undefined;
+    // Valider une fiche ouvre d'abord l'étape où elle se serre : domaine phare, débouchés,
+    // axe. Un parcours bâti sans axe resterait une liste de modules.
+    if (occupation && openFocusFromOccupation(occupation.id, 'results')) return;
+
     // Une fiche choisie dans les résultats remplace l'engagement pris dans l'entonnoir :
     // c'est la dernière intention du candidat, et le rechargement doit la montrer.
     applyPathway(
@@ -376,9 +414,23 @@ const WorkspaceApp = () => {
     setAppState('domain');
   };
 
-  const handleChooseDomain = (domainId: FunctionalDomainId) => {
+  const handleChooseDomain = (domainId: FunctionalDomainId, choice?: FunctionChoice) => {
     if (!profileResult) return;
-    setFocusDraft(focusFromResult(profileResult, domainId));
+    setFocusDraft(withFunctionChoice(focusFromResult(profileResult, domainId), choice));
+    setFocusReturn('domain');
+    setAppState('focus');
+  };
+
+  /** Un métier visé depuis la fiche du domaine : l'engagement part de cette fiche, pas du domaine entier. */
+  const handleChooseOpening = (
+    domainId: FunctionalDomainId,
+    occupationId: string,
+    choice?: FunctionChoice
+  ) => {
+    if (openFocusFromOccupation(occupationId, 'domain', domainId, choice)) return;
+    if (!profileResult) return;
+    setFocusDraft(withFunctionChoice(focusFromResult(profileResult, domainId), choice));
+    setFocusReturn('domain');
     setAppState('focus');
   };
 
@@ -561,6 +613,9 @@ const WorkspaceApp = () => {
           domainId={openDomainId}
           onBack={() => setAppState('results')}
           onChoose={handleChooseDomain}
+          onChooseOccupation={(occupationId, choice) =>
+            handleChooseOpening(openDomainId, occupationId, choice)
+          }
         />
       )}
 
@@ -569,7 +624,7 @@ const WorkspaceApp = () => {
           result={profileResult}
           draft={focusDraft}
           onChange={setFocusDraft}
-          onBack={() => setAppState('domain')}
+          onBack={() => setAppState(focusReturn)}
           onConfirm={handleConfirmFocus}
           onBuildOnDomains={handleBuildOnDomains}
         />

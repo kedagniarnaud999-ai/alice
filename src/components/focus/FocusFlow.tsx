@@ -6,6 +6,7 @@ import { FUNCTIONAL_DOMAINS_BY_ID } from '@/data/domains';
 import { Specialization, SPECIALIZATIONS_BY_ID } from '@/data/specializations';
 import { CrossOccupation, OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { domainOpenings } from '@/utils/domainFocus';
+import { functionLabel } from '@/utils/functionFocus';
 import {
   MAX_TARGETED_OPENINGS,
   specializationsInPlay,
@@ -98,6 +99,12 @@ export const FocusFlow: React.FC<FocusFlowProps> = ({
           <CardContent>
             {!adjusting && (
               <ul className="space-y-2 text-sm text-gray-700">
+                {draft.functionId && (
+                  <li className="flex items-start gap-2 text-gray-600">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-indigo-400" />
+                    Fonction visée : {functionLabel(draft.functionId)}
+                  </li>
+                )}
                 {pickedOpenings.map((occupation) => (
                   <li key={occupation.id} className="flex items-start gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary-500" />
@@ -127,22 +134,27 @@ export const FocusFlow: React.FC<FocusFlowProps> = ({
                   selectedIds={draft.occupationIds}
                   onToggle={(occupationId) => onChange(toggleOccupation(draft, occupationId))}
                 />
-
-                {inPlay.length > 0 && (
-                  <>
-                    <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      L’axe où vous appuyer
-                    </p>
-                    <SpecializationStep
-                      specializations={inPlay}
-                      selectedIds={draft.specializationIds}
-                      onToggle={(specializationId) =>
-                        onChange(toggleSpecialization(draft, specializationId))
-                      }
-                    />
-                  </>
-                )}
               </>
+            )}
+
+            {inPlay.length > 0 ? (
+              <>
+                <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  L’axe où vous appuyer — selon les débouchés retenus
+                </p>
+                <SpecializationStep
+                  specializations={inPlay}
+                  selectedIds={draft.specializationIds}
+                  onToggle={(specializationId) =>
+                    onChange(toggleSpecialization(draft, specializationId))
+                  }
+                />
+              </>
+            ) : (
+              <p className="mt-6 text-xs text-gray-500">
+                Aucun axe ne couvre les débouchés retenus dans ce domaine : le parcours se construit
+                sur les fiches seules, et vous pourrez l’ajuster séance par séance.
+              </p>
             )}
           </CardContent>
         </Card>
