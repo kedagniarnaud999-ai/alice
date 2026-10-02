@@ -310,13 +310,23 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 ### S2.6 — Relire le catalogue, ligne par ligne
 
 - **Ce que ça change** : quand AliTché conseille une école, quelqu'un l'a vérifiée. Aujourd'hui, 151 lignes
-  portent une date de vérification, mais ces dates ne forment que deux lots : 74 lignes datées du 21/09/2026, 77
-  du 22/09/2026. Et 50 liens sur 151 mènent à un site agrégateur, pas à l'école.
+  portent une date de vérification, mais ces dates ne forment que trois lots : 68 lignes datées du 21/09/2026, 77
+  du 22/09/2026, 6 du 02/10/2026. Et 44 liens sur 151 mènent encore à un site agrégateur, pas à l'école.
 - **Pourquoi maintenant** : c'est le seul risque du produit qu'aucune remise en ligne du site ne corrige : un
   candidat qui se présente à une porte fermée perd autre chose que du temps.
 - **Comment on saura que c'est fini** : les domaines prioritaires sont relus un par un, chaque ligne garde sa
   date de contrôle réelle, chaque lien mène au site officiel de l'établissement. Ce qui n'est pas vérifié reste,
   mais est dit comme non vérifié.
+- **Où en est la tâche** : première séance faite le 02/10/2026, dix lignes relues une par une. Six écoles ont
+  retrouvé leur propre adresse et portent maintenant la mention « vérifiée par nous » : ESGIS, l'École Supérieure
+  de Management, les Cours Sonou, l'École Supérieure d'Expertise Comptable, l'Institut Supérieur de Communication
+  et de Gestion, l'Institut Supérieur de Management Adonaï. Quatre n'ont aucune adresse d'école joignable : l'École
+  Supérieure d'Enseignement Professionnel Le Berger (le nom de site que les annuaires lui donnent ne répond plus
+  du tout), l'Université Polytechnique Internationale Obiang Nguema Mbasogo, l'Institut Universitaire des Sciences
+  et Techniques Ajavon Sébastien et l'Institut Supérieur d'Expertise et de Gestion. Ces quatre lignes gardent leur
+  lien d'annuaire et restent comptées comme non vérifiées. Une leçon de la séance : la liste officielle du
+  ministère béninois de l'enseignement supérieur existe en ligne, mais c'est un document scanné sans texte
+  sélectionnable — on ne peut pas l'interroger automatiquement.
 - **Taille** : une tâche de fond, dix lignes à la fois. Pas une semaine, des séances.
 - **Où ça se joue** : `src/data/opportunities.ts`.
 ---

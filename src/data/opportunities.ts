@@ -11,6 +11,9 @@ import { CrossOccupation } from '@/data/occupations';
  * Comment remplir ce catalogue (dans l'ordre de fiabilité) :
  *  1. une liste fournie par l'équipe (partenaires, annuaire déjà contrôlé) :
  *     `source: 'fourni'`, une `url` réelle et `verifiedAt` à la date de contrôle ;
+ *     `source: 'verifie'` désigne une ligne reprise ici, ligne à ligne : l'`url`
+ *     pointe alors sur le site officiel de l'établissement, et seulement après que
+ *     sa page d'accueil a porté le nom de l'école ;
  *  2. une table backend exposée par l'API (Lot 2) : le même format JSON, et ce
  *     fichier ne devient que le repli hors ligne ;
  *  3. le jeu de démonstration ci-dessous, qui n'a d'autre rôle que de prouver
@@ -200,9 +203,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['ict', 'ingenierie', 'administration', 'finance'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/ecole-superieure-de-gestion-dinformatique-et-des-sciences-esgis',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://www.esgis.org/',
   },
   {
     id: 'fourni_etablissement_esm',
@@ -212,9 +215,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['administration', 'finance', 'commerce_marketing'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/ecole-superieure-de-management-esm',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://esm-benin.com/',
   },
   {
     id: 'fourni_etablissement_lescours_sonou',
@@ -224,9 +227,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['finance', 'administration'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/les-cours-sonou',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://lescoursonou-university.org/',
   },
   {
     id: 'fourni_etablissement_esep_leberger',
@@ -272,9 +275,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['finance', 'administration'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/ecole-superieure-dexpertise-comptable-esec',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://esec.droord.com/',
   },
   {
     id: 'fourni_etablissement_iscg',
@@ -284,9 +287,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['finance', 'administration', 'commerce_marketing'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/institut-superieur-de-communication-et-de-gestion-iscg',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://www.iscg.edu.bj/',
   },
   {
     id: 'fourni_etablissement_iseg',
@@ -308,9 +311,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['finance', 'administration'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/institut-superieur-de-management-adonai-ism-adonai',
+    source: 'verifie',
+    verifiedAt: '2026-10-02',
+    url: 'https://www.ismadonai.net/fr/',
   },
   {
     id: 'fourni_etablissement_univ_parakou',
