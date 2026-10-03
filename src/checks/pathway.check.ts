@@ -15,6 +15,7 @@ import {
   MAX_RATIONALE_CHARS,
   MAX_RATIONALE_NOTE_CHARS,
   MIN_FUNCTION_OPENINGS,
+  MIN_FUNCTION_POSTES,
   RECOMMENDED_FUNCTION_COUNT,
 } from '@/utils/functionFocus';
 import { linkStudyPaths, matchStudyPath, normalizeLabel } from '@/utils/studyPathLinks';
@@ -1189,8 +1190,8 @@ check(unanchoredDraft === null, 'Une fiche inconnue du catalogue ouvre quand mê
  * Le niveau fonction ne doit avaler aucun métier. Un candidat qui range les
  * débouchés de son domaine par fonction doit retrouver les mêmes fiches que celui
  * qui ne range rien : le filtre est une façon de lire, pas un tri qui écarte.
- * Une fonction recommandée doit en ouvrir deux ou plus — une seule, c'est un
- * cul-de-sac présenté comme un choix.
+ * Une fonction recommandée doit avoir de quoi choisir derrière elle : deux métiers,
+ * ou un seul métier dont les postes nommés se laissent quand même sélectionner.
  */
 let thinnestRecommendation = RECOMMENDED_FUNCTION_COUNT;
 DOMAIN_IDS.forEach((domainId) => {
@@ -1207,15 +1208,17 @@ DOMAIN_IDS.forEach((domainId) => {
   thinnestRecommendation = Math.min(thinnestRecommendation, view.recommended.length);
 
   const thinPicks = view.recommended.filter(
-    (option) => option.openings.length < MIN_FUNCTION_OPENINGS
+    (option) => option.openings.length < MIN_FUNCTION_OPENINGS && option.postes < MIN_FUNCTION_POSTES
   );
   check(thinPicks.length === 0,
-    `${domainId} : recommandé sans assez de métiers derrière (${thinPicks.map((option) => option.id).join(', ')})`);
+    `${domainId} : recommandé sans assez de métiers ni de postes derrière (${thinPicks.map((option) => option.id).join(', ')})`);
 
   view.options.forEach((option) => {
+    const deQuoiChoisir =
+      option.openings.length >= MIN_FUNCTION_OPENINGS || option.postes >= MIN_FUNCTION_POSTES;
     check(
-      option.openings.length >= MIN_FUNCTION_OPENINGS || option.closedReason !== null,
-      `${domainId} / ${option.id} : fonction écartée de la recommandation sans raison à afficher`
+      deQuoiChoisir === (option.closedReason === null),
+      `${domainId} / ${option.id} : ${option.openings.length} métier(s) et ${option.postes} poste(s) à choisir, la fonction est dite « ${option.closedReason ?? 'choisissable'} »`
     );
     option.openings.forEach((match) =>
       check(match.occupation.functions.includes(option.id),

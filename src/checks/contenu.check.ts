@@ -11,6 +11,7 @@ import {
   REFERENTIEL_METIERS,
   REFERENTIEL_SPECIALISATIONS,
 } from '@/data/referentiel';
+import { postesPourFiche } from '@/data/postesNommes';
 import { getVisibleQuestions } from '@/utils/testAnalyzer';
 import type { CareerSituation, FunctionalDomainId, TestResponse } from '@/types/test';
 
@@ -381,8 +382,50 @@ REFERENTIEL_FONCTIONS.forEach((f) => {
   }
 });
 
+/**
+ * `src/data/postesNommes.ts` est la projection que lisent les écrans : des intitulés
+ * et rien d'autre. Elle est recopiée du référentiel pour que le paquet livré n'embarque
+ * pas les définitions et les formations, donc elle peut cesser d'y ressembler sans que
+ * le référentiel bouge. Ici se dit le seul cas où la duplication est pardonnable : tant
+ * que les deux tables concordent.
+ */
+let projeteCount = 0;
+CROSS_OCCUPATIONS.forEach((fiche) => {
+  const rang = METIER_PAR_FICHE[fiche.id];
+  if (!rang) return;
+  const attendu = REFERENTIEL_SPECIALISATIONS.filter((s) => s.parent === rang.code)
+    .sort((a, b) => a.code.localeCompare(b.code));
+  const projete = postesPourFiche(fiche.id);
+  if (projete.postes.length > 0) projeteCount += 1;
+  const approximationAttendue =
+    attendu.length > 0 && (rang.approximatif || attendu.some((s) => s.approximatif));
+
+  attendu.forEach((s, index) => {
+    const ligne = projete.postes[index];
+    if (!ligne) {
+      failures.push(
+        `${s.code} (${s.libelle}) se range sous ${rang.code} donc derrière « ${fiche.id} », mais la projection n'a que ${projete.postes.length} poste(s) pour cette fiche`
+      );
+    } else if (ligne.code !== s.code || ligne.libelle !== s.libelle) {
+      failures.push(
+        `La projection écrit « ${ligne.code} ${ligne.libelle} » à la place de « ${s.code} ${s.libelle} » sous ${rang.code} : \`postesNommes.ts\` a dérivé du référentiel`
+      );
+    }
+  });
+  if (projete.postes.length > attendu.length) {
+    failures.push(
+      `La projection donne ${projete.postes.length} poste(s) à « ${fiche.id} », le référentiel n'en donne que ${attendu.length}`
+    );
+  }
+  if (projete.approximation !== approximationAttendue) {
+    failures.push(
+      `« ${fiche.id} » est dit en approximation ${projete.approximation} dans la projection alors que le rang et ses postes disent ${approximationAttendue}`
+    );
+  }
+});
+
 console.log(
-  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues (${specialisationsApproximatives} liens dits approximatifs), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation`
+  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues (${specialisationsApproximatives} liens dits approximatifs), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation, ${projeteCount} fiche(s) avec postes nommés dans la projection`
 );
 
 if (failures.length > 0) {

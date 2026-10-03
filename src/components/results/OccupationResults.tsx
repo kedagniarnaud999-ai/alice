@@ -17,6 +17,7 @@ import {
   OPPORTUNITY_DELIVERY_LABEL,
 } from '@/data/opportunities';
 import { CrossOccupation } from '@/data/occupations';
+import { PostesNommes } from './PostesNommes';
 
 const CARDS_PER_SCREEN = 3;
 const OPPORTUNITIES_PER_CARD = 4;
@@ -283,6 +284,8 @@ const OccupationCard: React.FC<{
           </p>
         )}
       </div>
+
+      <PostesNommes occupationId={occupation.id} />
 
       <div className="mt-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Voies de formation</p>

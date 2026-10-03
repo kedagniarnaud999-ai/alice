@@ -114,8 +114,27 @@ Deux lignes sont en désaccord avec leur parent : le chargé de clientèle banca
 sous « chargé de relation client », qui est une fonction de vente, alors qu'elles se déclarent finance. C'est la
 fonction de la ligne qui est retenue partout, parce que c'est elle que lit l'écran.
 
-Rien de ce référentiel n'est encore montré à la personne qui passe le test. La vérification, elle, le contrôle déjà :
-ses codes, ses liens, ses fiches rédigées et nos trois tables de correspondance.
+Ses 113 spécialisations ne restent pas dans le fichier : elles se lisent à l'écran, sous chaque fiche, dans une liste
+dépliable qui dit « les postes que ce métier recouvre ». Ce sont les titres tels qu'on les trouve sur une offre d'emploi
+— chef de projet WASH, gérant de ferme, responsable e-commerce. Ils renseignent, ils ne se choisissent pas à la place du
+métier : la sélection reste le domaine, la fonction, le métier, l'axe. 41 de nos 45 fiches portent au moins un titre ;
+les autres restent sans poste nommé en attendant que la base s'enrichisse. Un même titre peut se ranger sous deux
+fiches, donc les 113 titres tiennent en 227 lignes à l'écran.
+
+Le doute du lien descend jusqu'à l'écran, mais une seule fois par fiche : quand le rang de la fiche ou le rattachement
+d'un titre est dit approximatif, la liste le déclare en une phrase sous les titres, au lieu de porter un avertissement
+ligne à ligne.
+
+Changer ce que l'on montre a changé une règle. Une fonction qui n'ouvrait qu'un seul métier du domaine était tenue pour
+un cul-de-sac et ne se recommandait pas. C'était exact tant que le métier était la dernière marche à choisir ; ça ne
+l'est plus depuis qu'il ouvre des titres. La règle dit maintenant ce que la personne voit : un métier seul cesse d'être
+un cul-de-sac dès qu'il reste deux postes ou plus à choisir derrière lui. Sur les 66 rangements d'une fonction sous un
+domaine, 60 passaient, ils sont 63. Les trois qui restent fermés le sont pour de vraies raisons : l'un ne s'appuie sur
+aucun métier du domaine, les deux autres n'en ouvrent qu'un seul, qui ne porte qu'un titre.
+
+Rien de tout cela n'est trié à la main sans contrôle : `src/checks/contenu.check.ts` relit le référentiel — ses codes,
+ses liens, ses fiches rédigées, nos trois tables de correspondance — et vérifie que la liste lue à l'écran,
+`src/data/postesNommes.ts`, reste exactement ce que le référentiel dit.
 
 ## Ce que cette fiche ne dit pas
 

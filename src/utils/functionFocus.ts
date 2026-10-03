@@ -1,5 +1,6 @@
 import { CHOICE_RATIONALES, FUNCTION_PROFILES } from '@/data/functions';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
+import { postesPourFiche } from '@/data/postesNommes';
 import { domainOpenings } from '@/utils/domainFocus';
 import { OccupationMatch } from '@/utils/occupationMatcher';
 import { FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test';
@@ -15,10 +16,19 @@ import { FunctionalDomainId, FunctionRoleId, ProfileResult } from '@/types/test'
  */
 
 /**
- * Une fonction qui n'ouvre qu'un seul métier du domaine n'est pas un choix, c'est
- * un cul-de-sac déguisé en menu : elle reste visible, elle n'est plus recommandée.
+ * Le premier des deux planchers du choix : une fonction qui n'ouvre qu'un seul
+ * métier du domaine sent le cul-de-sac, sauf si ce métier a quoi choisir derrière
+ * lui (voir `MIN_FUNCTION_POSTES`). Dans les deux cas elle reste visible.
  */
 export const MIN_FUNCTION_OPENINGS = 2;
+
+/**
+ * Un métier seul cesse d'être un cul-de-sac quand il a de quoi choisir derrière
+ * lui : les postes nommés de la base V3 se choisissent, eux aussi. Sous ce plancher
+ * là, la fonction n'ouvre rien et le dire serait lui faire une fausse promesse.
+ */
+export const MIN_FUNCTION_POSTES = 2;
+
 /** Les « trois grandes fonctions qui matchent » demandées : ni plus (bruit), ni moins (hasard). */
 export const RECOMMENDED_FUNCTION_COUNT = 3;
 
@@ -44,6 +54,8 @@ export interface FunctionOption {
   fit: number;
   /** Les métiers de ce domaine que CETTE fonction ouvre chez CE candidat. */
   openings: OccupationMatch[];
+  /** Postes nommés derrière ces métiers : ce qui reste à choisir quand un métier est seul. */
+  postes: number;
   /** Meilleur score de métier sous cet axe : un repère, pas une promesse. */
   bestScore: number;
   recommended: boolean;
@@ -75,12 +87,22 @@ function rank(value: number): number {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+/** Postes distincts que la base nomme derrière ces métiers. */
+function comptePostes(openings: OccupationMatch[]): number {
+  const codes = new Set<string>();
+  openings.forEach((match) =>
+    postesPourFiche(match.occupation.id).postes.forEach((poste) => codes.add(poste.code))
+  );
+  return codes.size;
+}
+
 export function functionView(result: ProfileResult, domainId: FunctionalDomainId): FunctionView {
   const { openings } = domainOpenings(result, domainId);
 
   const options: FunctionOption[] = FUNCTION_ROLE_IDS.map((id) => {
     const underAxis = openings.filter((match) => match.occupation.functions.includes(id));
     const bestScore = underAxis.reduce((best, match) => Math.max(best, match.score), 0);
+    const postes = comptePostes(underAxis);
     const profile = FUNCTION_PROFILES[id];
     return {
       id,
@@ -88,13 +110,14 @@ export function functionView(result: ProfileResult, domainId: FunctionalDomainId
       blurb: profile.blurb,
       fit: rank(result.functionSignals[id] ?? 0),
       openings: underAxis,
+      postes,
       bestScore,
       recommended: false,
       closedReason:
         underAxis.length === 0
           ? 'Aucun métier de ce domaine ne travaille sur cette fonction pour vous aujourd’hui.'
-          : underAxis.length < MIN_FUNCTION_OPENINGS
-            ? 'Cette fonction ne fait qu’un seul métier dans ce domaine : rien à choisir derrière.'
+          : underAxis.length < MIN_FUNCTION_OPENINGS && postes < MIN_FUNCTION_POSTES
+            ? 'Cette fonction ne fait qu’un seul métier dans ce domaine, et ce métier n’a rien de plus à choisir derrière.'
             : null,
     };
   });

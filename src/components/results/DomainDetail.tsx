@@ -33,6 +33,7 @@ import {
 } from '@/data/opportunities';
 import { MODULE_DIFFICULTY_LABELS } from '@/data/modules';
 import { ChoiceReasonForm } from './ChoiceReasonForm';
+import { PostesNommes } from './PostesNommes';
 
 type PanelKey = 'specializations' | 'training' | 'schools' | 'funding';
 
@@ -156,7 +157,9 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({
         <span className="mt-1 block text-sm text-gray-600">{option.blurb}</span>
         <span className="mt-1 block text-xs text-gray-500">
           {option.closedReason ??
-            `${option.openings.length} métier(s) de ce domaine travaillent sur cette fonction.`}
+            (option.openings.length === 1
+              ? `Un seul métier de ce domaine travaille sur cette fonction : il recouvre ${option.postes} poste(s) nommé(s).`
+              : `${option.openings.length} métier(s) de ce domaine travaillent sur cette fonction.`)}
         </span>
       </>
     );
@@ -209,6 +212,7 @@ export const DomainDetail: React.FC<DomainDetailProps> = ({
             À consolider pour ce poste : {match.coreGaps.map((gap) => gap.label).join(', ')}.
           </p>
         )}
+        <PostesNommes occupationId={match.occupation.id} />
         {onChooseOccupation && (
           <Button
             variant="outline"

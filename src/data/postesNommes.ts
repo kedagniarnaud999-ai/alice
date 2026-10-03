@@ -1,0 +1,464 @@
+/**
+ * Les 113 postes que la base V3 nomme derrière chacune de nos 45 fiches.
+ *
+ * Cette table est la projection de `referentiel.ts` : le rang d’une fiche (`METIER_PAR_FICHE`)
+ * croisé avec les spécialisations qui ont ce rang pour parent. Elle existe pour que les écrans
+ * lisent des intitulés sans embarquer les définitions, compétences et formations du référentiel
+ * dans le paquet livré. `src/checks/contenu.check.ts` rougit dès que les deux tables divergent.
+ *
+ * `approximation` dit que le lien lui-même est défendable et non strict : le rang de la fiche
+ * était approximatif, ou l’un des postes y est rattaché par approximation. L’écran le dit une
+ * fois par fiche plutôt que de porter un doute ligne à ligne.
+ */
+
+export interface PosteNomme {
+  code: string;
+  libelle: string;
+}
+
+export interface PostesDeFiche {
+  postes: PosteNomme[];
+  approximation: boolean;
+}
+
+const AUCUN: PostesDeFiche = { postes: [], approximation: false };
+
+const PAR_FICHE: Record<string, PostesDeFiche> = {
+  gestionnaire_projet_ict4d: {
+    postes: [
+      { code: 'SP011', libelle: 'Chef de projet agricole / développement rural' },
+      { code: 'SP022', libelle: 'Chef de projet industriel agroalimentaire' },
+      { code: 'SP030', libelle: 'Chef de projet technique / installation industrielle' },
+      { code: 'SP046', libelle: 'Chef de projet construction / BTP' },
+      { code: 'SP064', libelle: 'Chef de projet eau-assainissement (WASH)' },
+      { code: 'SP106', libelle: 'Chef de projet de développement' },
+    ],
+    approximation: false,
+  },
+  charge_logistique_humanitaire: {
+    postes: [
+      { code: 'SP009', libelle: 'Responsable logistique agricole (collecte, stockage)' },
+      { code: 'SP020', libelle: 'Responsable logistique agroalimentaire (chaîne du froid)' },
+      { code: 'SP051', libelle: 'Responsable logistique portuaire' },
+      { code: 'SP054', libelle: 'Responsable supply chain import-export' },
+    ],
+    approximation: false,
+  },
+  gestionnaire_etablissement_sante: {
+    postes: [
+      { code: 'SP014', libelle: 'Directeur d\'unité agro-industrielle' },
+      { code: 'SP023', libelle: 'Directeur technique / d\'usine' },
+      { code: 'SP038', libelle: 'Directeur de chantier / d\'entreprise BTP' },
+      { code: 'SP047', libelle: 'Chef d\'escale / Directeur d\'exploitation aéroportuaire' },
+      { code: 'SP082', libelle: 'Directeur d\'agence bancaire' },
+      { code: 'SP089', libelle: 'Directeur d\'établissement scolaire / Proviseur' },
+      { code: 'SP095', libelle: 'Directeur d\'hôpital / Administrateur de centre de santé' },
+      { code: 'SP103', libelle: 'Directeur d\'ONG' },
+      { code: 'SP109', libelle: 'Directeur de centre social / ONG sociale' },
+    ],
+    approximation: true,
+  },
+  responsable_hebergement: {
+    postes: [
+      { code: 'SP003', libelle: 'Ingénieur agronome' },
+      { code: 'SP016', libelle: 'Responsable de production agroalimentaire' },
+      { code: 'SP039', libelle: 'Conducteur de travaux' },
+      { code: 'SP041', libelle: 'Ingénieur génie civil' },
+      { code: 'SP042', libelle: 'Architecte' },
+      { code: 'SP060', libelle: 'Ingénieur en eau et assainissement' },
+      { code: 'SP071', libelle: 'Responsable d\'hébergement' },
+      { code: 'SP096', libelle: 'Médecin' },
+    ],
+    approximation: true,
+  },
+  charge_marketing_digital: {
+    postes: [
+      { code: 'SP021', libelle: 'Chargé marketing produits alimentaires' },
+      { code: 'SP035', libelle: 'Responsable e-commerce' },
+      { code: 'SP080', libelle: 'Growth hacker' },
+      { code: 'SP081', libelle: 'Responsable marketing digital' },
+    ],
+    approximation: true,
+  },
+  concepteur_produit_mobile_money: {
+    postes: [
+      { code: 'SP078', libelle: 'Chef de projet digital' },
+    ],
+    approximation: true,
+  },
+  technicien_reseaux_telecom: {
+    postes: [
+      { code: 'SP076', libelle: 'Administrateur réseau' },
+    ],
+    approximation: false,
+  },
+  concepteur_elearning: {
+    postes: [
+      { code: 'SP092', libelle: 'Concepteur de programmes pédagogiques' },
+    ],
+    approximation: false,
+  },
+  technicien_agriculture_precision: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  charge_destination_numerique: {
+    postes: [
+      { code: 'SP072', libelle: 'Chargé de promotion touristique' },
+    ],
+    approximation: true,
+  },
+  charge_credit_agricole: {
+    postes: [
+      { code: 'SP084', libelle: 'Chargé de clientèle bancaire' },
+      { code: 'SP085', libelle: 'Agent de microfinance' },
+    ],
+    approximation: true,
+  },
+  analyste_financement_infrastructure: {
+    postes: [
+      { code: 'SP083', libelle: 'Analyste crédit' },
+      { code: 'SP086', libelle: 'Actuaire' },
+      { code: 'SP087', libelle: 'Gestionnaire de portefeuille' },
+    ],
+    approximation: false,
+  },
+  gestionnaire_bourses_financement: {
+    postes: [
+      { code: 'SP108', libelle: 'Chargé de partenariats institutionnels' },
+    ],
+    approximation: true,
+  },
+  technicien_solaire_irrigation: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  responsable_maintenance: {
+    postes: [
+      { code: 'SP005', libelle: 'Conseiller agricole / Agent de vulgarisation' },
+      { code: 'SP048', libelle: 'Agent d\'exploitation aéroportuaire' },
+      { code: 'SP050', libelle: 'Contrôleur de trafic' },
+      { code: 'SP069', libelle: 'Gouvernante' },
+      { code: 'SP112', libelle: 'Chargé de protection de l\'enfance' },
+    ],
+    approximation: true,
+  },
+  formateur_technique_tvet: {
+    postes: [
+      { code: 'SP013', libelle: 'Formateur agricole / vulgarisateur' },
+      { code: 'SP057', libelle: 'Formateur en sûreté aéroportuaire' },
+      { code: 'SP090', libelle: 'Enseignant / Professeur' },
+      { code: 'SP091', libelle: 'Formateur professionnel' },
+    ],
+    approximation: false,
+  },
+  negociant_agribusiness: {
+    postes: [
+      { code: 'SP032', libelle: 'Responsable des ventes' },
+      { code: 'SP033', libelle: 'Chef de rayon' },
+    ],
+    approximation: true,
+  },
+  chef_produit_touristique: {
+    postes: [
+      { code: 'SP021', libelle: 'Chargé marketing produits alimentaires' },
+      { code: 'SP035', libelle: 'Responsable e-commerce' },
+      { code: 'SP080', libelle: 'Growth hacker' },
+      { code: 'SP081', libelle: 'Responsable marketing digital' },
+    ],
+    approximation: true,
+  },
+  delegate_medical: {
+    postes: [
+      { code: 'SP034', libelle: 'Commercial terrain' },
+    ],
+    approximation: true,
+  },
+  educateur_sante_communaute: {
+    postes: [
+      { code: 'SP013', libelle: 'Formateur agricole / vulgarisateur' },
+      { code: 'SP057', libelle: 'Formateur en sûreté aéroportuaire' },
+      { code: 'SP090', libelle: 'Enseignant / Professeur' },
+      { code: 'SP091', libelle: 'Formateur professionnel' },
+    ],
+    approximation: true,
+  },
+  charge_approvisionnement_sanitaire: {
+    postes: [
+      { code: 'SP036', libelle: 'Responsable approvisionnement commerce' },
+      { code: 'SP045', libelle: 'Responsable approvisionnement chantier' },
+    ],
+    approximation: false,
+  },
+  responsable_agrotourisme: {
+    postes: [
+      { code: 'SP001', libelle: 'Chef d\'exploitation agricole / Gérant de ferme' },
+      { code: 'SP031', libelle: 'Gérant de commerce / point de vente' },
+      { code: 'SP066', libelle: 'Directeur d\'hôtel / Gérant de restaurant' },
+    ],
+    approximation: true,
+  },
+  assistant_social: {
+    postes: [
+      { code: 'SP007', libelle: 'Pisciculteur / Aquaculteur' },
+      { code: 'SP017', libelle: 'Opérateur de transformation agroalimentaire' },
+      { code: 'SP025', libelle: 'Électricien industriel' },
+      { code: 'SP026', libelle: 'Mécanicien industriel' },
+      { code: 'SP049', libelle: 'Agent de piste' },
+      { code: 'SP068', libelle: 'Réceptionniste' },
+      { code: 'SP070', libelle: 'Guide touristique' },
+      { code: 'SP100', libelle: 'Travailleur social' },
+      { code: 'SP110', libelle: 'Éducateur spécialisé' },
+      { code: 'SP111', libelle: 'Animateur socio-éducatif' },
+    ],
+    approximation: true,
+  },
+  charge_protection_enfance: {
+    postes: [
+      { code: 'SP005', libelle: 'Conseiller agricole / Agent de vulgarisation' },
+      { code: 'SP048', libelle: 'Agent d\'exploitation aéroportuaire' },
+      { code: 'SP050', libelle: 'Contrôleur de trafic' },
+      { code: 'SP069', libelle: 'Gouvernante' },
+      { code: 'SP112', libelle: 'Chargé de protection de l\'enfance' },
+    ],
+    approximation: true,
+  },
+  administrateur_socio_educatif: {
+    postes: [
+      { code: 'SP014', libelle: 'Directeur d\'unité agro-industrielle' },
+      { code: 'SP023', libelle: 'Directeur technique / d\'usine' },
+      { code: 'SP038', libelle: 'Directeur de chantier / d\'entreprise BTP' },
+      { code: 'SP047', libelle: 'Chef d\'escale / Directeur d\'exploitation aéroportuaire' },
+      { code: 'SP082', libelle: 'Directeur d\'agence bancaire' },
+      { code: 'SP089', libelle: 'Directeur d\'établissement scolaire / Proviseur' },
+      { code: 'SP095', libelle: 'Directeur d\'hôpital / Administrateur de centre de santé' },
+      { code: 'SP103', libelle: 'Directeur d\'ONG' },
+      { code: 'SP109', libelle: 'Directeur de centre social / ONG sociale' },
+    ],
+    approximation: true,
+  },
+  agent_developpement_local: {
+    postes: [
+      { code: 'SP011', libelle: 'Chef de projet agricole / développement rural' },
+      { code: 'SP022', libelle: 'Chef de projet industriel agroalimentaire' },
+      { code: 'SP030', libelle: 'Chef de projet technique / installation industrielle' },
+      { code: 'SP046', libelle: 'Chef de projet construction / BTP' },
+      { code: 'SP064', libelle: 'Chef de projet eau-assainissement (WASH)' },
+      { code: 'SP106', libelle: 'Chef de projet de développement' },
+    ],
+    approximation: true,
+  },
+  infirmier_etat: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  sage_femme: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  kinesitherapeute: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  dieteticien_nutrition: {
+    postes: [
+      { code: 'SP004', libelle: 'Technicien agricole' },
+      { code: 'SP006', libelle: 'Zootechnicien' },
+      { code: 'SP008', libelle: 'Technicien en aquaponie' },
+      { code: 'SP015', libelle: 'Technicien agroalimentaire' },
+      { code: 'SP024', libelle: 'Technicien de maintenance industrielle' },
+      { code: 'SP027', libelle: 'Électrotechnicien' },
+      { code: 'SP043', libelle: 'Géomètre-topographe' },
+      { code: 'SP058', libelle: 'Hydrologue' },
+      { code: 'SP059', libelle: 'Hydrogéologue' },
+      { code: 'SP061', libelle: 'Technicien d\'assainissement' },
+      { code: 'SP062', libelle: 'Technicien de traitement des eaux' },
+      { code: 'SP097', libelle: 'Infirmier' },
+      { code: 'SP098', libelle: 'Sage-femme' },
+      { code: 'SP099', libelle: 'Kinésithérapeute' },
+    ],
+    approximation: true,
+  },
+  educateur_specialise: {
+    postes: [
+      { code: 'SP007', libelle: 'Pisciculteur / Aquaculteur' },
+      { code: 'SP017', libelle: 'Opérateur de transformation agroalimentaire' },
+      { code: 'SP025', libelle: 'Électricien industriel' },
+      { code: 'SP026', libelle: 'Mécanicien industriel' },
+      { code: 'SP049', libelle: 'Agent de piste' },
+      { code: 'SP068', libelle: 'Réceptionniste' },
+      { code: 'SP070', libelle: 'Guide touristique' },
+      { code: 'SP100', libelle: 'Travailleur social' },
+      { code: 'SP110', libelle: 'Éducateur spécialisé' },
+      { code: 'SP111', libelle: 'Animateur socio-éducatif' },
+    ],
+    approximation: true,
+  },
+  enseignant_primaire: {
+    postes: [
+      { code: 'SP013', libelle: 'Formateur agricole / vulgarisateur' },
+      { code: 'SP057', libelle: 'Formateur en sûreté aéroportuaire' },
+      { code: 'SP090', libelle: 'Enseignant / Professeur' },
+      { code: 'SP091', libelle: 'Formateur professionnel' },
+    ],
+    approximation: false,
+  },
+  agent_accueil_administration: {
+    postes: [
+      { code: 'SP007', libelle: 'Pisciculteur / Aquaculteur' },
+      { code: 'SP017', libelle: 'Opérateur de transformation agroalimentaire' },
+      { code: 'SP025', libelle: 'Électricien industriel' },
+      { code: 'SP026', libelle: 'Mécanicien industriel' },
+      { code: 'SP049', libelle: 'Agent de piste' },
+      { code: 'SP068', libelle: 'Réceptionniste' },
+      { code: 'SP070', libelle: 'Guide touristique' },
+      { code: 'SP100', libelle: 'Travailleur social' },
+      { code: 'SP110', libelle: 'Éducateur spécialisé' },
+      { code: 'SP111', libelle: 'Animateur socio-éducatif' },
+    ],
+    approximation: true,
+  },
+  assistant_direction: {
+    postes: [
+      { code: 'SP104', libelle: 'Secrétaire général de mairie' },
+    ],
+    approximation: true,
+  },
+  comptable: {
+    postes: [
+      { code: 'SP002', libelle: 'Gestionnaire comptable de coopérative agricole' },
+    ],
+    approximation: false,
+  },
+  chef_chantier: {
+    postes: [
+      { code: 'SP028', libelle: 'Chef d\'atelier mécanique' },
+      { code: 'SP040', libelle: 'Chef de chantier' },
+      { code: 'SP067', libelle: 'Chef cuisinier' },
+    ],
+    approximation: false,
+  },
+  developpeur_web_mobile: {
+    postes: [
+      { code: 'SP074', libelle: 'Développeur web / mobile' },
+    ],
+    approximation: false,
+  },
+  receptionniste_hotel: {
+    postes: [
+      { code: 'SP007', libelle: 'Pisciculteur / Aquaculteur' },
+      { code: 'SP017', libelle: 'Opérateur de transformation agroalimentaire' },
+      { code: 'SP025', libelle: 'Électricien industriel' },
+      { code: 'SP026', libelle: 'Mécanicien industriel' },
+      { code: 'SP049', libelle: 'Agent de piste' },
+      { code: 'SP068', libelle: 'Réceptionniste' },
+      { code: 'SP070', libelle: 'Guide touristique' },
+      { code: 'SP100', libelle: 'Travailleur social' },
+      { code: 'SP110', libelle: 'Éducateur spécialisé' },
+      { code: 'SP111', libelle: 'Animateur socio-éducatif' },
+    ],
+    approximation: true,
+  },
+  conseiller_technique_agricole: {
+    postes: [
+      { code: 'SP005', libelle: 'Conseiller agricole / Agent de vulgarisation' },
+      { code: 'SP048', libelle: 'Agent d\'exploitation aéroportuaire' },
+      { code: 'SP050', libelle: 'Contrôleur de trafic' },
+      { code: 'SP069', libelle: 'Gouvernante' },
+      { code: 'SP112', libelle: 'Chargé de protection de l\'enfance' },
+    ],
+    approximation: true,
+  },
+  magasinier_preparateur: {
+    postes: [
+      { code: 'SP037', libelle: 'Gestionnaire d\'entrepôt commercial' },
+    ],
+    approximation: false,
+  },
+  attache_commercial: {
+    postes: [
+      { code: 'SP034', libelle: 'Commercial terrain' },
+    ],
+    approximation: false,
+  },
+};
+
+/** Ce que la base nomme comme postes derrière cette fiche, dans son ordre de code. */
+export function postesPourFiche(occupationId: string): PostesDeFiche {
+  return PAR_FICHE[occupationId] ?? AUCUN;
+}
