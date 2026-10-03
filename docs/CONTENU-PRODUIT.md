@@ -118,8 +118,9 @@ Ses 113 spécialisations ne restent pas dans le fichier : elles se lisent à l'�
 dépliable qui dit « les postes que ce métier recouvre ». Ce sont les titres tels qu'on les trouve sur une offre d'emploi
 — chef de projet WASH, gérant de ferme, responsable e-commerce. Ils renseignent, ils ne se choisissent pas à la place du
 métier : la sélection reste le domaine, la fonction, le métier, l'axe. 41 de nos 45 fiches portent au moins un titre ;
-les autres restent sans poste nommé en attendant que la base s'enrichisse. Un même titre peut se ranger sous deux
-fiches, donc les 113 titres tiennent en 227 lignes à l'écran.
+les autres restent sans poste nommé en attendant que la base s'enrichisse. 89 de ses 113 titres atteignent l'écran, en
+227 lignes, parce qu'un même titre peut se ranger sous deux fiches. Les 24 autres n'y sont pas : aucune de nos fiches
+ne se range sous le métier générique qui les porte. La correspondance est incomplète, pas la base.
 
 Le doute du lien descend jusqu'à l'écran, mais une seule fois par fiche : quand le rang de la fiche ou le rattachement
 d'un titre est dit approximatif, la liste le déclare en une phrase sous les titres, au lieu de porter un avertissement
