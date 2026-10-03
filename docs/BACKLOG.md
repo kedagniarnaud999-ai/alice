@@ -740,62 +740,59 @@ décide en réalité du démarrage du sprint 4.
 ClickUp est le miroir, pas l'autorité. Ce que je fais, ce que je dois faire et ce qui est fait se lisent d'abord
 ici ; ClickUp sert à voir l'avancement dans le temps et à suivre mes activités jour par jour.
 
-**Ce que j'ai demandé le 2026-09-23 au soir, et qui change la forme du miroir.** Deux choses, et pas une seule :
+**Où le travail se pose, mesuré le 03/10/2026.** J'ai rangé ClickUp à la main le 25/09/2026 : le travail d'AliTché
+vit dans mon espace de travail le plus récent, en deux espaces — « AliTché » pour ce qu'on construit, « Project
+management » pour ce qu'on suit dans le temps. Les identifiants comptent plus que les noms, parce que les noms
+changent pendant qu'on travaille.
 
-- **Un planning dans l'espace général**, pour planifier et suivre mes activités, au lieu de retrouver le travail
-  empilé en listes de tâches. C'est là que les dates se voient.
-- **Un dossier par module du chapitre 7 de mon document**, avec les fonctionnalités en cartes, et les
-  sous-fonctionnalités en sous-cartes quand une fonctionnalité en demande plusieurs. Ce qui est déjà développé
-  se reconnaît au statut, pas à une étiquette.
+| Ce qui porte le travail | Où | Identifiant | Ce que ça contient |
+|---|---|---|---|
+| Backlog — Individus | dossier Module Impétrants | `1200440000047021` | soixante-dix-neuf cartes de fonctionnalités, miroir de `docs/MODULES.md`, étiquetées module 1 à module 10, plus les vingt-neuf cartes des tâches de ce document |
+| Backlog — page d'accueil | dossier Landing page | `1200440000046011` | quatre cartes |
+| Backlog — administration | dossier Espaces Admin | `1200440000046018` | six cartes : le catalogue et les documents du dépôt |
+| Cadrage — Universités et centres de formations | `1200440000047028` | une carte : est-ce que j'ouvre cet espace |
+| Cadrage — Consultants et centres d'employabilité | `1200440000047029` | une carte : idem |
+| Cadrage — Entreprises et recruteurs | `1200440000047034` | une carte : idem |
+| sprint planning | espace Project management | `1200440000046312` | les cinq jalons de sprint avec leurs dates, et les cinq fiches de session de test |
+| Action Items | espace Project management | `1200440000046344` | la liste de service, telle qu'elle a été créée |
 
-**Où ça en est, mesuré le 23/09/2026 au soir.** La liste de planning existe : « Planning — suivre mes activités »,
-`https://app.clickup.com/1200430000008636/v/l/li/1200430000041935`. Quatre cartes y ont été écrites avant
-d'atteindre le plafond. La liste à recopier est écrite : `docs/MODULES.md` porte **84** fonctionnalités pour les dix
-modules, dont **26** développées, **10** engagées et **48** absentes — les trois nombres ont été comptés ligne à
-ligne dans les tableaux du fichier, et leur somme fait bien 84. Les dix modules attendent encore leur dossier. Ce qui
-est écrit dans ClickUp à cette heure, listé par une lecture du dépôt d'appels :
+**Ce que j'y ai écrit le 03/10/2026.** Quarante-quatre cartes, prises une à une dans ce document, aucune inventée pour
+faire bonne mesure : vingt-neuf tâches et lignes « Ensuite » chez les candidats, quatre pour la page d'accueil, six
+pour le catalogue et les documents, cinq jalons pour le calendrier. Chaque carte porte le numéro de sa tâche, ce
+qu'elle change, comment on saura que c'est fini, sa taille, et renvoie à ce fichier. Trois cartes sont fermées et
+portent leur preuve : la fiche d'identité du dépôt (commit `e0cc79a`), ce que contient AliTché écrit à un seul
+endroit (commit `90369b2`), les quatre onglets morts retirés de l'accueil (commit `6005e19`). Huit cartes portent
+« en cours », parce que leur dépôt est écrit et leur preuve à l'écran non faite. Une porte « bloqué » : la connexion
+Google, dont les deux réglages chez le fournisseur ne se font pas sans la carte bancaire que je n'ai pas.
 
-| Ce qui existe | Identifiant | État |
-|---|---|---|
-| Espace iNOVA LAB | `1200430000025095` | en place |
-| Dossier AliTché | `1200430000030189` | en place, porte les six listes de sprint |
-| Liste « Planning — suivre mes activités » | `1200430000041935` | créée, quatre cartes écrites |
-| Liste « Sprint 1 · Stabiliser » | `1200430000041680` | en place, cartes du backlog |
-| Liste « Sprint 2 · Corriger les incohérences » | `1200430000041682` | en place |
-| Liste « Sprint 3 · Rendre le parcours fluide » | `1200430000041687` | en place |
-| Liste « Sprint 4 · Connecter les données entre elles » | `1200430000041688` | en place |
-| Liste « Sprint 5 · Relier les modules à des formations réelles » | `1200430000041689` | en place |
-| Liste « Ensuite · important, mais ne bloque pas » | `1200430000041690` | en place |
+**Ce que le miroir ne peut pas dire, et comment je m'en passe.** Les listes du dossier AliTché n'ont que deux
+statuts, « à faire » et « achevé ». Le « où j'en suis vraiment » ne se lit donc pas dans le statut : c'est
+l'étiquette qui le porte — non commencé, en cours, en test, validé, bloqué. Le sprint n'est pas non plus une case à
+cocher : une étiquette « sprint 1 » à « sprint 5 » et les deux dates de la carte font le travail. La liste de
+planning a quatre états en anglais, parce qu'elle vient d'un moule tout prêt ; mes cinq jalons y sont ouverts « à
+faire », avec les dates du calendrier ci-dessus.
 
-**Pourquoi ça s'arrête là ce soir, et pas plus loin.** Le service de gestion de projet limite à cent appels par
-jour, et les lectures comptent comme les écritures. Le compteur est à cent sur cent depuis environ dix-neuf
-heures trente, heure locale, et il repart le 24/09/2026 vers 19 h 23. Ce n'est pas une panne : c'est un quota,
-et il se rouvre tout seul.
+**Le budget décide du rythme.** Le service coupe à cent appels par jour, lectures comprises, et ce compteur est
+partagé avec mes autres sessions. Le quota d'aujourd'hui s'est épuisé sur la dernière relecture que je voulais faire.
+`docs/MODULES.md` en garde la trace : quarante cartes envoyées le 26/09 au matin, relues le 01/10 seulement, parce
+que le compteur était plein entre-temps. D'où la règle : relire par identifiant avant de réécrire, parce que rejouer
+un appel déjà passé fait une carte en double. Le miroir est écrit et relu carte par carte ; seul le contenu des
+listes de l'espace d'avant reste non recompté, et je ne le devine pas.
 
-**Ce que la reprise a à écrire, dans cet ordre, et seulement après avoir relu l'existant** — parce que les
-appels partis avant le plafond sont bien passés, et que réécrire sans lire ferait des doublons :
+**Le plan du 23/09 est dépassé, pas inachevé.** Il promettait dix dossiers de module, une liste dans chacun et
+quatre-vingt-quatre cartes. J'ai tranché autrement le 25/09, et c'est écrit dans `docs/MODULES.md` : des dossiers par
+acteur, pas par module. Les cartes des dix modules tiennent donc dans une seule liste, « Backlog — Individus », et
+c'est l'étiquette qui les rend filtrables module par module. Cette liste compte maintenant cent huit cartes :
+soixante-dix-neuf fonctionnalités de module, et les vingt-neuf tâches de ce document.
 
-1. Relire la liste de planning, puis compléter les cartes de jalons qui manquent (une par sprint, aux dates du
-   tableau ci-dessus).
-2. Créer les dix dossiers de module : « Module 1 · Orientation », « Module 2 · Profil utilisateur »,
-   « Module 3 · Parcours », « Module 4 · Formation et apprentissage », « Module 5 · Compétences »,
-   « Module 6 · Projet professionnel », « Module 7 · Opportunités », « Module 8 · Profil professionnel et
-   portfolio », « Module 9 · Évaluations et examens », « Module 10 · Suivi de l'employé ».
-   **À quel niveau, et pourquoi.** ClickUp imbrique bien les dossiers — un dossier peut en contenir un autre, et
-   c'est ce que je veux à terme. Ce qui ne le peut pas, c'est l'outil par lequel j'écris là-bas : sa fiche de
-   paramètres n'accepte qu'un nom et un espace, sans dossier parent, et aucun appel plus général n'est ouvert pour
-   passer le champ manquant. Mesuré le 24/09/2026. Les dix dossiers sont donc posés au niveau de l'espace iNOVA LAB,
-   à côté du dossier AliTché, et je les range sous un dossier parent à la souris dans l'interface — une glissade par
-   dossier, une seule fois.
-3. Dans chacun, une liste « Fonctionnalités », et une carte par fonctionnalité de `docs/MODULES.md`, avec ses
-   sous-cartes quand le fichier en donne. Statut « achevé » pour ce qui est développé ; statut « à faire » pour
-   le reste ; « engagé » se lit dans la description, parce que le miroir ne connaît que deux statuts ici.
-4. Les cartes de la découpe précédente restent où elles sont, dans six listes renommées « Avant le cadrage · … » :
-   vingt-sept cartes, mesuré avant d'écrire. Le service ne sait pas supprimer une liste ; le tri se fait dans
-   l'interface quand j'y passe.
+**L'espace de travail d'avant.** AliTché y occupe un dossier découpé lui aussi par acteur — « Espace
+utilisateurs », « Landing page », « Espace admin », une liste dans chacun, relevé à l'instant. Les six listes de
+sprint que le plan du 23/09 y avait comptées n'y sont plus : la reprise à la souris a défait cette découpe.
+J'affirme cela et rien de plus, parce que le recomptage de leur contenu est tombé après la coupure. Et je ne
+supprime rien : le connecteur ne sait pas supprimer une liste, et une carte effacée emporte avec elle la décision
+qui l'avait fait écrire.
 
-Budget, sur les nombres ci-dessus : dix dossiers plus dix listes plus quatre-vingt-quatre cartes, cela fait
-**104 écritures**, et il faut y ajouter les relectures qui empêchent les doublons. À cent appels par jour, la
-découpe complète tient donc sur **deux jours au minimum**, module par module, dans l'ordre des modules. Le premier
-jour s'ouvre d'ailleurs à moitié fermé : le compteur se rouvre vers dix-neuf heures vingt-trois, heure locale,
-ce qui laisse une soirée de travail et non une journée.
+**Règle de sens.** Les cartes viennent de ce fichier, jamais l'inverse. Une retouche faite dans l'interface entre
+deux séances — une priorité changée, une carte créée à la volée — est une demande de portée, pas un avancement :
+elle passe d'abord ici, puis le miroir est corrigé le jour même. Le détail des cartes de module vit dans
+`docs/MODULES.md` ; ce document-ci porte les tâches, et ClickUp les répète.
