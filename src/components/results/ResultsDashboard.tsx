@@ -9,6 +9,7 @@ import { ExportMenu } from './ExportMenu';
 import { OccupationResults } from './OccupationResults';
 import { profileService } from '@/services/profile.api';
 import { storageManager } from '@/utils/storageManager';
+import { loadStoredProfile } from '@/utils/storedProfile';
 
 interface ResultsDashboardProps {
   result?: ProfileResult;
@@ -52,7 +53,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
         storageManager.saveProfileResult(remoteProfile);
       } catch (error) {
         console.error('Erreur chargement profil distant, fallback local:', error);
-        const localProfile = storageManager.loadProfileResult();
+        const localProfile = loadStoredProfile();
         if (localProfile) {
           setProfileResult(localProfile);
         }

@@ -18,7 +18,7 @@ import { Question } from '@/types/test';
  * chaque domaine. Bump this version whenever weights move — a profile computed
  * on the previous scale is not comparable and must not be replayed.
  */
-export const ASSESSMENT_VERSION = 6;
+export { ASSESSMENT_VERSION } from './assessmentVersion';
 
 export const orientationQuestions: Question[] = [
   // ─────────────────────────────── 1. SITUATION ───────────────────────────────

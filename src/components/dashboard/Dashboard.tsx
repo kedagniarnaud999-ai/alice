@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { profileService } from '@/services/profile.api';
 import { storageManager } from '@/utils/storageManager';
+import { loadStoredProfile } from '@/utils/storedProfile';
 import toast from 'react-hot-toast';
 
 interface DashboardProps {
@@ -57,7 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           "Votre profil n'a pas pu être rechargé depuis votre compte. Ce que vous voyez vient de cet appareil et peut être plus ancien.",
           { id: 'sync-profil-affiche' }
         );
-        const localProfile = storageManager.loadProfileResult();
+        const localProfile = loadStoredProfile();
         if (localProfile) {
           setProfileResult(localProfile);
         }

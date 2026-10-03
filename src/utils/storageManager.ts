@@ -1,8 +1,7 @@
 import { TestResponse, ProfileResult } from '@/types/test';
-import { PersonalizedPathway } from './pathwayEngine';
-import { UserModuleProgress } from '@/services/module.api';
-import { normalizeProfileResult } from './profileResult';
-import { ASSESSMENT_VERSION } from '@/data/questions';
+import type { PersonalizedPathway } from './pathwayEngine';
+import type { UserModuleProgress } from '@/services/module.api';
+import { ASSESSMENT_VERSION } from '@/data/assessmentVersion';
 import toast from 'react-hot-toast';
 
 const STORAGE_KEYS = {
@@ -88,12 +87,17 @@ class StorageManager {
     }
   }
 
-  loadProfileResult(): ProfileResult | null {
+  /**
+   * Le contenu brut gardé sous la clé de profil, sans décision sur sa validité :
+   * le valider demande les catalogues, et l'écran d'accueil n'a pas à les payer.
+   * Un appelant qui veut s'en servir passe par `loadStoredProfile`.
+   */
+  readStoredProfileResult(): unknown {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.PROFILE_RESULT);
       if (saved) {
         const data = JSON.parse(saved);
-        return normalizeProfileResult(data.result);
+        return data.result;
       }
     } catch (error) {
       notifyStorage('load', error);
@@ -186,8 +190,15 @@ class StorageManager {
     }
   }
 
+  /**
+   * Un parcours est-il déjà engagé sur cet appareil ? La réponse se prend sur
+   * l'enveloppe : un profil calculé sous un autre barème ne se rejoue pas. Le
+   * détail — domaine encore connu, fiches encore ouvertes — se vérifie à
+   * l'écran qui s'en sert, dans `loadStoredProfile`.
+   */
   hasCompletedTest(): boolean {
-    return this.loadProfileResult() !== null;
+    const stored = this.readStoredProfileResult() as { assessmentVersion?: number } | null;
+    return !!stored && stored.assessmentVersion === ASSESSMENT_VERSION;
   }
 }
 

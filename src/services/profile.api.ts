@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { storageManager } from '@/utils/storageManager';
 import { normalizeProfileResult } from '@/utils/profileResult';
+import { loadStoredProfile } from '@/utils/storedProfile';
 import type { ProfileResult, TestResponse } from '@/types/test';
 
 const getCurrentUserId = async () => {
@@ -52,7 +53,7 @@ export class ProfileService {
     }
 
     if (!data?.payload) {
-      const localProfile = storageManager.loadProfileResult();
+      const localProfile = loadStoredProfile();
       if (localProfile) {
         return localProfile;
       }

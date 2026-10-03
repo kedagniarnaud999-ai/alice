@@ -618,7 +618,7 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 | E1 | rattacher les chances réelles aux métiers, pas au seul domaine | un candidat qui vise un métier croisé voit les formations de ce métier |
 | E2 | compléter l'offre hors Bénin et les formations qui manquent | l'orientation ne s'arrête plus à la frontière |
 | E3 | rendre la recherche d'écoles utilisable | on cherche par métier, pays, durée, frais |
-| E4 | alléger le premier affichage | le site s'ouvre sur une connexion faible : 164 kilo-octets compressés depuis le 2026-10-02, contre 214 avant ; restent les trois catalogues à sortir du fichier de départ |
+| E4 | alléger le premier affichage | le site s'ouvre sur une connexion faible : 119 kilo-octets compressés depuis le 2026-10-03, contre 164 le 2026-10-02 et 214 avant ; les trois catalogues sont sortis du fichier de départ, seule la bibliothèque de connexion y tient encore une centaine de kilo-octets, et elle est vraiment nécessaire dès l'ouverture |
 | E5 | accessibilité clavier et contrastes | utilisable sans souris et en plein soleil |
 | E6 | une version anglaise de l'accueil | cohérente avec une ambition régionale, une fois la version française irréprochable |
 | E7 | écrire la politique de conservation des données | le produit peut toucher des mineurs : durée de garde, effacement à demande, sortie d'un mineur |
@@ -714,6 +714,21 @@ Mon chapitre 19, complété par ce que le produit a déjà commencé à promettr
   après la poussée, donc la comparaison ne pouvait rien trouver de neuf, et mes recherches de textes accentués
   échouaient à cause de l'accent de ma propre requête, pas de l'absence du texte. La référence se prend avant de
   pousser, et une recherche qui échoue se teste d'abord sur le fichier construit ici.
+- **La poussée du 2026-10-03, les catalogues hors du fichier de départ** : le fichier que reçoit quelqu'un qui arrive
+  pesait encore 550 616 octets parce qu'il emportait le questionnaire, les fiches de métier et les modules, alors que
+  l'accueil n'en affiche aucun. Ces trois-là suivent maintenant les deux écrans qui s'en servent — le test et l'espace
+  de travail — et se téléchargent au moment où l'on y entre. Le fichier de départ est descendu à 409 713 octets,
+  119 kilo-octets une fois comprimé, contre 164 la veille. Le fichier des catalogues pèse 142 744 octets, 38 kilo-octets
+  comprimé, et ne part que pour qui lance le test ou ouvre son espace : quelqu'un qui lit seulement l'accueil ne le
+  paie pas. Un seul nombre a dû rester au départ, la version du barème, parce que c'est lui qui décide si un profil
+  gardé sur l'appareil est encore comparable à celui d'aujourd'hui ; il a son propre fichier, et la promesse
+  « 29 à 30 questions selon votre situation » continue de se calculer sur les questions réelles, je ne l'ai pas écrite
+  à la main. Vérifié à l'exécution, pas à la configuration : la liste des fichiers demandés par l'accueil ne contient
+  qu'un seul fichier de programme, l'entrée dans le test déclenche celui des catalogues, et la page de résultats,
+  la fiche d'un domaine et l'écran de ciblage se sont construits avec leurs données. Un piège de vérification m'a
+  fait perdre dix minutes : cliquer la boîte d'une option au lieu de l'option elle-même la coche puis la décoche, si
+  bien que mon parcours automatique restait bloqué sans erreur visible. Ce qui reste à gagner sur ce fichier : la
+  bibliothèque de connexion, une centaine de kilo-octets, mais elle sert dès l'ouverture.
 
 **Ouvert le 2026-10-02, et à trancher par moi : que doit contenir le champ « voies de formation ».**
 
