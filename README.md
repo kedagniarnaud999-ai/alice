@@ -113,9 +113,10 @@ réglages de la plate-forme a déjà cassé le build : on garde le choix par dé
 Je préfère l'écrire ici que le découvrir plus tard.
 
 L'isolement d'un compte par rapport à un autre n'a jamais été prouvé par deux vrais comptes sur deux appareils :
-c'est la tâche S1.4, et le code est en ligne pour ça. Cinquante liens sur les cent cinquante et une lignes
-vérifiées du catalogue mènent à un site agrégateur plutôt qu'à l'établissement lui-même, et les dates de
-vérification forment deux lots plutôt que cent cinquante et une relectures : c'est la tâche S2.6. La connexion par
+c'est la tâche S1.4, et le code est en ligne pour ça. Les dates de vérification du catalogue forment quatre lots
+dont deux saisies en masse : cent trois lignes sur cent cinquante-neuf datent du 21 ou du 22 septembre 2026 et n'ont
+pas été relues une à une. L'autre reproche de cette même tâche, S2.6, est traité depuis le 03/10/2026 : plus aucun
+lien du catalogue ne mène au site d'un agrégateur. La connexion par
 compte externe est retirée de l'écran parce que son réglage chez le fournisseur exige une carte de paiement que je
 n'ai pas encore : c'est la tâche S2.2, et le code reste dans le dépôt. Deux fausses promesses tiennent encore dans
 l'interface : c'est la tâche S1.5. Le dépôt, enfin, enregistre des bibliothèques et un serveur mort : c'est S2.4.

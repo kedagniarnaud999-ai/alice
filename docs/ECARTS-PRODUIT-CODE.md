@@ -217,10 +217,13 @@ d'identité mais relus dans `docs/CONTENU-PRODUIT.md`, et le contrôle `src/chec
 ouvre le dépôt lit donc aujourd'hui le produit qui est en ligne. Reste le serveur abandonné lui-même, et les
 vingt-deux autres fichiers Markdown hérités de la racine : tâche S2.4.
 
-**Le catalogue.** 165 lignes d'écoles, formations et bourses. 151 portent une date de vérification, mais ces
-151 dates ne forment que deux lots : 74 lignes datées du 21/09/2026, 77 du 22/09/2026. Ce n'est pas 151
-contrôles, c'est deux saisies en masse. 50 lignes sur 151 renvoient vers un site qui recense des écoles, pas
-vers l'école elle-même. Zéro ligne est marquée comme vérifiée individuellement. Un candidat qui suit le
+**Le catalogue.** 173 lignes d'écoles, formations et bourses. 159 portent une date de vérification, et ces 159 dates
+forment quatre lots : 77 lignes datées du 22/09/2026, 26 du 21/09/2026, 6 du 02/10/2026, 50 du 03/10/2026. Les deux
+premiers ne sont pas 103 contrôles, ce sont deux saisies en masse ; les deux derniers sont des relectures une à une, et
+cinquante lignes portent la mention « vérifiée par nous ». L'autre défaut écrit ici — cinquante lignes sur cent
+cinquante et une renvoyant vers un site qui recense des écoles plutôt que vers l'école elle-même — est traité : les
+quarante et un liens qui restaient ont été remplacés le 03/10/2026 par l'adresse de l'organisme qui parle lui-même, et
+cinq lignes sans page d'organisateur sont sorties du catalogue. Un candidat qui suit le
 conseil d'AliTché et trouve porte fermée perd autre chose que du temps : il perd la disposition à suivre le prochain
 conseil. Proposition : la tâche S2.6, dix lignes à la fois, et tant qu'un domaine n'est pas relu il est dit
 non vérifié — ce qui est l'inverse de promettre, et ne coûte rien.

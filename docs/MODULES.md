@@ -9,7 +9,7 @@ mains dans `docs/CADRAGE-PRODUIT.md`, chapitre 7, parfois mot pour mot. Je n'ajo
 fonctionnalité par fonctionnalité. Tout a été relu dans le code le 23/09/2026.
 
 Depuis, je ne compte plus à la main. Les nombres du produit — 51 modules de formation au catalogue, 11 domaines de
-carrière, 31 questions, 4 situations de départ, 45 métiers documentés, 165 lignes d'écoles, de formations et de
+carrière, 31 questions, 4 situations de départ, 45 métiers documentés, 173 lignes d'écoles, de formations et de
 bourses — se lisent à un seul endroit, `docs/CONTENU-PRODUIT.md`, et une troisième vérification automatique les
 recompte dans le code à chaque `npm run verify`. Elle rougit si la fiche s'écarte du catalogue, et elle rougit aussi
 si un document comme celui-ci écrit un chiffre que la mesure ne rend pas. Partout ailleurs je dis où je l'ai compté ;
@@ -208,19 +208,21 @@ J'en attends qu'AliTché sache dire où aller, et que cela suive la personne plu
 |---|---|---|
 | Stages | **Absent** | Le catalogue des opportunités ne connaît que trois familles (`src/data/opportunities.ts`) : formation, établissement, bourse. Le stage n'existe ni comme famille, ni comme donnée. |
 | Emplois | **Absent** | Rien. Aucune offre d'emploi, aucun champ, aucun écran. |
-| Formations | **Développé** | 95 des 165 lignes du catalogue sont des formations, reliées aux fiches de métier et aux domaines de carrière. |
+| Formations | **Développé** | 95 des 173 lignes du catalogue sont des formations, reliées aux fiches de métier et aux domaines de carrière. |
 | Programmes | **Absent** | Pas de famille « programme ». Une partie de ce qui en serait un est rangée sous « formation » sans qu'on puisse les distinguer. |
-| Bourses | **Développé** | 34 lignes, affichées sous le même toit que les formations et les établissements. |
+| Bourses | **Développé** | 42 lignes, affichées sous le même toit que les formations et les établissements. Treize d'entre elles sont des dispositifs nationaux sud-africains : le pays affiché dit où l'offre se déroule, pas à qui elle est ouverte. |
 | Événements | **Absent** | Rien. |
 | Missions | **Absent** | Rien. |
 | Opportunités professionnelles | **Absent** | Rien de nommé ainsi, et rien qui s'en rapproche hors les trois familles existantes. |
-| « Profil → compétences → objectif → opportunités pertinentes » | **Engagé** | Le dernier maillon est réel et le premier n'existe pas : les offres sont accrochées à une fiche de métier ou à un domaine de carrière (`src/components/results/OccupationResults.tsx:251`, `src/components/results/DomainDetail.tsx:24`), jamais filtrées par ce que sait la personne ni par son objectif. Le produit ne connaît que deux endroits où montrer ces 165 lignes, et aucun écran ne les parcourt : on n'y accède qu'en passant par un métier ou un domaine. |
+| « Profil → compétences → objectif → opportunités pertinentes » | **Engagé** | Le dernier maillon est réel et le premier n'existe pas : les offres sont accrochées à une fiche de métier ou à un domaine de carrière (`src/components/results/OccupationResults.tsx:251`, `src/components/results/DomainDetail.tsx:24`), jamais filtrées par ce que sait la personne ni par son objectif. Le produit ne connaît que deux endroits où montrer ces 173 lignes, et aucun écran ne les parcourt : on n'y accède qu'en passant par un métier ou un domaine. |
 
 Sur huit familles que je demande, trois existent, et une de celles qui existent n'est pas de ma liste : 36 lignes sont
-des établissements. Sur les 165 lignes, 15 portent la mention « démo » et 14 en portent la trace dans leur identifiant.
-Leur date de vérification ne dit pas ce qu'elle laisse croire — 151 lignes en portent une, mais en deux lots seulement,
-74 datées du 21/09/2026 et 77 du 22/09/2026, et 50 d'entre elles renvoient vers un annuaire d'écoles plutôt que vers
-l'école : c'est le point 9 de `docs/ECARTS-PRODUIT-CODE.md`, et ce n'est toujours pas réglé.
+des établissements. Sur les 173 lignes, 14 restent du jeu de démonstration et portent le badge « Démo ». Leur date de
+vérification ne dit pas ce qu'elle laisse croire — 159 lignes en portent une, réparties en quatre lots : 77 du
+22/09/2026, 26 du 21/09/2026, 6 du 02/10/2026, 50 du 03/10/2026. Les deux derniers sont des relectures une à une, les
+deux premiers des saisies en masse, et cinquante lignes portent la mention « vérifiée par nous ». Des deux reproches
+du point 9 de `docs/ECARTS-PRODUIT-CODE.md`, un est traité depuis le 03/10/2026 : plus aucun lien ne mène vers un
+annuaire d'écoles plutôt que vers l'école. Reste l'autre : reprendre les cent trois lignes saisies en masse.
 
 ---
 

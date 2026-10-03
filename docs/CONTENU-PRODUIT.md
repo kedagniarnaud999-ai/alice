@@ -36,17 +36,17 @@ pas un diplôme : c'est un faisceau de métiers qui se partagent les mêmes comp
 
 | Identifiant          | Nom affiché à l'écran              | Métiers qui l'exigent | Métiers qui s'en servent comme terrain | Axes | Modules | Chances réelles |
 | -------------------- | ---------------------------------- | --------------------- | -------------------------------------- | ---- | ------- | --------------- |
-| administration       | Administration & Gestion           | 16                    | 12                                     | 4    | 11      | 72              |
-| commerce_marketing   | Commerce, Vente & Marketing        | 8                     | 12                                     | 3    | 8       | 48              |
-| finance              | Finance & Comptabilité             | 8                     | 6                                      | 4    | 6       | 72              |
-| ingenierie           | Ingénierie & Métiers Techniques    | 6                     | 4                                      | 4    | 6       | 74              |
-| ict                  | Technologies de l'Information      | 8                     | 6                                      | 4    | 6       | 60              |
-| tourisme             | Tourisme, Hôtellerie & Restauration| 5                     | 3                                      | 3    | 6       | 40              |
-| sante                | Santé                              | 8                     | 11                                     | 3    | 6       | 49              |
-| social               | Social & Accompagnement            | 12                    | 7                                      | 3    | 8       | 43              |
-| education            | Éducation & Formation              | 8                     | 11                                     | 3    | 7       | 57              |
-| agriculture          | Agriculture & Agroalimentaire      | 7                     | 11                                     | 4    | 6       | 53              |
-| logistique          | Transport & Logistique             | 5                     | 14                                     | 3    | 7       | 48              |
+| administration       | Administration & Gestion           | 16                    | 12                                     | 4    | 11      | 68              |
+| commerce_marketing   | Commerce, Vente & Marketing        | 8                     | 12                                     | 3    | 8       | 45              |
+| finance              | Finance & Comptabilité             | 8                     | 6                                      | 4    | 6       | 69              |
+| ingenierie           | Ingénierie & Métiers Techniques    | 6                     | 4                                      | 4    | 6       | 71              |
+| ict                  | Technologies de l'Information      | 8                     | 6                                      | 4    | 6       | 56              |
+| tourisme             | Tourisme, Hôtellerie & Restauration| 5                     | 3                                      | 3    | 6       | 37              |
+| sante                | Santé                              | 8                     | 11                                     | 3    | 6       | 46              |
+| social               | Social & Accompagnement            | 12                    | 7                                      | 3    | 8       | 40              |
+| education            | Éducation & Formation              | 8                     | 11                                     | 3    | 7       | 54              |
+| agriculture          | Agriculture & Agroalimentaire      | 7                     | 11                                     | 4    | 6       | 49              |
+| logistique          | Transport & Logistique             | 5                     | 14                                     | 3    | 7       | 45              |
 
 Les colonnes ne se totalisent pas : une même fiche métier compte dans chaque domaine qu'elle touche, et une école, une
 formation ou une bourse peut servir plusieurs domaines.
@@ -73,20 +73,50 @@ refuse si un axe revendique un métier ou un module qui n'existe pas.
 Le parcours recommandé se construit avec ces briques. 49 se rattachent à au moins un domaine ; 2 sont transversales et
 ne servent aucun domaine en particulier — ce sont celles d'employabilité.
 
-## Les 178 chances
+## Les 173 chances
 
-95 formations, 36 établissements, 47 bourses. Les 164 lignes réelles portent une adresse et un contrôle daté ; 14
+95 formations, 36 établissements, 42 bourses. Les 159 lignes réelles portent une adresse et un contrôle daté ; 14
 restent du jeu de démonstration, et l'écran les badge « Démo ».
 
 Deux lignes de la base que j'ai remise n'y figurent pas : celles de l'office d'échange académique allemand et de
 l'agence universitaire de la Francophonie. Leurs sites ne répondaient pas quand j'ai voulu les contrôler, et je
 préfère les attendre hors catalogue plutôt que leur donner une date de vérification que je n'ai pas vue passer.
 
-Les 164 dates de contrôle viennent de quatre saisies : 77 lignes contrôlées le 22/09/2026, 65 le 21/09/2026, 6 le
-02/10/2026 et 16 aujourd'hui, le 03/10/2026. Les deux premières sont des saisies en masse : ce ne sont pas 142
-vérifications une par une, et le dire est important — c'est la tâche S2.6 que de reprendre ces lignes une à une. Les 16
-d'aujourd'hui ne sont pas de ce lot : les treize bourses que j'ai remises ont été reprises ligne à ligne, et les trois
-autres sont d'anciennes lignes d'annuaire dont le lien a été remplacé par l'adresse officielle.
+Cinq lignes venues de l'annuaire en sont sorties le 03/10/2026, pour ce seul motif : aucune n'a de page d'organisateur
+qui la nomme. La « bourse Afrique subsaharienne » prêtée à une université américaine n'est écrite sur aucune page de
+cette université ; la bourse de premier cycle que l'annuaire attribue à une société de production végétale
+sud-africaine n'apparaît sur le site d'aucune de ses pages ; le stage de fin d'études d'un institut national de la
+statistique dont le site ne rend plus qu'une page vide ; une bourse du Commonwealth que la Nouvelle-Zélande ne donne
+qu'aux Îles du Pacifique et au Timor-Leste ; et une bourse de conservation marine dont la seule pièce que j'ai trouvée
+est le dossier de candidature d'un cycle clos en 2018.
+
+Les 159 dates de contrôle viennent de quatre saisies : 77 lignes contrôlées le 22/09/2026, 26 le 21/09/2026, 6 le
+02/10/2026 et 50 aujourd'hui, le 03/10/2026. Les deux premières sont des saisies en masse : ce ne sont pas 103
+vérifications une par une, et le dire est important — c'est la tâche S2.6 que de reprendre ces lignes une à une. Le
+lot d'aujourd'hui n'est pas une saisie en masse : j'ai ouvert chaque page l'une après l'autre.
+
+Ce que le 03/10/2026 a changé, précisément. Les 41 liens qui menaient encore au site d'un agrégateur tiers ont été
+remplacés par l'adresse de l'organisme qui parle lui-même — l'école, le fonds, le ministère — et vingt-huit lignes
+portent maintenant la mention « vérifiée par nous », parce que leur page a écrit le nom cherché. Huit restent comptées
+comme reçues et non vérifiées, et je les dis telles quelles : deux domaines répondent sans rien contenir ni nommer
+(Obiang Nguema Mbasogo d'un côté, Ajavon Sébastien de l'autre, dont la vitrine écrit un autre nom que le sien), trois
+lignes de diplômes mènent à l'accueil de leur école sans que cette page nomme le diplôme, et deux adresses officielles
+n'ont pas pu être lues du tout — la banque et l'université oxfordienne refusent l'accès automatisé, elles gardent donc
+la date de l'annuaire et non une date d'aujourd'hui.
+
+Trois défauts de forme sont à signaler aux intéressés, pas à corriger chez nous : le certificat de sécurité du site de
+l'Institut Supérieur de Management Adonaï est expiré, la vitrine de l'Institut Supérieur des Métiers de l'Audiovisuel
+annonce son propre site « en construction », et l'agrégateur avait renommé deux organismes — « Baldwin Foundation »
+au lieu de Balwin, « Mineral Qualifications Authority » au lieu de Mining. Les pays affichés ont été repris sur la
+même page : quatorze lignes que l'annuaire disaient sans pays sont sud-africaines ou canadiennes, et cela se lit
+désormais à l'écran.
+
+Ce que le pays affiché veut dire, précisément. Treize des quarante-deux bourses du catalogue sont des dispositifs
+nationaux sud-africains, écrits d'abord pour les ressortissants de l'Afrique du Sud ; la liste officielle des pays
+admis que le gouvernement néo-zélandais publie pour Manaaki ne nomme aucun pays d'Afrique, et c'est cette liste que
+son lien ouvre. Le pays d'une ligne dit donc où l'offre se déroule, pas à qui elle est ouverte : AliTché montre une
+porte et son adresse, il ne promet pas une admission. Rapporter des offres ouvertes aux candidats béninois est le
+chantier E2.
 
 ## Le référentiel des 113 spécialisations
 
@@ -176,18 +206,18 @@ axes.modules.min = 3
 axes.modules.max = 3
 modules = 51
 modules.transversaux = 2
-chances = 178
-chances.reelles = 164
+chances = 173
+chances.reelles = 159
 chances.demo = 14
-chances.controlees = 164
-chances.avec.url = 164
-chances.controlees.2026-09-21 = 65
+chances.controlees = 159
+chances.avec.url = 159
+chances.controlees.2026-09-21 = 26
 chances.controlees.2026-09-22 = 77
 chances.controlees.2026-10-02 = 6
-chances.controlees.2026-10-03 = 16
+chances.controlees.2026-10-03 = 50
 chances.etablissement = 36
 chances.formation = 95
-chances.bourse = 47
+chances.bourse = 42
 paires.coeur = 91
 paires.terrain = 97
 referentiel.domaines = 14

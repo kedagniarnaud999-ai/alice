@@ -54,7 +54,7 @@ réellement le produit. Si une réponse manque : **on ne code pas, on classe au 
 
 AliTché est en ligne et fonctionne de bout en bout sur ma machine : un visiteur peut découvrir,
 s'inscrire, répondre à **31 questions**, voir un classement de ses **11 domaines de carrière** possibles parmi
-**45 métiers documentés**, choisir une direction et recevoir un parcours bâti sur **51 modules**, avec **178
+**45 métiers documentés**, choisir une direction et recevoir un parcours bâti sur **51 modules**, avec **173
 écoles, formations et bourses** référencées. Le produit n'a encore été **testé par personne hors de l'équipe**,
 et rien de ce parcours n'a été **vu rendu à l'écran par un utilisateur réel**. C'est pour ça que la priorité 0
 de mon document — stabiliser — est aussi la première du backlog.
@@ -310,10 +310,11 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 
 ### S2.6 — Relire le catalogue, ligne par ligne
 
-- **Ce que ça change** : quand AliTché conseille une école, quelqu'un l'a vérifiée. Aujourd'hui, 164 lignes
-  portent une date de vérification, mais ces dates ne forment que quatre lots : 77 lignes datées du 22/09/2026, 65
-  du 21/09/2026, 6 du 02/10/2026, 16 du 03/10/2026. Et 41 liens sur 164 mènent encore à un site agrégateur, pas à
-  l'école.
+- **Ce que ça change** : quand AliTché conseille une école, quelqu'un l'a vérifiée. Aujourd'hui, 159 lignes
+  portent une date de vérification, mais ces dates ne forment que quatre lots : 77 lignes datées du 22/09/2026, 26
+  du 21/09/2026, 6 du 02/10/2026, 50 du 03/10/2026. Le premier des deux reproches est traité : plus aucun lien du
+  catalogue ne mène à un site agrégateur, c'est fait le 03/10/2026. Reste le second : cent trois lignes datent d'une
+  saisie en masse, pas d'une relecture.
 - **Pourquoi maintenant** : c'est le seul risque du produit qu'aucune remise en ligne du site ne corrige : un
   candidat qui se présente à une porte fermée perd autre chose que du temps.
 - **Comment on saura que c'est fini** : les domaines prioritaires sont relus un par un, chaque ligne garde sa
@@ -322,11 +323,16 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Où en est la tâche** : première séance faite le 02/10/2026, dix lignes relues une par une. Six écoles ont
   retrouvé leur propre adresse et portent maintenant la mention « vérifiée par nous » : ESGIS, l'École Supérieure
   de Management, les Cours Sonou, l'École Supérieure d'Expertise Comptable, l'Institut Supérieur de Communication
-  et de Gestion, l'Institut Supérieur de Management Adonaï. Quatre n'ont aucune adresse d'école joignable : l'École
+  et de Gestion, l'Institut Supérieur de Management Adonaï. Quatre n'avaient ce jour-là aucune adresse d'école
+  joignable : l'École
   Supérieure d'Enseignement Professionnel Le Berger (le nom de site que les annuaires lui donnent ne répond plus
   du tout), l'Université Polytechnique Internationale Obiang Nguema Mbasogo, l'Institut Universitaire des Sciences
-  et Techniques Ajavon Sébastien et l'Institut Supérieur d'Expertise et de Gestion. Ces quatre lignes gardent leur
-  lien d'annuaire et restent comptées comme non vérifiées. Une leçon de la séance : la liste officielle du
+  et Techniques Ajavon Sébastien et l'Institut Supérieur d'Expertise et de Gestion. Les quatre ont retrouvé leur
+  propre adresse le 03/10/2026, par un autre chemin que le nom de domaine que l'agrégateur leur prêtait : Le Berger et
+  l'Institut Supérieur d'Expertise et de Gestion sont passées « vérifiées par nous » ; les deux autres gardent la
+  mention « reçue, non vérifiée », parce que leur site répond sans écrire le nom que l'annuaire lui donnait — le
+  domaine Obiang Nguema Mbasogo est une page vide, et la vitrine d'Ajavon Sébastien se nomme ISST-Bénin. Une leçon de
+  la séance : la liste officielle du
   ministère béninois de l'enseignement supérieur existe en ligne, mais c'est un document scanné sans texte
   sélectionnable — on ne peut pas l'interroger automatiquement.
 
@@ -342,9 +348,28 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   catalogue, celles du DAAD et de l'AUF : les sites qu'elles nomment ne répondaient pas, et je ne voulais pas leur
   donner une date de contrôle que je n'avais pas vue passer. Ce que la reprise a aussi corrigé : une aide
   mensuelle de cinquante mille francs CFA que ma base ne prêtait qu'à la Russie est en fait demandée par le Bénin à
-  tout candidat parti avec une bourse de l'État. Reste à reprendre une ligne déjà en place, héritée de l'agrégateur,
-  qui promet une bourse du Commonwealth proposée par la Nouvelle-Zélande : aucun site officiel de ce pays ne porte
-  ce nom aujourd'hui, et la liste des pays qu'il admet ne retient que les îles du Pacifique et Timor-Leste.
+  tout candidat parti avec une bourse de l'État. La ligne déjà en place qui promettait une bourse du Commonwealth
+  proposée par la Nouvelle-Zélande est reprise le même jour, et sort du catalogue : ce nom n'existe sur aucune page
+  officielle de ce pays.
+
+  Troisième séance le 03/10/2026, la plus fournie : les quarante et un liens qui menaient encore au site d'un
+  agrégateur tiers. Trente-six ont retrouvé l'adresse de l'organisme qui parle lui-même — l'école, le fonds, le
+  ministère — et vingt-huit portent maintenant la mention « vérifiée par nous », parce que leur page a écrit le nom
+  cherché sous mes yeux. Huit restent comptées comme reçues et non vérifiées, et c'est ce qu'elles sont : six sites
+  répondent sans reprendre le nom de l'école ou du diplôme, deux refusent l'accès automatisé — la banque et
+  l'université oxfordienne — et gardent donc leur date d'annuaire du 21/09/2026 plutôt qu'une date que je n'ai pas
+  vue passer. Cinq lignes sont sorties du catalogue, faute d'une page d'organisateur qui les nomme. Treize libellés
+  portent désormais le nom que l'organisme s'écrit lui-même, dont trois où l'agrégateur se trompait : Balwin et non
+  Baldwin, la Mining Qualifications Authority et non Mineral, et Manaaki pour les bourses du gouvernement
+  néo-zélandais. Quatorze lignes ont reçu le pays où l'offre se déroule. Un effet de bord à connaître : la date d'une
+  ligne est la date où sa page a été lue, donc trente-quatre lignes ont quitté le lot du 21/09/2026, qui passe de
+  soixante-cinq à vingt-six.
+
+  Reste pour les séances suivantes : relire une à une les cent trois lignes des deux lots saisis en masse, celles du
+  22/09/2026 et celles du 21/09/2026 ; et signaler aux intéressés ce qui cloche sur leurs propres pages — le
+  certificat de sécurité expiré de l'Institut Supérieur de Management Adonaï, la vitrine de l'Institut Supérieur des
+  Métiers de l'Audiovisuel qui annonce son site « en construction », et le domaine de l'Université Polytechnique
+  Internationale qui répond une page vide.
 - **Taille** : une tâche de fond, dix lignes à la fois. Pas une semaine, des séances.
 - **Où ça se joue** : `src/data/opportunities.ts`.
 ---
@@ -352,18 +377,23 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 ### S2.7 — Écrire en français ce que le catalogue affiche en anglais
 
 - **Ce que ça change** : un candidat francophone lit aujourd'hui des noms de formations et de bourses écrits en
-  anglais, sur l'écran même où AliTché lui parle de son avenir. Mesuré le 02/10/2026 : sur les 165 lignes du
-  catalogue, 40 portent un nom écrit en anglais — 26 formations dont le diplôme se nomme « Bachelor in … », et 14
+  anglais, sur l'écran même où AliTché lui parle de son avenir. Mesuré le 03/10/2026 : sur les 173 lignes du
+  catalogue, 45 portent un nom écrit en anglais — 26 formations dont le diplôme se nomme « Bachelor in … », et 19
   bourses dont le nom tout entier est en anglais. Un premier comptage en annonçait 51 : il passait par un test de
-  mots anglais qui attrapait aussi des lignes françaises commençant par « Master professionnel ». Deux exemples
-  trouvés en relisant : « Bachelor in Accountancy — ESM » et « VLIR-UOS awards scholarships to study in Vlanders
-  Belgium », cette dernière contenant de plus une coquille sur le nom de la région.
+  mots anglais qui attrapait aussi des lignes françaises commençant par « Master professionnel ». Cette tâche a un peu
+  grandi le 03/10/2026 : en reprenant les liens d'agrégateur, j'ai écrit derrière plusieurs titres de bourses le nom
+  que l'organisme se donne en anglais — « Funza Lushaka Bursary - Department of Basic Education ». Un exemple trouvé en
+  relisant : « Bachelor in Accountancy — ESM », où le nom anglais est celui du diplôme tel que l'école l'écrit.
 - **Pourquoi maintenant** : la tâche S2.6 oblige à relire le catalogue ligne par ligne. Autant corriger la langue
   de chaque ligne au moment où on la contrôle, plutôt que d'y revenir dans six mois.
 - **Comment on saura que c'est fini** : chaque ligne est soit écrite en français, soit laissée dans sa langue
   d'origine parce que ce nom est le nom officiel de la chose, et ce choix est alors dit à l'écran par un
-  complément en français. La coquille sur la région flamande est corrigée. Aucune ligne ne se présente comme un
+  complément en français. Aucune ligne ne se présente comme un
   texte brut que personne n'a relu.
+- **Où en est la tâche** : une coquille est corrigée depuis le 03/10/2026, et c'est un effet de bord de S2.6 : la
+  ligne belge qui écrivait « Vlanders » porte maintenant le nom que son organisateur écrit lui-même, « VLIR-UOS
+  scholarships to study in Flanders ». Les quarante-cinq noms anglais restants se traiteront au fil des relectures,
+  ligne par ligne.
 - **Taille** : se fait avec S2.6, ligne par ligne, sans séance supplémentaire pour la plupart des cas.
 - **Où ça se joue** : `src/data/opportunities.ts`, champ des noms de lignes.
 ---
@@ -550,7 +580,7 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 - **Ce que ça change** : derrière un module du parcours, il y a une école, un centre ou une bourse réels, avec une
   adresse qui mène à eux. Le candidat qui veut suivre ce module sait où aller.
 - **Pourquoi maintenant** : c'est ce que mon produit sait déjà faire, et il ne le fait qu'à moitié : le catalogue
-  contient 178 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
+  contient 173 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
 - **Comment on saura que c'est fini** : pour les domaines prioritaires, chaque module du parcours affiche au moins
   une formation réelle, vérifiée ligne à ligne (S2.6), avec son lieu, sa durée et son adresse officielle.
 - **Taille** : une semaine par domaine prioritaire, en travaillant domaine par domaine.
