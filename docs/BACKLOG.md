@@ -54,7 +54,7 @@ réellement le produit. Si une réponse manque : **on ne code pas, on classe au 
 
 AliTché est en ligne et fonctionne de bout en bout sur ma machine : un visiteur peut découvrir,
 s'inscrire, répondre à **31 questions**, voir un classement de ses **11 domaines de carrière** possibles parmi
-**45 métiers documentés**, choisir une direction et recevoir un parcours bâti sur **51 modules**, avec **165
+**45 métiers documentés**, choisir une direction et recevoir un parcours bâti sur **51 modules**, avec **178
 écoles, formations et bourses** référencées. Le produit n'a encore été **testé par personne hors de l'équipe**,
 et rien de ce parcours n'a été **vu rendu à l'écran par un utilisateur réel**. C'est pour ça que la priorité 0
 de mon document — stabiliser — est aussi la première du backlog.
@@ -303,15 +303,17 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 - **Ce qui est fait dans le dépôt (02/10/2026)** : `docs/CONTENU-PRODUIT.md` tient les nombres du produit, et le
   bloc de compteurs qu'il contient n'est pas écrit à la main : c'est la mesure qui l'a imprimé. Une troisième
   vérification automatique, `src/checks/contenu.check.ts`, recompte le catalogue à chaque `npm run verify`, compare
-  les trente-huit compteurs, relit les onze lignes du tableau par domaine et scanne chaque chiffre suivi de «
+  les quarante-sept compteurs (mesuré le 03/10/2026), relit les onze lignes du tableau par domaine et scanne chaque
+  chiffre suivi de «
   question », « module », « domaine », « métier » ou « axe » dans les documents vivants du dépôt et dans le
   `README.md`. Le garde-fou a été éprouvé en cassant le texte de trois façons différentes : chacune rougit.
 
 ### S2.6 — Relire le catalogue, ligne par ligne
 
-- **Ce que ça change** : quand AliTché conseille une école, quelqu'un l'a vérifiée. Aujourd'hui, 151 lignes
-  portent une date de vérification, mais ces dates ne forment que trois lots : 68 lignes datées du 21/09/2026, 77
-  du 22/09/2026, 6 du 02/10/2026. Et 44 liens sur 151 mènent encore à un site agrégateur, pas à l'école.
+- **Ce que ça change** : quand AliTché conseille une école, quelqu'un l'a vérifiée. Aujourd'hui, 164 lignes
+  portent une date de vérification, mais ces dates ne forment que quatre lots : 77 lignes datées du 22/09/2026, 65
+  du 21/09/2026, 6 du 02/10/2026, 16 du 03/10/2026. Et 41 liens sur 164 mènent encore à un site agrégateur, pas à
+  l'école.
 - **Pourquoi maintenant** : c'est le seul risque du produit qu'aucune remise en ligne du site ne corrige : un
   candidat qui se présente à une porte fermée perd autre chose que du temps.
 - **Comment on saura que c'est fini** : les domaines prioritaires sont relus un par un, chaque ligne garde sa
@@ -327,6 +329,22 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   lien d'annuaire et restent comptées comme non vérifiées. Une leçon de la séance : la liste officielle du
   ministère béninois de l'enseignement supérieur existe en ligne, mais c'est un document scanné sans texte
   sélectionnable — on ne peut pas l'interroger automatiquement.
+
+  Deuxième séance le 03/10/2026, autour des dix-neuf bourses que j'ai remises. Seize lignes du catalogue sortent
+  contrôlées une à une : treize bourses nouvelles, chacune à l'adresse officielle de la session en cours, et trois
+  lignes anciennes dont le lien menait à l'agrégateur et mène maintenant à l'organisme qui les distribue. Quatorze
+  lignes de ma base sur dix-neuf sont donc entrées : parmi les treize nouvelles, une — celle de l'Algérie — n'y
+  figurait pas et vient du portail du ministère, et deux des siennes étaient déjà au catalogue sous un lien
+  d'agrégateur, la bourse Eiffel et la bourse chinoise. Trois lignes de ma base n'entrent pas. Les bourses du
+  Commonwealth, d'abord : la liste officielle des pays admis ne retient pas le Bénin. Le dispositif prêté à la mairie
+  de Parakou avec un institut privé ensuite, que ni l'une ni l'autre partie n'écrit sur son site. Une bourse enfin que
+  l'on ne trouve que chez des sites qui recopient des annonces, sans page d'organisateur. Deux lignes restent hors
+  catalogue, celles du DAAD et de l'AUF : les sites qu'elles nomment ne répondaient pas, et je ne voulais pas leur
+  donner une date de contrôle que je n'avais pas vue passer. Ce que la reprise a aussi corrigé : une aide
+  mensuelle de cinquante mille francs CFA que ma base ne prêtait qu'à la Russie est en fait demandée par le Bénin à
+  tout candidat parti avec une bourse de l'État. Reste à reprendre une ligne déjà en place, héritée de l'agrégateur,
+  qui promet une bourse du Commonwealth proposée par la Nouvelle-Zélande : aucun site officiel de ce pays ne porte
+  ce nom aujourd'hui, et la liste des pays qu'il admet ne retient que les îles du Pacifique et Timor-Leste.
 - **Taille** : une tâche de fond, dix lignes à la fois. Pas une semaine, des séances.
 - **Où ça se joue** : `src/data/opportunities.ts`.
 ---
@@ -532,7 +550,7 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
 - **Ce que ça change** : derrière un module du parcours, il y a une école, un centre ou une bourse réels, avec une
   adresse qui mène à eux. Le candidat qui veut suivre ce module sait où aller.
 - **Pourquoi maintenant** : c'est ce que mon produit sait déjà faire, et il ne le fait qu'à moitié : le catalogue
-  contient 165 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
+  contient 178 lignes d'écoles, formations et bourses, mais les modules du parcours ne pointent pas vers elles.
 - **Comment on saura que c'est fini** : pour les domaines prioritaires, chaque module du parcours affiche au moins
   une formation réelle, vérifiée ligne à ligne (S2.6), avec son lieu, sa durée et son adresse officielle.
 - **Taille** : une semaine par domaine prioritaire, en travaillant domaine par domaine.

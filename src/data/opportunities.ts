@@ -335,9 +335,9 @@ export const OPPORTUNITIES: Opportunity[] = [
     delivery: 'presentiel',
     occupationIds: [],
     domainIds: ['agriculture', 'finance'],
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//ben/institution/universite-nationale-dagriculture-una',
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://www.una.bj/',
   },
   {
     id: 'fourni_etablissement_uac',
@@ -720,13 +720,13 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'fourni_bourse_eiffel',
     kind: 'bourse',
-    label: 'Eiffel scholarships - Eiffel scholarships',
+    label: 'Bourse France Excellence Eiffel',
     country: 'France',
     occupationIds: [],
     domainIds: ALL_DOMAIN_IDS,
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//bursary/eiffel-scholarships',
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://www.campusfrance.org/fr/la-bourse-france-excellence-eiffel',
   },
   {
     id: 'fourni_bourse_investec_ca',
@@ -874,13 +874,13 @@ export const OPPORTUNITIES: Opportunity[] = [
   {
     id: 'fourni_bourse_chinese_government',
     kind: 'bourse',
-    label: 'Chinese Government Scholarship - Chinese government',
+    label: 'Bourse de coopération avec la Chine (appel annuel de la DBAU)',
     country: 'Chine',
     occupationIds: [],
     domainIds: ALL_DOMAIN_IDS,
-    source: 'fourni',
-    verifiedAt: '2026-09-21',
-    url: 'https://v1.gostudy.net//bursary/chinese-government-scholarship',
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-chinoise-2026-2027/',
   },
   {
     id: 'fourni_bourse_reap',
@@ -1046,6 +1046,181 @@ export const OPPORTUNITIES: Opportunity[] = [
     source: 'fourni',
     verifiedAt: '2026-09-21',
     url: 'https://v1.gostudy.net//bursary/sa-society-for-crop-production-undergraduate-bursary',
+  },
+
+  /*
+   * Base de bourses remise par le fondateur (Bourses_Etudes_Benin.xlsx, dix-neuf lignes),
+   * reprise ligne à ligne le 2026-10-03.
+   *
+   * Les bourses bilatérales et l'allocation nationale ne s'obtiennent qu'auprès de la
+   * Direction des Bourses et Aides Universitaires : le lien pointe donc son portail,
+   * qui publie chaque année l'appel du cycle en cours avec ses pièces et sa date de
+   * clôture. Une réserve lue sur ces pages vaut pour toutes : le Bénin demande aux
+   * parents du candidat un complément mensuel de cinquante mille francs CFA, ce que
+   * la base ne disait que pour la Russie.
+   *
+   * Trois lignes de la base ne sont pas entrées. Les bourses du Commonwealth sont
+   * fermées au Bénin : la liste officielle des pays éligibles ne le comporte pas. Le
+   * dispositif prêté à la mairie de Parakou avec l'IUFIP n'est écrit sur le site ni de
+   * l'une ni de l'autre partie. La « bourse Djéna » n'existe que sur des sites qui
+   * reprennent des annonces, sans page d'organisateur.
+   *
+   * À noter pour le tri des liens d'annuaire encore en place : le catalogue porte une
+   * ligne de même famille, héritée de l'export, qui nomme une bourse du Commonwealth
+   * proposée par la Nouvelle-Zélande. Aucune page officielle néo-zélandaise ne reprend
+   * ce nom aujourd'hui et la liste des pays admis que publie le gouvernement
+   * néo-zélandais ne retient que les Îles du Pacifique et Timor-Leste. La ligne reste
+   * donc telle que reçue, à reprendre ; sur la seule foi de l'annuaire, aucun candidat
+   * béninois ne doit y être envoyé.
+   *
+   * Deux lignes de la base restent hors catalogue : celles du DAAD et de l'AUF. Le DAAD refusait l'accès et
+   * le site de l'AUF ne répondait pas, depuis deux clients différents. Une ligne réelle porte ici une date de
+   * contrôle — la gate du catalogue le redemande à chaque contrôle — et je ne pouvais pas dater un contrôle que je
+   * n'ai pas vu. Ces adresses, qui viennent de la base et n'ont pas été devinées, y entreront le jour où leur page
+   * portera le nom du programme.
+   */
+  {
+    id: 'verifie_bourse_dbau_maroc',
+    kind: 'bourse',
+    label: 'Bourse de coopération avec le Maroc (appel annuel de la DBAU)',
+    country: 'Maroc',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-marocaine-formations-universitaires-2025-2026/',
+  },
+  {
+    id: 'verifie_bourse_dbau_russie',
+    kind: 'bourse',
+    label: 'Bourse de coopération avec la Russie (appel annuel de la DBAU)',
+    country: 'Russie',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-russe-2026-2027/',
+  },
+  {
+    id: 'verifie_bourse_dbau_algerie',
+    kind: 'bourse',
+    label: "Bourse de coopération avec l'Algérie (appel annuel de la DBAU)",
+    country: 'Algérie',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-algerienne-2026-2027_formation-universitaire/',
+  },
+  {
+    id: 'verifie_bourse_dbau_azerbaidjan',
+    kind: 'bourse',
+    label: "Bourse de coopération avec l'Azerbaïdjan (appel annuel de la DBAU)",
+    country: 'Azerbaïdjan',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-de-lazerbaidjan-2025-2026/',
+  },
+  {
+    id: 'verifie_bourse_dbau_cuba',
+    kind: 'bourse',
+    label: 'Bourse cubaine en médecine (appel annuel de la DBAU)',
+    country: 'Cuba',
+    occupationIds: [],
+    domainIds: ['sante'],
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-cubaine-2025-2026/',
+  },
+  {
+    id: 'verifie_bourse_dbau_japon',
+    kind: 'bourse',
+    label: 'Bourse MEXT du gouvernement japonais (étudiants chercheurs)',
+    country: 'Japon',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/bourse-japonaise/',
+  },
+  {
+    id: 'verifie_bourse_dbau_allocations',
+    kind: 'bourse',
+    label: "Allocation d'études dans une université publique du Bénin",
+    country: 'Bénin',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bourses.enseignementsuperieur.gouv.bj/e-service/',
+  },
+  {
+    id: 'verifie_bourse_turkiye',
+    kind: 'bourse',
+    label: 'Bourses du gouvernement turc (Türkiye Bursları)',
+    country: 'Turquie',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://www.turkiyeburslari.gov.tr/en',
+  },
+  {
+    id: 'verifie_bourse_erasmus_mundus',
+    kind: 'bourse',
+    label: 'Erasmus Mundus Joint Masters (master en consortium européen)',
+    country: 'multi',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://erasmus-plus.ec.europa.eu/opportunities/individuals/students/erasmus-mundus-joint-masters',
+  },
+  {
+    id: 'verifie_bourse_fulbright',
+    kind: 'bourse',
+    label: "Fulbright Foreign Student Program (master, candidature à l'ambassade)",
+    country: 'États-Unis',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://bj.usembassy.gov/fulbright-foreign-student-program/',
+  },
+  {
+    id: 'verifie_bourse_mastercard_scholars',
+    kind: 'bourse',
+    label: 'Mastercard Foundation Scholars Program (licence et master)',
+    country: 'multi',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/',
+  },
+  {
+    id: 'verifie_bourse_tagdev',
+    kind: 'bourse',
+    label: "TAGDev 2.0 — bourses de l'Université Nationale d'Agriculture (RUFORUM)",
+    country: 'Bénin',
+    occupationIds: [],
+    domainIds: ['agriculture'],
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://news.ruforum.org/call-for-scholarship-applications-under-the-tagdev-2-0-programme-for-the-2026-2027-academic-year-at-the-national-university-of-agriculture/',
+  },
+  {
+    id: 'verifie_bourse_cames',
+    kind: 'bourse',
+    label: 'Bourses et mobilités du CAMES',
+    country: 'multi',
+    occupationIds: [],
+    domainIds: ALL_DOMAIN_IDS,
+    source: 'verifie',
+    verifiedAt: '2026-10-03',
+    url: 'https://www.lecames.org/',
   },
 
   /*

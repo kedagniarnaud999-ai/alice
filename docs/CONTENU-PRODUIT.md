@@ -36,17 +36,17 @@ pas un diplôme : c'est un faisceau de métiers qui se partagent les mêmes comp
 
 | Identifiant          | Nom affiché à l'écran              | Métiers qui l'exigent | Métiers qui s'en servent comme terrain | Axes | Modules | Chances réelles |
 | -------------------- | ---------------------------------- | --------------------- | -------------------------------------- | ---- | ------- | --------------- |
-| administration       | Administration & Gestion           | 16                    | 12                                     | 4    | 11      | 61              |
-| commerce_marketing   | Commerce, Vente & Marketing        | 8                     | 12                                     | 3    | 8       | 37              |
-| finance              | Finance & Comptabilité             | 8                     | 6                                      | 4    | 6       | 61              |
-| ingenierie           | Ingénierie & Métiers Techniques    | 6                     | 4                                      | 4    | 6       | 63              |
-| ict                  | Technologies de l'Information      | 8                     | 6                                      | 4    | 6       | 49              |
-| tourisme             | Tourisme, Hôtellerie & Restauration| 5                     | 3                                      | 3    | 6       | 29              |
-| sante                | Santé                              | 8                     | 11                                     | 3    | 6       | 37              |
-| social               | Social & Accompagnement            | 12                    | 7                                      | 3    | 8       | 32              |
-| education            | Éducation & Formation              | 8                     | 11                                     | 3    | 7       | 46              |
-| agriculture          | Agriculture & Agroalimentaire      | 7                     | 11                                     | 4    | 6       | 41              |
-| logistique          | Transport & Logistique             | 5                     | 14                                     | 3    | 7       | 37              |
+| administration       | Administration & Gestion           | 16                    | 12                                     | 4    | 11      | 72              |
+| commerce_marketing   | Commerce, Vente & Marketing        | 8                     | 12                                     | 3    | 8       | 48              |
+| finance              | Finance & Comptabilité             | 8                     | 6                                      | 4    | 6       | 72              |
+| ingenierie           | Ingénierie & Métiers Techniques    | 6                     | 4                                      | 4    | 6       | 74              |
+| ict                  | Technologies de l'Information      | 8                     | 6                                      | 4    | 6       | 60              |
+| tourisme             | Tourisme, Hôtellerie & Restauration| 5                     | 3                                      | 3    | 6       | 40              |
+| sante                | Santé                              | 8                     | 11                                     | 3    | 6       | 49              |
+| social               | Social & Accompagnement            | 12                    | 7                                      | 3    | 8       | 43              |
+| education            | Éducation & Formation              | 8                     | 11                                     | 3    | 7       | 57              |
+| agriculture          | Agriculture & Agroalimentaire      | 7                     | 11                                     | 4    | 6       | 53              |
+| logistique          | Transport & Logistique             | 5                     | 14                                     | 3    | 7       | 48              |
 
 Les colonnes ne se totalisent pas : une même fiche métier compte dans chaque domaine qu'elle touche, et une école, une
 formation ou une bourse peut servir plusieurs domaines.
@@ -73,14 +73,20 @@ refuse si un axe revendique un métier ou un module qui n'existe pas.
 Le parcours recommandé se construit avec ces briques. 49 se rattachent à au moins un domaine ; 2 sont transversales et
 ne servent aucun domaine en particulier — ce sont celles d'employabilité.
 
-## Les 165 chances
+## Les 178 chances
 
-95 formations, 36 établissements, 34 bourses. 151 sont réelles et portent une adresse dont le contrôle est daté ; 14
+95 formations, 36 établissements, 47 bourses. Les 164 lignes réelles portent une adresse et un contrôle daté ; 14
 restent du jeu de démonstration, et l'écran les badge « Démo ».
 
-Les 151 dates de contrôle viennent de deux saisies en masse — 74 lignes contrôlées le 21/09/2026, 77 le 22/09/2026. Ce
-ne sont pas 151 vérifications une par une, et le dire est important : c'est la tâche S2.6 que de reprendre ces lignes
-une à une.
+Deux lignes de la base que j'ai remise n'y figurent pas : celles de l'office d'échange académique allemand et de
+l'agence universitaire de la Francophonie. Leurs sites ne répondaient pas quand j'ai voulu les contrôler, et je
+préfère les attendre hors catalogue plutôt que leur donner une date de vérification que je n'ai pas vue passer.
+
+Les 164 dates de contrôle viennent de quatre saisies : 77 lignes contrôlées le 22/09/2026, 65 le 21/09/2026, 6 le
+02/10/2026 et 16 aujourd'hui, le 03/10/2026. Les deux premières sont des saisies en masse : ce ne sont pas 142
+vérifications une par une, et le dire est important — c'est la tâche S2.6 que de reprendre ces lignes une à une. Les 16
+d'aujourd'hui ne sont pas de ce lot : les treize bourses que j'ai remises ont été reprises ligne à ligne, et les trois
+autres sont d'anciennes lignes d'annuaire dont le lien a été remplacé par l'adresse officielle.
 
 ## Le référentiel des 113 spécialisations
 
@@ -170,17 +176,18 @@ axes.modules.min = 3
 axes.modules.max = 3
 modules = 51
 modules.transversaux = 2
-chances = 165
-chances.reelles = 151
+chances = 178
+chances.reelles = 164
 chances.demo = 14
-chances.controlees = 151
-chances.avec.url = 151
-chances.controlees.2026-09-21 = 68
+chances.controlees = 164
+chances.avec.url = 164
+chances.controlees.2026-09-21 = 65
 chances.controlees.2026-09-22 = 77
 chances.controlees.2026-10-02 = 6
+chances.controlees.2026-10-03 = 16
 chances.etablissement = 36
 chances.formation = 95
-chances.bourse = 34
+chances.bourse = 47
 paires.coeur = 91
 paires.terrain = 97
 referentiel.domaines = 14
