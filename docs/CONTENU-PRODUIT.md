@@ -82,6 +82,41 @@ Les 151 dates de contrôle viennent de deux saisies en masse — 74 lignes contr
 ne sont pas 151 vérifications une par une, et le dire est important : c'est la tâche S2.6 que de reprendre ces lignes
 une à une.
 
+## Le référentiel des 113 spécialisations
+
+Le 3 octobre 2026, j'ai remis une base de nomenclature validée à deux, et elle est entrée dans le dépôt le jour même,
+dans `src/data/referentiel.ts`. Elle tient quatre niveaux : 14 domaines, 11 fonctions, 63 métiers génériques et 113
+spécialisations. Chaque spécialisation porte sa fiche rédigée — ce qu'elle est, trois ou quatre compétences qu'elle
+demande, comment y accéder, et ce qu'on en fait.
+
+Ce référentiel ne porte aucun score. Il nomme et il documente. Le questionnaire, lui, continue de mesurer les 11
+domaines de carrière et les six axes de fonction du produit : c'est ce que nous savons mesurer, et un niveau que l'on
+ne mesure pas ne peut pas classer quelqu'un.
+
+Trois choses viennent donc de nous, et c'est nous qui les défendons :
+
+- le domaine de carrière qui héberge chacun de ses 14 domaines — deux d'entre eux logent dans notre agriculture, trois
+  dans notre ingénierie, et un seul de ces logements est dit approximatif : ses métiers de l'eau, de l'hydrologie et de
+  l'assainissement n'ont pas de domaine qui leur soit propre chez nous ;
+- la manière dont ses 11 fonctions se répartissent sur nos six axes, avec des poids qui somment à un ;
+- le rang de nos 45 fiches sous ses 63 métiers génériques. 23 fiches s'y rangent exactement ; 22 le font par
+  approximation, parce que notre fiche est plus étroite ou plus large que le métier générique.
+
+Sur ses 113 spécialisations, 18 se rattachent à un métier générique de façon approximative, et les motifs sont de deux
+sortes, à parts égales. Neuf sont des métiers du soin et de l'accompagnement — médecin, infirmier, sage-femme,
+kinésithérapeute, travailleur social, éducateur spécialisé, conseiller d'orientation : le métier générique les
+englobe sans les contenir. Neuf sont des postes plus récents ou plus spécialisés que lui, de la vente, du numérique, de
+la banque et de l'environnement — chef de rayon, responsable e-commerce, growth hacker, chargé de clientèle bancaire,
+hydrologue. Le lien sert à la navigation, pas à faire croire que la spécialisation est une sous-catégorie stricte du
+métier générique.
+
+Deux lignes sont en désaccord avec leur parent : le chargé de clientèle bancaire et l'agent de microfinance se rangent
+sous « chargé de relation client », qui est une fonction de vente, alors qu'elles se déclarent finance. C'est la
+fonction de la ligne qui est retenue partout, parce que c'est elle que lit l'écran.
+
+Rien de ce référentiel n'est encore montré à la personne qui passe le test. La vérification, elle, le contrôle déjà :
+ses codes, ses liens, ses fiches rédigées et nos trois tables de correspondance.
+
 ## Ce que cette fiche ne dit pas
 
 Elle dit ce que le catalogue contient. Elle ne dit pas si le contenu est bon, ni s'il suffit à couvrir les métiers
@@ -128,4 +163,11 @@ chances.formation = 95
 chances.bourse = 34
 paires.coeur = 91
 paires.terrain = 97
+referentiel.domaines = 14
+referentiel.fonctions = 11
+referentiel.metiers.generiques = 63
+referentiel.specialisations = 113
+referentiel.specialisations.approximatives = 18
+referentiel.fiches.classees = 45
+referentiel.fiches.classees.approximatives = 22
 <!-- COMPTEURS : fin -->

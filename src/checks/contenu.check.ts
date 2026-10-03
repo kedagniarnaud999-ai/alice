@@ -4,6 +4,13 @@ import { CROSS_OCCUPATIONS } from '@/data/occupations';
 import { SPECIALIZATIONS } from '@/data/specializations';
 import { OPPORTUNITIES, opportunitiesForOccupation, Opportunity } from '@/data/opportunities';
 import { orientationQuestions } from '@/data/questions';
+import {
+  METIER_PAR_FICHE,
+  REFERENTIEL_DOMAINES,
+  REFERENTIEL_FONCTIONS,
+  REFERENTIEL_METIERS,
+  REFERENTIEL_SPECIALISATIONS,
+} from '@/data/referentiel';
 import { getVisibleQuestions } from '@/utils/testAnalyzer';
 import type { CareerSituation, FunctionalDomainId, TestResponse } from '@/types/test';
 
@@ -79,6 +86,24 @@ const etapes = [...new Set(orientationQuestions.map((q) => q.stage))].sort();
 
 const branches = SITUATIONS.map((s) => getVisibleQuestions(branchFor(s)).length);
 
+// ——— Le référentiel reçu du fondateur ———
+//
+// Ses 14 domaines, ses 11 fonctions, ses 63 métiers génériques et ses 113 spécialisations
+// ne portent aucun score : ils nomment et documentent. Ce qui est à nous dans ce fichier —
+// le domaine de carrière qui héberge chacun de ses domaines, la répartition de ses fonctions
+// sur nos six axes, et le rang de nos 45 fiches sous ses métiers génériques — se vérifie ici.
+
+const codesDomaines = REFERENTIEL_DOMAINES.map((d) => d.code);
+const codesFonctions = REFERENTIEL_FONCTIONS.map((f) => f.code);
+const codesGeneriques = REFERENTIEL_METIERS.map((m) => m.code);
+const codesSpecialisations = REFERENTIEL_SPECIALISATIONS.map((s) => s.code);
+const generiqueParCode = new Map(REFERENTIEL_METIERS.map((m) => [m.code, m]));
+const specialisationsApproximatives = REFERENTIEL_SPECIALISATIONS.filter((s) => s.approximatif).length;
+const fichesClassees = Object.keys(METIER_PAR_FICHE);
+const rangsApproximatifs = fichesClassees.filter((id) => METIER_PAR_FICHE[id].approximatif).length;
+const competencesMin = min(REFERENTIEL_SPECIALISATIONS.map((s) => s.competences.length));
+const competencesMax = max(REFERENTIEL_SPECIALISATIONS.map((s) => s.competences.length));
+
 const compteurs: { cle: string; valeur: number }[] = [
   { cle: 'questions', valeur: orientationQuestions.length },
   ...SITUATIONS.map((s, i) => ({ cle: `questions.${s}`, valeur: branches[i] })),
@@ -119,6 +144,13 @@ const compteurs: { cle: string; valeur: number }[] = [
   { cle: 'chances.bourse', valeur: OPPORTUNITIES.filter((o) => o.kind === 'bourse').length },
   { cle: 'paires.coeur', valeur: CROSS_OCCUPATIONS.reduce((n, o) => n + Object.values(o.core).filter((w) => (w ?? 0) > 0).length, 0) },
   { cle: 'paires.terrain', valeur: CROSS_OCCUPATIONS.reduce((n, o) => n + o.sectors.length, 0) },
+  { cle: 'referentiel.domaines', valeur: REFERENTIEL_DOMAINES.length },
+  { cle: 'referentiel.fonctions', valeur: REFERENTIEL_FONCTIONS.length },
+  { cle: 'referentiel.metiers.generiques', valeur: REFERENTIEL_METIERS.length },
+  { cle: 'referentiel.specialisations', valeur: REFERENTIEL_SPECIALISATIONS.length },
+  { cle: 'referentiel.specialisations.approximatives', valeur: specialisationsApproximatives },
+  { cle: 'referentiel.fiches.classees', valeur: fichesClassees.length },
+  { cle: 'referentiel.fiches.classees.approximatives', valeur: rangsApproximatifs },
 ];
 
 const blocAttendu = compteurs.map((c) => `${c.cle} = ${c.valeur}`).join('\n');
@@ -224,9 +256,10 @@ const admissibles: Record<string, number[]> = {
   questions: compteurs.filter((c) => c.cle === 'questions' || c.cle.startsWith('questions.')).map((c) => c.valeur),
   modules: [valeurDe('modules'), valeurDe('modules.transversaux'), valeurDe('axes.modules.min'),
     valeurDe('axes.modules.max'), ...parDomaine.map((d) => d.modules)],
-  domaines: [valeurDe('domaines')],
+  domaines: [valeurDe('domaines'), valeurDe('referentiel.domaines')],
   metiers: [valeurDe('metiers'), valeurDe('metiers.sans.axe'), valeurDe('metiers.avec.chance.reelle'),
     valeurDe('axes.metiers.min'), valeurDe('axes.metiers.max'), valeurDe('paires.coeur'), valeurDe('paires.terrain'),
+    valeurDe('referentiel.metiers.generiques'), valeurDe('referentiel.specialisations'),
     ...parDomaine.map((d) => d.metiers), ...parDomaine.map((d) => d.terrains)],
   axes: [valeurDe('axes'), valeurDe('axes.par.domaine.min'), valeurDe('axes.par.domaine.max'),
     ...parDomaine.map((d) => d.axes)],
@@ -287,8 +320,69 @@ HORS_CATALOGUE.forEach((e) => {
   }
 });
 
+// ——— 3. Le référentiel reçu tient debout, et nos promesses dessus aussi ———
+//
+// Ce fichier ne se contente pas de recopier la base du fondateur : il ajoute trois
+// choses qui viennent de nous (le domaine hôte, les poids d'axes, le rang de nos
+// fiches). Chacune peut casser sans que rien d'autre ne le dise. C'est ici que ça
+// se dit.
+
+const uniques = (codes: string[]): string[] =>
+  codes.filter((code, index) => codes.indexOf(code) !== index);
+
+[['domaines', codesDomaines], ['fonctions', codesFonctions], ['métiers génériques', codesGeneriques],
+  ['spécialisations', codesSpecialisations]].forEach(([niveau, codes]) => {
+  const doublons = uniques(codes as string[]);
+  if (doublons.length > 0) {
+    failures.push(`Le référentiel donne deux fois le code « ${doublons.join(' », « ')} » au niveau ${niveau}`);
+  }
+});
+
+const codesDomaine = new Set(codesDomaines);
+const codesFonction = new Set(codesFonctions);
+REFERENTIEL_SPECIALISATIONS.forEach((s) => {
+  if (!codesDomaine.has(s.domaine)) failures.push(`${s.code} renvoie au domaine « ${s.domaine} », qui n'existe pas`);
+  if (!codesFonction.has(s.fonction)) failures.push(`${s.code} renvoie à la fonction « ${s.fonction} », qui n'existe pas`);
+  const parent = generiqueParCode.get(s.parent);
+  if (!parent) {
+    failures.push(`${s.code} se range sous le métier générique « ${s.parent} », qui n'existe pas`);
+    return;
+  }
+  if (!s.definition.trim() || !s.formation.trim() || !s.debouches.trim() || s.competences.length === 0) {
+    failures.push(`${s.code} (${s.libelle}) a une fiche incomplète : définition, compétences, formation et débouchés sont dus`);
+  }
+  if (parent.fonction !== s.fonction && !s.approximatif) {
+    failures.push(
+      `${s.code} se range sous ${s.parent} (${parent.libelle}) dont la fonction est ${parent.fonction}, alors que la ligne déclare ${s.fonction} : le lien est dit strict, il ne l'est pas — passe-le en approximatif ou change de parent`
+    );
+  }
+});
+
+const idsFiches = CROSS_OCCUPATIONS.map((o) => o.id);
+const classees = new Set(fichesClassees);
+idsFiches.forEach((id) => {
+  if (!classees.has(id)) failures.push(`La fiche « ${id} » n'est rangée sous aucun métier générique du référentiel`);
+});
+fichesClassees.forEach((id) => {
+  if (!idsFiches.includes(id)) {
+    failures.push(`METIER_PAR_FICHE classe « ${id} » : cette fiche n'est plus au catalogue, retire son rang`);
+  }
+  if (!codesGeneriques.includes(METIER_PAR_FICHE[id].code)) {
+    failures.push(`La fiche « ${id} » se range sous « ${METIER_PAR_FICHE[id].code} », qui n'est pas un métier générique du référentiel`);
+  }
+});
+
+REFERENTIEL_FONCTIONS.forEach((f) => {
+  const somme = Number(f.axes.reduce((a, x) => a + x.poids, 0).toFixed(6));
+  if (f.axes.length === 0 || somme !== 1) {
+    failures.push(
+      `La fonction ${f.code} (${f.libelle}) répartit son poids sur ${f.axes.length} axe(s) pour une somme de ${somme} : il faut 1, sinon son signal s'éteint ou gonfle dans le score`
+    );
+  }
+});
+
 console.log(
-  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu`
+  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues (${specialisationsApproximatives} liens dits approximatifs), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation`
 );
 
 if (failures.length > 0) {
