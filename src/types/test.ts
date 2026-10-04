@@ -143,6 +143,18 @@ export interface Targeting {
   functionRationale?: string;
 }
 
+/**
+ * Ce que le candidat a retouché sur son parcours à l'écran : combien d'heures il
+ * tient par semaine, les séances qu'il écarte, l'ordre de priorité qu'il préfère.
+ * Le parcours du moteur n'est pas réécrit — la retouche se pose dessus —, donc
+ * tout se défait en effaçant ces trois listes.
+ */
+export interface PathwayAdjustments {
+  weeklyHours: number;
+  excludedModuleIds: string[];
+  priorityOrder: string[];
+}
+
 export interface ProfileResult {
   assessmentVersion: number;
   situation: CareerSituation;
@@ -169,6 +181,12 @@ export interface ProfileResult {
    * profil sans ciblage reste un profil complet, il repart sur les pistes par domaine.
    */
   targeting?: Targeting;
+  /**
+   * Ce que le candidat a retouché sur l'écran de parcours : volume hebdomadaire,
+   * séances écartées, ordre de priorité. Absent tant qu'il n'a rien modulé — le
+   * parcours du moteur reste alors la seule référence.
+   */
+  pathwayAdjustments?: PathwayAdjustments;
 }
 
 export interface TestState {

@@ -102,16 +102,16 @@ J'en attends que la personne sache, en regardant une fois, où elle en est et ce
 |---|---|---|
 | Où suis-je ? | **Développé** | `src/components/dashboard/Dashboard.tsx:157` : la carte « Votre profil » donne la lecture du profil (`:158`) et la phrase qui la résume (`:161`). |
 | Qu'ai-je déjà accompli ? | **Développé** | `src/components/dashboard/Dashboard.tsx:117` : le compte des modules terminés sur le total du parcours (`src/components/dashboard/Dashboard.tsx:118`), en pourcentage et en fraction (`:189`). C'est étroit — tout ce que le produit tient pour « accompli », c'est ce que la personne a déclaré elle-même. |
-| Qu'ai-je validé ? | **Absent** | Rien n'est validé nulle part. « Terminer le module » (`src/components/pathway/PathwayView.tsx:477`) est un clic sur soi-même ; aucune note, aucune vérification, aucune attestation ne vient derrière. |
-| Qu'est-ce qu'il me reste à faire ? | **Développé** | Le parcours est écrit module par module, avec son état d'avancement et le compteur en fractions (`src/components/pathway/PathwayView.tsx:335`). |
-| Quelle est ma prochaine étape ? | **Développé** | La carte des gains rapides (`src/components/pathway/PathwayView.tsx:91`) place en tête du parcours les modules les plus courts à fermer, bouton « Commencer » à l'appui (`:273`). |
-| Pourquoi cette étape est-elle recommandée ? | **Absent** | L'ordre des modules est pourtant calculé, en comptant combien de compétences du métier visé chaque module apporte (`src/utils/pathwayEngine.ts:128`) — et ce calcul n'est jamais dit. Sur les neuf écrans après connexion, aucune phrase n'explique pourquoi un module est là plutôt qu'un autre. |
-| « Orientation → Formation → Compétences → Expérience → Insertion → Évolution » | **Engagé** | Les deux premiers maillons tiennent : l'orientation débouche sur un parcours de formation. Les quatre autres n'ont aucune donnée derrière eux. Et la colonne « Jalons de progression » (`src/components/pathway/PathwayView.tsx:163`) est écrite une fois pour toutes : la fabrication des jalons ne reçoit rien en entrée (`src/utils/pathwayEngine.ts:330`), donc les trois mêmes jalons s'affichent pour tout le monde, avec des critères qu'AliTché ne peut pas observer — « Profil complété à 100 % », « Participation à la communauté », « CV et profil LinkedIn optimisés ». |
+| Qu'ai-je validé ? | **Absent** | Rien n'est validé nulle part. « Terminer le module » (`src/components/pathway/PathwayView.tsx:648`) est un clic sur soi-même ; aucune note, aucune vérification, aucune attestation ne vient derrière. |
+| Qu'est-ce qu'il me reste à faire ? | **Développé** | Le parcours est écrit module par module, avec son état d'avancement et le compteur en fractions (`src/components/pathway/PathwayView.tsx:472`). |
+| Quelle est ma prochaine étape ? | **Développé** | La carte des gains rapides (`src/components/pathway/PathwayView.tsx:204`) place en tête du parcours les modules les plus courts à fermer, bouton « Commencer » à l'appui (`:400`). |
+| Pourquoi cette étape est-elle recommandée ? | **Absent** | L'ordre des modules est pourtant calculé, en comptant combien de compétences du métier visé chaque module apporte (`src/utils/pathwayEngine.ts:131`) — et ce calcul n'est jamais dit. Sur les neuf écrans après connexion, aucune phrase n'explique pourquoi un module est là plutôt qu'un autre. |
+| « Orientation → Formation → Compétences → Expérience → Insertion → Évolution » | **Engagé** | Les deux premiers maillons tiennent : l'orientation débouche sur un parcours de formation. Les quatre autres n'ont aucune donnée derrière eux. Et la colonne « Jalons de progression » (`src/components/pathway/PathwayView.tsx:288`) est écrite une fois pour toutes : la fabrication des jalons ne reçoit rien en entrée (`src/utils/pathwayEngine.ts:332`), donc les trois mêmes jalons s'affichent pour tout le monde, avec des critères qu'AliTché ne peut pas observer — « Profil complété à 100 % », « Participation à la communauté », « CV et profil LinkedIn optimisés ». |
 
 Deux pièges relevés dans ce module, et corrigés le 23/09 au soir. Le premier était le plus grave du fichier : la
 phrase « Choisir et intégrer une filière alignée sur votre domaine prioritaire » s'affiche sous « Objectifs long
-terme » (`src/components/pathway/PathwayView.tsx:144`) alors que j'ai exclu ce mot de notre vocabulaire ; elle est
-écrite dans le moteur de parcours (`src/utils/pathwayEngine.ts:307`) et se voyait en ligne depuis le 23/09. Le mot
+terme » (`src/components/pathway/PathwayView.tsx:269`) alors que j'ai exclu ce mot de notre vocabulaire ; elle est
+écrite dans le moteur de parcours (`src/utils/pathwayEngine.ts:309`) et se voyait en ligne depuis le 23/09. Le mot
 « formation » le remplace, et le contrôle qui interdisait déjà « filière » dans la phrase de profil l'interdit
 désormais aussi dans les objectifs du parcours — le texte ne peut plus revenir sans que `npm run verify` le refuse.
 Le second : quatre titres d'écran avaient perdu leurs accents, « Quick wins - Demarrez maintenant », « Modules
@@ -120,7 +120,7 @@ s'écrit maintenant « Gains rapides », comme ce fichier l'appelle.
 
 Le même relevé, repris après coup dans les mêmes fichiers, ne laisse plus rien en suspens. Quatre verbes du parcours
 avaient eux aussi perdu leur accent : « Demarrer ce module », deux fois « Demarrer », et le compteur « termines »
-(`src/components/pathway/PathwayView.tsx:273`, `:335`, `:384`, `:463`). Ils l'ont repris. Le mot exclu survivait dans
+(`src/components/pathway/PathwayView.tsx:400`, `:472`, `:551`, `:634`). Ils l'ont repris. Le mot exclu survivait dans
 une réponse du questionnaire : « Une exploitation, une ferme, une filière agricole » (`src/data/questions.ts:422`) —
 c'est le candidat qui la lit sur l'écran du module 1, et le contrôle du parcours ne regardait pas cette chaîne-là. La
 réponse s'écrit maintenant « une coopérative agricole ». Son identifiant et ses poids n'ont pas bougé : un candidat
@@ -132,6 +132,22 @@ contexte du formateur technique, où « les filières professionnelles » est de
 gestion des productions agricoles ». Titre, contexte, compétences et voies de formation de chaque fiche sont passés
 au contrôle à présent : le mot ne peut plus revenir par les données de métiers.
 
+**Ajouté le 2026-10-04 : le parcours se retouche à l'écran, et il se recalcule aussitôt.** Une carte « Moduler mon
+parcours » (`src/components/pathway/PathwayView.tsx:121`) ouvre l'écran du parcours. Elle tient trois choses. Un
+curseur, d'abord : je dis combien d'heures je tiens par semaine, et les semaines annoncées changent sous mes yeux —
+mesuré sur la piste du métier visé, dix-huit semaines à cinq heures par semaine, neuf à dix heures, quatre-vingt-dix
+à une heure. Ensuite « Écarter », sur chaque séance : la séance sort du parcours, le compteur du dessus diminue d'autant,
+et elle reste rangée en bas de la carte avec « Reprendre », qui la remet où elle était. Enfin deux flèches, pour changer
+l'ordre d'une séance dans sa piste, sans toucher aux autres pistes. « Repartir du parcours proposé » efface mes
+retouches d'un seul clic. Ce que je garde est écrit dans mon profil (`src/utils/pathwayEditing.ts`), donc mes retouches
+retrouvent l'écran après une reconnexion et sur un autre appareil ; la proposition du moteur, elle, ne change jamais,
+l'écran ne fait que la relire avec mes modifications. Une limite mesurée, à savoir avant de promettre autre chose :
+quatre séances sur cinq de la piste du métier visé se retrouvent aussi dans une autre piste, donc écarter une séance
+l'ôte partout où elle passe — c'est le comportement attendu d'un refus, pas d'un tri — tandis que l'ordre, lui, reste
+propre à chaque piste. Ce qui manque encore est ce que je n'ai pas fait : ajouter une séance qui n'était pas proposée,
+écrire une étape qui m'est personnelle, et garder l'histoire de mes changements. C'est la tâche S5.4. Le contrôle du
+parcours (`npm run verify`) vérifie chacun de ces points, et dit à voix haute les durées mesurées de la piste retouchable.
+
 ---
 
 ## Module 4 — Formation / Apprentissage
@@ -140,18 +156,18 @@ J'en attends que le parcours promis se suive quelque part, et que la fin d'un mo
 
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
-| Cours | **Absent** | Ouvrir un module affiche quatre phrases fabriquées à partir de son titre (`src/components/pathway/PathwayView.tsx:420`), présentées sous « Étapes conseillées » (`:493`). Il n'y a pas de cours derrière. |
+| Cours | **Absent** | Ouvrir un module affiche quatre phrases fabriquées à partir de son titre (`src/components/pathway/PathwayView.tsx:591`), présentées sous « Étapes conseillées » (`:664`). Il n'y a pas de cours derrière. |
 | Ressources | **Absent** | La fiche d'un module ne tient que sur dix champs (`src/data/modules.ts:6`) : un identifiant, un titre, une description, une durée, un niveau, une catégorie, des compétences, un format, une gratuité, des domaines. Aucun de ces dix ne porte une ressource ni une adresse. |
 | Vidéos | **Absent** | Le format « Vidéo » existe comme étiquette (`src/data/modules.ts:31`) et s'affiche sur la carte du module. Rien ne se lit. |
 | Exercices | **Absent** | Aucun champ, aucun écran, aucune donnée. |
 | Évaluations | **Absent** | Rien ne mesure ce qui a été compris. Le module 9 y était réservé, il n'a pas commencé. |
-| Progression | **Développé** | Trois boutons la font avancer : démarrer à 10 %, « Marquer une avancée » qui ajoute 25 % et s'arrête à 90 % (`src/components/pathway/PathwayView.tsx:470`), terminer à 100 % (`:477`). Le chiffre est conservé et relu pour chaque personne (`src/services/module.api.ts`). |
+| Progression | **Développé** | Trois boutons la font avancer : démarrer à 10 %, « Marquer une avancée » qui ajoute 25 % et s'arrête à 90 % (`src/components/pathway/PathwayView.tsx:645`), terminer à 100 % (`:648`). Le chiffre est conservé et relu pour chaque personne (`src/services/module.api.ts`). |
 | Validation | **Absent** | Le 100 % vient d'un clic, jamais d'une vérification. Ma chaîne « formation suivie → compétence développée → compétence validée » échoue dès son deuxième maillon. |
-| Compétences associées | **Développé** | Les 51 modules portent une liste de compétences, sans exception, et c'est cette liste qui décide de l'ordre du parcours (`src/utils/pathwayEngine.ts:128`). Ce qui manque n'est pas l'association mais la nature des compétences : des libellés libres, pas des éléments que le produit peut compter ni valider. |
+| Compétences associées | **Développé** | Les 51 modules portent une liste de compétences, sans exception, et c'est cette liste qui décide de l'ordre du parcours (`src/utils/pathwayEngine.ts:131`). Ce qui manque n'est pas l'association mais la nature des compétences : des libellés libres, pas des éléments que le produit peut compter ni valider. |
 
 La décision du 23/09/2026 est claire — AliTché oriente, il n'héberge pas — et l'absence de cours est donc un choix
 assumé, pas un trou. Ce qui ne l'est pas : l'écran est écrit comme si le cours était donné, et il annonce une durée
-en semaines calculée sur les modules (`src/components/pathway/PathwayView.tsx:316`). C'est exactement la tâche S5.1,
+en semaines calculée sur les modules (`src/components/pathway/PathwayView.tsx:453`). C'est exactement la tâche S5.1,
 et sa sœur S5.2, qui veut que chaque module renvoie vers une formation qui existe.
 
 ---
@@ -164,12 +180,12 @@ rattraper.
 | Fonctionnalité (telle que je la demande) | État | Où ça se trouve, et ce qui manque |
 |---|---|---|
 | Identifier les compétences | **Engagé** | Le produit en connaît beaucoup, et ne les compte pas. Les 51 modules portent 198 mentions de compétences, qui se ramènent à 179 libellés écrits à la main, dont 12 répétés (« Communication » quatre fois, « Écoute Active » quatre fois, « Secret professionnel » trois fois). Les 45 fiches de métier portent 240 mentions pour 116 libellés, dont 57 répétés. Ce qui manque : une compétence n'est pas une donnée — pas d'identifiant, rien où l'accrocher, donc aucun niveau à y raccorder. |
-| Associer les compétences aux formations | **Développé** | Les 51 modules portent leur liste de compétences, et c'est elle qui classe les modules entre eux (`src/utils/pathwayEngine.ts:128`). |
+| Associer les compétences aux formations | **Développé** | Les 51 modules portent leur liste de compétences, et c'est elle qui classe les modules entre eux (`src/utils/pathwayEngine.ts:131`). |
 | Associer les compétences aux expériences | **Absent** | Cette association suppose le module 2, et le module 2 n'a pas d'expériences à associer. |
 | Suivre leur niveau | **Absent** | Aucun niveau n'est tenu pour une personne. Le seul mot de niveau dans le produit qualifie le module (« Débutant », « Intermédiaire », « Avancé », `src/data/modules.ts:24`), jamais celui ou celle qui le suit. |
 | Valider certaines compétences | **Absent** | Rien ne se valide. C'est la même absence qu'au « Qu'ai-je validé ? » du module 3 et à la « validation » du module 4, vue trois fois dans ce fichier. |
 | Identifier les compétences à développer | **Développé** | Le calcul est fait et affiché : les compétences de la fiche de métier sont comparées à celles que le parcours apporte déjà, et le reste est écrit sous « Compétences à développer : » (`src/components/results/OccupationResults.tsx:191`, affiché `:241`). |
-| Recommander des formations ou activités | **Développé** | La recommandation est bien guidée par les compétences : un module est choisi selon combien de compétences du métier visé il couvre (`src/utils/pathwayEngine.ts:128`). Ce qui manque est plus grave qu'un retard : l'écart affiché à l'écran se définit comme ce que les cinq modules choisis ne couvrent pas (`src/components/results/OccupationResults.tsx:192`). Le parcours montre donc des manques qu'il ne peut pas, par construction, refermer. |
+| Recommander des formations ou activités | **Développé** | La recommandation est bien guidée par les compétences : un module est choisi selon combien de compétences du métier visé il couvre (`src/utils/pathwayEngine.ts:131`). Ce qui manque est plus grave qu'un retard : l'écart affiché à l'écran se définit comme ce que les cinq modules choisis ne couvrent pas (`src/components/results/OccupationResults.tsx:192`). Le parcours montre donc des manques qu'il ne peut pas, par construction, refermer. |
 | « Comparer profil actuel ↔ profil cible » | **Développé** | C'est exactement ce que fait la comparaison `couvert` / `gaps` (`src/components/results/OccupationResults.tsx:191`). Une seule réserve de taille : elle n'existe que sur l'écran des résultats, jamais dans le parcours, et le profil actuel est celui de l'orientation, pas celui de la personne — faute de module 2. |
 
 Ce module est le plus trompeur des dix. Il donne l'impression d'être avancé parce que le mot « compétences » est
@@ -262,7 +278,7 @@ ce module appartenait à une phase ultérieure.
 |---|---|---|
 | Examens | **Absent** | Rien. Aucun écran, aucune donnée, aucune durée, aucune session. |
 | Tests | **Absent** | Le produit ne connaît qu'un questionnaire, celui de l'orientation, 31 questions (`src/data/questions.ts:23`). Il mesure un profil, pas un savoir, et il ne se repasse pas. |
-| Évaluations | **Absent** | Aucune note n'est attribuée à personne. Le pourcentage affiché sur un module vient d'un clic de la personne (`src/components/pathway/PathwayView.tsx:470`). |
+| Évaluations | **Absent** | Aucune note n'est attribuée à personne. Le pourcentage affiché sur un module vient d'un clic de la personne (`src/components/pathway/PathwayView.tsx:634`). |
 | Notation | **Absent** | Aucun barème, aucune échelle, aucun correcteur. |
 | Validation de compétences | **Absent** | La troisième fois dans ce fichier, et c'est la même cause : rien ne vérifie, donc rien ne valide. |
 | Suivi des résultats | **Absent** | Ce qui est suivi, c'est l'avancement déclaré, conservé par module (`src/services/module.api.ts`). Aucun résultat n'existe à suivre. |

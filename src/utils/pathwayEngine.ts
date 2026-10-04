@@ -45,21 +45,23 @@ function uniqueModules(modules: LearningModule[]): LearningModule[] {
 
 /**
  * Charge nominale d'un apprenant sur une semaine. Sert à convertir en semaines
- * les modules dont la durée est exprimée en heures ; les modules déjà exprimés
- * en semaines sont comptés tels quels.
+ * les modules dont la durée est exprimée en heures, et à rendre lisible par le
+ * candidat la durée de ceux exprimés en semaines : les deux disent des heures.
  */
-const WEEKLY_STUDY_HOURS = 5;
+export const NOMINAL_WEEKLY_HOURS = 5;
 
-function durationInWeeks(duration: string): number {
-  const hours = Number.parseFloat(duration.replace(',', '.'));
-  if (!Number.isFinite(hours)) {
+/** Une durée de catalogue, lue en semaines à `weeklyHours` heures par semaine. */
+export function durationInWeeks(duration: string, weeklyHours = NOMINAL_WEEKLY_HOURS): number {
+  const value = Number.parseFloat(duration.replace(',', '.'));
+  if (!Number.isFinite(value) || weeklyHours <= 0) {
     return 0;
   }
-  return /semaine/i.test(duration) ? hours : hours / WEEKLY_STUDY_HOURS;
+  const hours = /semaine/i.test(duration) ? value * NOMINAL_WEEKLY_HOURS : value;
+  return hours / weeklyHours;
 }
 
-function estimateWeeks(modules: LearningModule[]): number {
-  const total = modules.reduce((sum, module) => sum + durationInWeeks(module.duration), 0);
+export function estimateWeeks(modules: LearningModule[], weeklyHours = NOMINAL_WEEKLY_HOURS): number {
+  const total = modules.reduce((sum, module) => sum + durationInWeeks(module.duration, weeklyHours), 0);
   return Math.max(1, Math.round(total));
 }
 
@@ -73,7 +75,7 @@ function byTrackOrder(a: LearningModule, b: LearningModule): number {
   return DIFFICULTY_LEVEL[a.difficulty] - DIFFICULTY_LEVEL[b.difficulty];
 }
 
-function extractSkills(modules: LearningModule[]): string[] {
+export function extractSkills(modules: LearningModule[]): string[] {
   const skills = new Set<string>();
   modules.forEach((module) => {
     module.skills.forEach((skill) => skills.add(skill));

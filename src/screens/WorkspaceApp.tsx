@@ -13,10 +13,11 @@ import type { FunctionChoice } from '@/utils/functionFocus';
 import { withFunctionChoice } from '@/utils/targetingChoice';
 import { resolveFocus } from '@/utils/focusSelection';
 import { storageManager } from '@/utils/storageManager';
+import { DEFAULT_ADJUSTMENTS } from '@/utils/pathwayEditing';
 import { loadStoredProfile } from '@/utils/storedProfile';
 import { profileService } from '@/services/profile.api';
 import { moduleService, UserModuleProgress } from '@/services/module.api';
-import { FunctionalDomainId, ProfileResult, Targeting, TestResponse } from '@/types/test';
+import { FunctionalDomainId, PathwayAdjustments, ProfileResult, Targeting, TestResponse } from '@/types/test';
 
 const TestFlow = lazy(() => import('@/components/test/TestFlow').then((m) => ({ default: m.TestFlow })));
 const ResultsDashboard = lazy(() =>
@@ -168,11 +169,14 @@ const WorkspaceApp = () => {
   };
 
   const applyPathway = (source: ProfileResult, occupation?: CrossOccupation) => {
-    const generatedPathway = pathwayEngine.generatePathway(source, occupation);
+    // Un parcours qui se reconstruit repart de ce que le moteur propose : les retouches
+    // d'avant portaient sur des séances qui ne sont plus forcément devant le candidat.
+    const starting = { ...source, pathwayAdjustments: undefined };
+    const generatedPathway = pathwayEngine.generatePathway(starting, occupation);
 
-    setProfileResult(source);
+    setProfileResult(starting);
     setPathway(generatedPathway);
-    storageManager.saveProfileResult(source);
+    storageManager.saveProfileResult(starting);
     storageManager.savePathway(generatedPathway);
     setAppState('pathway');
   };
@@ -257,7 +261,7 @@ const WorkspaceApp = () => {
       occupations,
       seededModules: modules,
     });
-    const chosen = { ...profileResult, targeting: draft };
+    const chosen = { ...profileResult, targeting: draft, pathwayAdjustments: undefined };
 
     setProfileResult(chosen);
     setPathway(targetedPathway);
@@ -275,6 +279,27 @@ const WorkspaceApp = () => {
       });
     }
     setAppState('pathway');
+  };
+
+  /**
+   * La retouche du parcours est une décision du candidat, pas un état d'écran : elle
+   * part dans le profil, donc elle survit à une reconnexion et à un autre appareil.
+   */
+  const handleAdjustmentsChange = (next: PathwayAdjustments) => {
+    if (!profileResult) return;
+
+    const retouched = { ...profileResult, pathwayAdjustments: next };
+    setProfileResult(retouched);
+    storageManager.saveProfileResult(retouched);
+    if (isAuthenticated) {
+      profileService.saveProfile(retouched).catch((error) => {
+        console.warn('Retouches gardées en local, la synchronisation à distance a échoué.', error);
+        toast.error(
+          'Vos retouches du parcours restent sur cet appareil, mais elles ne sont pas parties sur votre compte. Un autre appareil afficherait le parcours sans vos modifications.',
+          { id: 'sync-modulation' }
+        );
+      });
+    }
   };
 
   const handleViewDashboard = () => {
@@ -457,6 +482,8 @@ const WorkspaceApp = () => {
       {appState === 'pathway' && pathway && (
         <PathwayView
           pathway={pathway}
+          adjustments={profileResult?.pathwayAdjustments ?? DEFAULT_ADJUSTMENTS}
+          onAdjustmentsChange={handleAdjustmentsChange}
           moduleProgress={moduleProgress}
           onUpdateModuleProgress={handleModuleProgressChange}
           onBack={() => setAppState('dashboard')}

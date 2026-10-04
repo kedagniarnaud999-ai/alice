@@ -31,7 +31,15 @@ import {
 import { matchOccupations } from '@/utils/occupationMatcher';
 import { normalizeProfileResult } from '@/utils/profileResult';
 import { pathwayEngine, buildTrackForOccupation, fromTargeting } from '@/utils/pathwayEngine';
-import type { LearningTrack } from '@/utils/pathwayEngine';
+import type { LearningTrack, PersonalizedPathway } from '@/utils/pathwayEngine';
+import {
+  applyAdjustments,
+  countRetainedSessions,
+  DEFAULT_ADJUSTMENTS,
+  MAX_WEEKLY_HOURS,
+  MIN_WEEKLY_HOURS,
+  moveSession,
+} from '@/utils/pathwayEditing';
 import type { CareerSituation, FunctionRoleId, FunctionalDomainId, ProfileResult, Question, QuestionOption, Targeting, TestResponse } from '@/types/test';
 
 const DIFFICULTY_LEVEL: Record<LearningModule['difficulty'], number> = {
@@ -1346,6 +1354,186 @@ check(
 
 check(functionAxisMatters,
   'Effacer les six axes fonctionnels laisse l’ordre des métiers identique pour chaque profil : la projection des fonctions est décorative');
+
+/**
+ * Écran 4 : le parcours généré se retouche à l’écran.
+ *
+ * Trois commandes, et chacune peut casser sans que l’écran le dise : écarter une
+ * séance, changer l’ordre de priorité, dire combien d’heures il tient par semaine.
+ * Le tout se recalcule sans repasser par le questionnaire, donc retoucher ne doit
+ * jamais abîmer la base : le moteur reste le moteur, la retouche se pose dessus.
+ * Et comme elle part dans le profil, elle doit se relire intacte.
+ */
+const editable = pathwayEngine.generatePathway(calm, CROSS_OCCUPATIONS[0]);
+const editableTrack = editable.recommendedTracks[0];
+check(editableTrack.modules.length >= 3,
+  `La piste retouchable n’a que ${editableTrack.modules.length} séances : les tests d’ordre ne portent plus sur rien`);
+
+/** Rien retouché, c’est exactement ce que le moteur a produit. */
+check(
+  JSON.stringify(applyAdjustments(editable, DEFAULT_ADJUSTMENTS)) === JSON.stringify(editable),
+  'Des retouches par défaut déplacent déjà des séances ou changent un compteur de semaines'
+);
+
+/** Écarter une séance : elle sort de sa piste, et la base du moteur reste intacte. */
+const droppedId = editableTrack.modules[0].id;
+const afterDrop = applyAdjustments(editable, { ...DEFAULT_ADJUSTMENTS, excludedModuleIds: [droppedId] });
+const droppedTrack = afterDrop.recommendedTracks[0];
+check(!droppedTrack.modules.some((module) => module.id === droppedId),
+  `« ${droppedId} » est écartée et reste pourtant affichée dans la piste`);
+check(droppedTrack.modules.length === editableTrack.modules.length - 1,
+  `Écarter une séance laisse ${droppedTrack.modules.length} séances sur ${editableTrack.modules.length} : la retouche déborde sur d’autres pistes`);
+check(
+  editable.recommendedTracks[0].modules.length === editableTrack.modules.length &&
+    JSON.stringify(applyAdjustments(editable, DEFAULT_ADJUSTMENTS)) === JSON.stringify(editable),
+  'Écarter une séance a abîmé le parcours du moteur : la retouche écrit dans la base au lieu de se poser dessus'
+);
+
+/** Une retouche ne retire que la séance visée, là où elle se trouvait — jamais une autre. */
+const sessionIds = (modules: LearningModule[]): string[] => modules.map((module) => module.id);
+check(
+  afterDrop.recommendedTracks.slice(1).every(
+    (track, index) =>
+      JSON.stringify(sessionIds(track.modules)) ===
+      JSON.stringify(sessionIds(editable.recommendedTracks[index + 1].modules).filter((id) => id !== droppedId))
+  ),
+  'Écarter une séance déplace une autre séance que celle que le candidat a écartée'
+);
+check(
+  JSON.stringify(sessionIds(afterDrop.quickWins)) ===
+    JSON.stringify(sessionIds(editable.quickWins).filter((id) => id !== droppedId)),
+  'Écarter une séance de parcours retire ou ajoute un gain rapide que le candidat n’a pas touché'
+);
+
+/** Les gains rapides s’écartent aussi : personne ne se voit forcer trois séances. */
+const quickWinId = editable.quickWins[0].id;
+const afterQuickDrop = applyAdjustments(editable, { ...DEFAULT_ADJUSTMENTS, excludedModuleIds: [quickWinId] });
+check(!afterQuickDrop.quickWins.some((module) => module.id === quickWinId),
+  `« ${quickWinId} » est un gain rapide écarté qu’il voit toujours à l’écran`);
+
+/** Piste vidée : zéro séance, zéro semaine, et non une semaine inventée pour faire plein. */
+const emptied = applyAdjustments(editable, {
+  ...DEFAULT_ADJUSTMENTS,
+  excludedModuleIds: editableTrack.modules.map((module) => module.id),
+});
+check(
+  emptied.recommendedTracks[0].modules.length === 0 && emptied.recommendedTracks[0].estimatedWeeks === 0,
+  `Une piste sans séance retenue annonce encore ${emptied.recommendedTracks[0].estimatedWeeks} semaine(s) sur ${emptied.recommendedTracks[0].modules.length} séance(s)`
+);
+check(emptied.recommendedTracks[0].targetSkills.length === 0,
+  'Une piste vidée continue d’afficher des compétences visées qu’aucune séance ne porte plus');
+
+/** Le volume hebdomadaire : neutre à la charge nominale, raccourci quand il double, allongé quand il baisse. */
+check(
+  applyAdjustments(editable, { ...DEFAULT_ADJUSTMENTS, weeklyHours: HOURS_PER_WEEK }).recommendedTracks[0]
+    .estimatedWeeks === editableTrack.estimatedWeeks,
+  'Régler le volume sur la charge nominale du moteur change le compteur de semaines : la conversion n’est plus neutre'
+);
+const atTwice = applyAdjustments(editable, { ...DEFAULT_ADJUSTMENTS, weeklyHours: HOURS_PER_WEEK * 2 });
+check(atTwice.recommendedTracks[0].estimatedWeeks < editableTrack.estimatedWeeks,
+  `Deux fois plus d’heures par semaine laisse ${atTwice.recommendedTracks[0].estimatedWeeks} semaines contre ${editableTrack.estimatedWeeks} : le volume ne sert à rien`);
+const atLow = applyAdjustments(editable, { ...DEFAULT_ADJUSTMENTS, weeklyHours: 1 });
+check(atLow.recommendedTracks[0].estimatedWeeks > editableTrack.estimatedWeeks,
+  'Une heure par semaine ne rallonge pas le parcours : le candidat lirait un calendrier qui ne tient pas');
+
+/** Le volume se borne : hors plage, on retombe sur la borne la plus proche, et un nombre absent sur la charge nominale. */
+const weeksAt = (pathway: PersonalizedPathway, hours: number): number =>
+  applyAdjustments(pathway, { ...DEFAULT_ADJUSTMENTS, weeklyHours: hours }).recommendedTracks[0].estimatedWeeks;
+check(weeksAt(editable, 999) === weeksAt(editable, MAX_WEEKLY_HOURS),
+  'Un volume de 999 heures par semaine n’est pas ramené à la borne haute : l’écran afficherait un calendrier inventé');
+check(weeksAt(editable, 0) === weeksAt(editable, MIN_WEEKLY_HOURS),
+  'Un volume de zéro heure n’est pas ramené à la borne basse : le parcours se dissoudrait en une semaine');
+check(weeksAt(editable, Number.NaN) === editableTrack.estimatedWeeks,
+  'Un volume qui n’est pas un nombre ne retombe pas sur la charge nominale : la relecture d’un payload abîmé change le calendrier');
+
+/** Changer l’ordre de priorité : la séance remontée passe devant, le reste garde sa place. */
+const target = editableTrack.modules[1];
+const wantedFirst = moveSession(DEFAULT_ADJUSTMENTS, editableTrack, target.id, 'up');
+const reordered = applyAdjustments(editable, wantedFirst);
+check(reordered.recommendedTracks[0].modules[0]?.id === target.id,
+  `Remonter « ${target.id} » ne la met pas en tête de sa piste`);
+check(
+  JSON.stringify(reordered.recommendedTracks[0].modules.map((module) => module.id).slice(1)) ===
+    JSON.stringify(editableTrack.modules.map((module) => module.id).filter((id) => id !== target.id)),
+  'Remonter une séance dérange l’ordre des autres au lieu de les laisser en place'
+);
+const movedBack = moveSession(wantedFirst, reordered.recommendedTracks[0], target.id, 'down');
+check(
+  JSON.stringify(applyAdjustments(editable, movedBack)) === JSON.stringify(applyAdjustments(editable, DEFAULT_ADJUSTMENTS)),
+  'Redescendre une séance remontée ne rend pas le parcours du moteur : l’ordre ne se défait pas'
+);
+check(
+  JSON.stringify(moveSession(DEFAULT_ADJUSTMENTS, editableTrack, editableTrack.modules[0].id, 'up')) ===
+    JSON.stringify(DEFAULT_ADJUSTMENTS),
+  'Remonter la séance déjà en tête invente un ordre'
+);
+check(
+  JSON.stringify(moveSession(DEFAULT_ADJUSTMENTS, editableTrack, editableTrack.modules[editableTrack.modules.length - 1].id, 'down')) ===
+    JSON.stringify(DEFAULT_ADJUSTMENTS),
+  'Descendre la séance déjà en queue invente un ordre'
+);
+
+/** Une clé morte ne doit pas survivre : la séance a changé de piste, ou n’existe plus. */
+const stale = applyAdjustments(editable, {
+  weeklyHours: HOURS_PER_WEEK,
+  excludedModuleIds: ['module_inexistant', droppedId],
+  priorityOrder: ['module_inexistant', target.id],
+});
+check(stale.recommendedTracks[0].modules[0]?.id === target.id,
+  'Un identifiant périmé dans l’ordre voulu empêche la séance réelle de passer en tête');
+check(
+  !stale.recommendedTracks.some((track) => track.modules.some((module) => module.id === 'module_inexistant')),
+  'Une séance inventée apparaît à l’écran : la retouche peut faire exister ce que le catalogue ignore');
+
+/** Le total retenu se lit d’un coup, et il dit bien ce que l’écran montre. */
+const renderedSessions = (candidate: PersonalizedPathway): number =>
+  candidate.quickWins.length + candidate.recommendedTracks.reduce((n, track) => n + track.modules.length, 0);
+check(countRetainedSessions(editable) === renderedSessions(editable),
+  'Le compteur de séances retenues ne rend pas le parcours entier quand rien n’est retouché');
+check(countRetainedSessions(afterDrop) === renderedSessions(afterDrop),
+  'Le compteur de séances retenues ne suit pas une séance écartée : le résumé ment sur ce que l’écran affiche');
+
+/** La retouche part dans le profil : elle doit se relire intacte, et une ordure se réparer. */
+const savedAdjustments = { weeklyHours: 8, excludedModuleIds: [droppedId], priorityOrder: [target.id, droppedId] };
+const reread = normalizeProfileResult({ ...calm, pathwayAdjustments: savedAdjustments });
+check(
+  reread?.pathwayAdjustments !== undefined &&
+    reread.pathwayAdjustments.weeklyHours === 8 &&
+    reread.pathwayAdjustments.excludedModuleIds.join(',') === droppedId &&
+    reread.pathwayAdjustments.priorityOrder.join(',') === `${target.id},${droppedId}`,
+  'La retouche du parcours ne survit pas à la relecture du profil : elle se perd à la reconnexion'
+);
+const repaired = normalizeProfileResult({
+  ...calm,
+  pathwayAdjustments: { weeklyHours: 'beaucoup', excludedModuleIds: 'non-liste', priorityOrder: [42, target.id] },
+});
+check(
+  repaired?.pathwayAdjustments !== undefined &&
+    repaired.pathwayAdjustments.weeklyHours === HOURS_PER_WEEK &&
+    repaired.pathwayAdjustments.excludedModuleIds.length === 0 &&
+    repaired.pathwayAdjustments.priorityOrder.join(',') === target.id,
+  'Une retouche abîmée dans la colonne JSONB se propage à l’écran au lieu d’être réparée'
+);
+const untouched = normalizeProfileResult({ ...calm });
+check(untouched?.pathwayAdjustments === undefined,
+  'Un profil sans retouche en reçoit une quand même : le payload enfle et le moteur n’est plus la référence');
+check(
+  JSON.stringify(applyAdjustments(editable, reread!.pathwayAdjustments!)) ===
+    JSON.stringify(applyAdjustments(editable, savedAdjustments)),
+  'La retouche relue du profil ne redonne pas le même écran que la retouche telle qu’il l’a écrite'
+);
+
+notes.push(
+  `Écran 4 : piste retouchable de ${editableTrack.modules.length} séances (${editableTrack.modules
+    .map((module) => module.duration)
+    .join(', ')}), ${editableTrack.estimatedWeeks} semaine(s) à ${HOURS_PER_WEEK} h, ${
+    atTwice.recommendedTracks[0].estimatedWeeks
+  } à ${HOURS_PER_WEEK * 2} h, ${atLow.recommendedTracks[0].estimatedWeeks} à ${MIN_WEEKLY_HOURS} h ; ${
+    editableTrack.modules.filter((module) =>
+      editable.recommendedTracks.slice(1).some((track) => track.modules.some((other) => other.id === module.id))
+    ).length
+  } séance(s) partagée(s) avec une autre piste`
+);
 
 console.log(`Contrôles du parcours — catalogue de ${MODULE_CATALOG.length} modules, ${DOMAIN_IDS.length} domaines, ${gate.options.length} situations`);
 notes.forEach((note) => console.log(`  ${note}`));

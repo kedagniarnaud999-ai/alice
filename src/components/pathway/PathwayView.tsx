@@ -1,6 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import { PersonalizedPathway, LearningTrack } from '@/utils/pathwayEngine';
 import {
+  applyAdjustments,
+  countRetainedSessions,
+  DEFAULT_ADJUSTMENTS,
+  MAX_WEEKLY_HOURS,
+  MIN_WEEKLY_HOURS,
+  moveSession,
+  type MoveDirection,
+  toggleExcluded,
+} from '@/utils/pathwayEditing';
+import { PathwayAdjustments } from '@/types/test';
+import {
   MODULE_DIFFICULTY_LABELS,
   MODULE_FORMAT_LABELS,
   type LearningModule,
@@ -10,18 +21,25 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import {
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   BookOpen,
   CheckCircle2,
   ChevronRight,
   Clock,
+  EyeOff,
   Play,
+  RotateCcw,
+  SlidersHorizontal,
   Target,
   TrendingUp,
 } from 'lucide-react';
 
 interface PathwayViewProps {
   pathway: PersonalizedPathway;
+  adjustments: PathwayAdjustments;
+  onAdjustmentsChange: (next: PathwayAdjustments) => void;
   moduleProgress: UserModuleProgress[];
   onUpdateModuleProgress: (
     moduleId: string,
@@ -33,6 +51,8 @@ interface PathwayViewProps {
 
 export const PathwayView: React.FC<PathwayViewProps> = ({
   pathway,
+  adjustments,
+  onAdjustmentsChange,
   moduleProgress,
   onUpdateModuleProgress,
   onBack,
@@ -42,6 +62,23 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
     () => new Map(moduleProgress.map((item) => [item.moduleId, item])),
     [moduleProgress]
   );
+
+  /** La base du moteur reste intacte : ce que voit le candidat est la retouche posée dessus. */
+  const shown = useMemo(() => applyAdjustments(pathway, adjustments), [pathway, adjustments]);
+  const setAside = useMemo(() => {
+    const hidden = new Set(adjustments.excludedModuleIds);
+    const all = [...pathway.quickWins, ...pathway.recommendedTracks.flatMap((track) => track.modules)];
+    const seen = new Set<string>();
+    return all.filter((module) => {
+      if (!hidden.has(module.id) || seen.has(module.id)) return false;
+      seen.add(module.id);
+      return true;
+    });
+  }, [pathway, adjustments]);
+  const isRetouched =
+    adjustments.weeklyHours !== DEFAULT_ADJUSTMENTS.weeklyHours ||
+    adjustments.excludedModuleIds.length > 0 ||
+    adjustments.priorityOrder.length > 0;
 
   const selectedProgress = selectedModule ? progressMap.get(selectedModule.id) : undefined;
 
@@ -81,6 +118,82 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
           </div>
         </div>
 
+        <Card padding="lg" className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="h-6 w-6 text-blue-700" />
+              <CardTitle>Moduler mon parcours</CardTitle>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              Écartez une séance, changez l’ordre de priorité, dites combien d’heures vous tenez par
+              semaine : le parcours se recalcule ici, sans reprendre le questionnaire.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div>
+              <label htmlFor="weekly-hours" className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                <Clock className="h-4 w-4 text-blue-700" />
+                Je tiens {adjustments.weeklyHours} heures par semaine
+              </label>
+              <input
+                id="weekly-hours"
+                type="range"
+                min={MIN_WEEKLY_HOURS}
+                max={MAX_WEEKLY_HOURS}
+                step={1}
+                value={adjustments.weeklyHours}
+                onChange={(event) =>
+                  onAdjustmentsChange({ ...adjustments, weeklyHours: Number(event.target.value) })
+                }
+                className="mt-2 w-full accent-blue-600"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{MIN_WEEKLY_HOURS} h</span>
+                <span>{MAX_WEEKLY_HOURS} h</span>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-700">
+              <strong>{countRetainedSessions(shown)}</strong> séances à suivre
+              {setAside.length > 0 && ` · ${setAside.length} écartée${setAside.length > 1 ? 's' : ''}`}.
+            </p>
+
+            {setAside.length > 0 && (
+              <ul className="space-y-2">
+                {setAside.map((module) => (
+                  <li
+                    key={module.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-700">{module.title}</p>
+                      <p className="text-xs text-gray-500">{module.duration}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onAdjustmentsChange(toggleExcluded(adjustments, module.id))}
+                    >
+                      Reprendre
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {isRetouched && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onAdjustmentsChange(DEFAULT_ADJUSTMENTS)}
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Repartir du parcours proposé
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+
         <Card
           padding="lg"
           className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50"
@@ -96,7 +209,7 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
-              {pathway.quickWins.map((module) => (
+              {shown.quickWins.map((module) => (
                 <ModuleCard
                   key={module.id}
                   module={module}
@@ -104,9 +217,15 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
                   isQuickWin
                   onOpen={() => setSelectedModule(module)}
                   onUpdateModuleProgress={onUpdateModuleProgress}
+                  onExclude={() => onAdjustmentsChange(toggleExcluded(adjustments, module.id))}
                 />
               ))}
             </div>
+            {shown.quickWins.length === 0 && (
+              <p className="text-sm text-gray-600">
+                Aucun gain rapide devant vous : reprenez une séance écartée pour en remettre.
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -118,13 +237,19 @@ export const PathwayView: React.FC<PathwayViewProps> = ({
             </p>
           </div>
 
-          {pathway.recommendedTracks.map((track) => (
+          {shown.recommendedTracks.map((track) => (
             <TrackCard
               key={track.id}
               track={track}
               progressMap={progressMap}
               onOpenModule={setSelectedModule}
               onUpdateModuleProgress={onUpdateModuleProgress}
+              onMove={(moduleId, direction) => {
+                const source = pathway.recommendedTracks.find((candidate) => candidate.id === track.id);
+                if (!source) return;
+                onAdjustmentsChange(moveSession(adjustments, source, moduleId, direction));
+              }}
+              onExclude={(moduleId) => onAdjustmentsChange(toggleExcluded(adjustments, moduleId))}
             />
           ))}
         </div>
@@ -210,6 +335,7 @@ interface ModuleCardProps {
   progress?: UserModuleProgress;
   isQuickWin?: boolean;
   onOpen: () => void;
+  onExclude?: () => void;
   onUpdateModuleProgress: (
     moduleId: string,
     progress: number,
@@ -222,6 +348,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   progress,
   isQuickWin = false,
   onOpen,
+  onExclude,
   onUpdateModuleProgress,
 }) => {
   const currentProgress = progress?.progress ?? 0;
@@ -278,6 +405,12 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         )}
+        {onExclude && (
+          <Button size="sm" variant="ghost" className="w-full" onClick={onExclude}>
+            <EyeOff className="mr-1 h-4 w-4" />
+            Écarter
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -287,6 +420,8 @@ interface TrackCardProps {
   track: LearningTrack;
   progressMap: Map<string, UserModuleProgress>;
   onOpenModule: (module: LearningModule) => void;
+  onMove: (moduleId: string, direction: MoveDirection) => void;
+  onExclude: (moduleId: string) => void;
   onUpdateModuleProgress: (
     moduleId: string,
     progress: number,
@@ -298,6 +433,8 @@ const TrackCard: React.FC<TrackCardProps> = ({
   track,
   progressMap,
   onOpenModule,
+  onMove,
+  onExclude,
   onUpdateModuleProgress,
 }) => {
   const completedCount = track.modules.filter(
@@ -337,9 +474,17 @@ const TrackCard: React.FC<TrackCardProps> = ({
       </div>
 
       <div className="space-y-3">
+        {track.modules.length === 0 && (
+          <p className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+            Plus aucune séance devant vous dans ce parcours : reprenez-en une parmi les séances
+            écartées pour le rouvrir.
+          </p>
+        )}
         {track.modules.map((module, index) => {
           const progress = progressMap.get(module.id);
           const status = progress?.status ?? 'not_started';
+          const isHead = index === 0;
+          const isTail = index === track.modules.length - 1;
 
           return (
             <div
@@ -362,6 +507,28 @@ const TrackCard: React.FC<TrackCardProps> = ({
                         <span>{MODULE_FORMAT_LABELS[module.format]}</span>
                       </div>
                     </button>
+                    <div className="flex flex-shrink-0 gap-1">
+                      {!isHead && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          aria-label={`Faire monter « ${module.title} » dans ce parcours`}
+                          onClick={() => onMove(module.id, 'up')}
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {!isTail && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          aria-label={`Faire descendre « ${module.title} » dans ce parcours`}
+                          onClick={() => onMove(module.id, 'down')}
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-xs text-gray-500">
@@ -386,6 +553,10 @@ const TrackCard: React.FC<TrackCardProps> = ({
                       )}
                       <Button size="sm" onClick={() => onOpenModule(module)}>
                         Voir les étapes
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => onExclude(module.id)}>
+                        <EyeOff className="mr-1 h-4 w-4" />
+                        Écarter
                       </Button>
                     </div>
                   </div>

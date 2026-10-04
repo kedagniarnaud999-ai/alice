@@ -1,10 +1,11 @@
-import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, ProfileResult, Targeting } from '@/types/test';
+import { CapacitySignals, CareerSituation, DomainScore, FunctionalDomainId, FunctionRoleId, PathwayAdjustments, ProfileResult, Targeting } from '@/types/test';
 import { ALL_DOMAIN_IDS } from '@/data/domains';
 import { OCCUPATIONS_BY_ID } from '@/data/occupations';
 import { FUNCTION_ROLE_IDS } from '@/data/psychAffinity';
 import { ASSESSMENT_VERSION } from '@/data/questions';
 import { domainOccupations } from '@/utils/domainFocus';
 import { MAX_RATIONALE_CHARS } from '@/utils/functionFocus';
+import { normalizeAdjustments } from '@/utils/pathwayEditing';
 import {
   MAX_TARGETED_OPENINGS,
   MAX_TARGETED_SPECIALIZATIONS,
@@ -95,6 +96,7 @@ export function normalizeProfileResult(value: unknown): ProfileResult | null {
       (id): id is FunctionalDomainId => KNOWN_DOMAINS.has(id)
     ),
     selectedOccupationId: asKnownOccupationId(candidate.selectedOccupationId),
+    pathwayAdjustments: asAdjustments(candidate.pathwayAdjustments),
   };
 
   parsed.targeting = asTargeting(candidate.targeting, parsed);
@@ -168,6 +170,18 @@ function asRawDomains(value: unknown): DomainScore[] | null {
     }));
 
   return domains.length ? domains : null;
+}
+
+/**
+ * La retouche du parcours se relit sous les bornes que l'écran applique lui-même :
+ * un volume qui n'est pas un nombre retombe sur la charge nominale, une liste qui
+ * n'en est pas une se vide. Rien n'est inventé, tout est réparé ou absent.
+ */
+function asAdjustments(value: unknown): PathwayAdjustments | undefined {
+  if (!value || typeof value !== 'object') {
+    return undefined;
+  }
+  return normalizeAdjustments(value);
 }
 
 /**

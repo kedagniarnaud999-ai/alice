@@ -222,7 +222,7 @@ deux champs, nom et photo, face à ces sept blocs. C'est l'écart le plus simple
 |---|---|---|---|---|---|
 | `IND04-F01` | Consultation du parcours | PARTIELLEMENT EXISTANT | P0 | Voir le parcours recommandé après le choix de la voie. | C'est fait : le parcours recommandé s'affiche dès la direction confirmée, avec ses modules et leurs semaines. |
 | `IND04-F02` | Validation du parcours | À VALIDER | P0 | Valider et démarrer le parcours. | C'est fait : la validation se fait à l'écran de ciblage, et le premier module s'ouvre depuis le parcours. Désaccord n° 2. |
-| `IND04-F03` | Personnalisation du parcours | HORS MVP | P2 | Ajouter, retirer, remplacer, réordonner ou ajouter une étape personnelle. Fonction dédiée ultérieurement. | Marqué hors du premier indispensable dans le document, programmé en S5.4 chez moi. Je range ma tâche : désaccord n° 7. |
+| `IND04-F03` | Personnalisation du parcours | HORS MVP | P2 | Ajouter, retirer, remplacer, réordonner ou ajouter une étape personnelle. Fonction dédiée ultérieurement. | À moitié, depuis le 2026-10-04 : écarter une séance, la reprendre, changer son rang dans une piste et doser ses heures par semaine se font à l'écran du parcours, le parcours se recalcule aussitôt, et mes retouches repartent avec mon profil. Restent à faire : y ajouter une séance qui n'était pas proposée, écrire une étape qui m'est personnelle, et garder l'histoire de mes changements. Le document classe cette ligne « hors du premier indispensable » et je l'ai quand même commencée : désaccord n° 7, et cette fois c'est moi qui ai bougé. |
 
 ### IND05 — Progression
 
@@ -1212,6 +1212,11 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
   indispensable », et mon principe numéro 2 dit de ne pas surcharger le premier choix de parcours. Je la range en
   « Ensuite » ; le désaccord n° 7 de la partie C porte la contradiction, et le calendrier garde ses jours écrits
   tels quels jusqu'à ce que je reprenne le calcul.
+- **Ce que j'ai quand même construit le même jour** : l'écran du parcours se module à l'écran — écarter une séance,
+  la reprendre, changer son rang dans une piste, doser les heures par semaine, et repartir de la proposition du
+  moteur. Cela couvre les verbes « retirer » et « réordonner » de `IND04-F03`, pas le verbe propre de cette tâche,
+  qui est d'y **ajouter** une formation repérée plus tard, ni l'historique des changements. La tâche reste donc
+  rangée en « Ensuite », avec un périmètre restant plus petit que ce que j'y avais écrit.
 
 ---
 
