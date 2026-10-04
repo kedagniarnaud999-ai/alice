@@ -1,39 +1,60 @@
 # AliTché — le travail à faire
 
-**Document de référence :** `docs/CADRAGE-PRODUIT.md`, que j'ai écrit le 2026-09-23.
-Ce backlog en est la déclinaison. Il remplace tout ce qui a été écrit avant : l'ancienne documentation est
-rangée dans `docs/hors-usage-2026-09-23/`, rien n'a été supprimé.
+**Réorganisé le 2026-10-04** sur mon backlog de référence fonctionnel — « Backlog de référence AliTché, de
+l'admission à l'insertion : construis ta voie », version 1.0, octobre 2026 — que je tiens pour mon périmètre.
+Ce fichier ne remplace plus ce document : il le contient. Les cent trente-sept lignes d'inventaire sont recopiées
+ici, ligne à ligne, avec leurs identifiants, et chaque ligne porte maintenant en face ce que mon produit fait
+vraiment. Les vingt-neuf tâches des sprints, leurs preuves et mes décisions sont toujours là, dans la partie B, à
+leur place et avec leurs mots.
 
-**Où lire quoi.** `docs/CADRAGE-PRODUIT.md` : ce qu'AliTché doit être, tel que je l'ai écrit. Ce fichier : le
-travail à faire, dans l'ordre. `docs/MODULES.md` : les dix modules de mon chapitre 7, fonctionnalité par
-fonctionnalité, avec pour chacune son état réel lu dans le code — développé, engagé, ou absent. C'est cette liste
-que le miroir ClickUp doit reproduire, un dossier par module. `docs/ECARTS-PRODUIT-CODE.md` : les neuf points où les
-deux ne disent pas la même chose, et qui attendent une réponse. Trois documents plus anciens que le cadrage sont
-restés en place
-(`Ali_Ce_Product_Overview_Public.md`, `PRD_Ali_Ce_Private.md`, `PRD_Ali_Ce_Private.html`) : ils sont conservés
-comme traces, et en cas de désaccord avec le cadrage, c'est le cadrage qui a raison.
+**Document de référence produit :** `docs/CADRAGE-PRODUIT.md`, que j'ai écrit le 2026-09-23. En cas de désaccord
+sur ce qu'AliTché doit être, c'est lui qui a raison. Sur ce que le produit contient, c'est
+`docs/CONTENU-PRODUIT.md`. Sur ce qui reste à faire, c'est ce fichier.
+
+## Où lire quoi
+
+| Je cherche | Je lis |
+|---|---|
+| ce qu'AliTché doit être | `docs/CADRAGE-PRODUIT.md` |
+| la liste de tout ce que le produit pourrait faire, rangée par espace et par fonctionnalité, avec un identifiant | **partie A** de ce fichier, puis mon document de référence, `Backlog_de_reference_AliTche.docx`, qui fait foi sur le périmètre |
+| ce que le produit fait vraiment aujourd'hui | la sixième colonne des tableaux de la partie A, et `docs/CONTENU-PRODUIT.md` pour les nombres |
+| ce que je fais, dans quel ordre, et ce qui est fini | **partie B** |
+| où le document de référence et mon produit se contredisent | **partie C** |
+| ce qui est écrit dans l'outil de suivi | **partie D** |
+| les dix modules, fonctionnalité par fonctionnalité | `docs/MODULES.md` |
+| les points où le produit et le code ne disent pas la même chose | `docs/ECARTS-PRODUIT-CODE.md` |
+
+Une chose à dire sur ce document de référence : il vit dans mon dossier de téléchargements, pas dans le dépôt. Le
+dépôt en porte maintenant la copie intégrale en français, mais l'original n'est nulle part où il survive à un
+changement d'ordinateur. Je note la question en partie C, et je ne copie pas le fichier sans qu'on me le dise.
 
 ## Comment lire une tâche
 
-Chaque tâche dit cinq choses, en français :
+Chaque tâche dit six choses, en français :
 
+- **Ses identifiants** — les lettres et les chiffres de mon inventaire, par exemple `IND02-F04`. C'est le lien avec
+  la partie A et avec les cartes de l'outil de suivi. Une tâche qui n'en porte pas est une tâche technique : elle
+  est rattachée quand même, parce que j'ai écrit que tout travail technique doit tenir sur une fonctionnalité.
 - **Ce que ça change pour l'utilisateur** — ce qu'il verra, ou ne verra plus.
 - **Pourquoi maintenant** — le lien avec une priorité du document de cadrage.
 - **Comment on saura que c'est fini** — une liste courte, vérifiable à la main, sans discussion.
 - **Taille** — une journée, trois jours, une semaine. C'est un ordre de grandeur, pas un engagement.
 - **Où ça se joue** — le ou les écrans et fichiers concernés, pour celui qui code.
 
-Une tâche porte un numéro simple : `S1.3` = sprint 1, tâche 3.
+Une tâche porte deux numéros qui ne se ressemblent pas et ne se remplacent pas : `S1.3`, qui est le mien et dit
+dans quel sprint elle tombe, et `IND02-F04`, qui est celui du document de référence et dit de quoi il s'agit.
 
-## Les niveaux, tels que je les définis
+## Les deux échelles que ce fichier porte
 
-| Niveau | Sens |
-|---|---|
-| **Maintenant** | indispensable au fonctionnement du produit actuel |
-| **Ensuite** | important, mais ne bloque pas |
-| **Plus tard** | utile à l'évolution |
-| **Vision** | stratégique à long terme |
-| **Parking** | idée intéressante, pertinence pas encore démontrée |
+La mienne dit **quand**, celle du document dit **combien ça compte**. Elles ne se contrarient pas, elles se lisent ensemble.
+
+| Mon niveau | Sens | Ce que ça donne dans le document |
+|---|---|---|
+| **Maintenant** | indispensable au fonctionnement du produit actuel | les `P0` et une partie des `P1` |
+| **Ensuite** | important, mais ne bloque pas | le reste des `P1` et les `P2` |
+| **Plus tard** | utile à l'évolution | les `P2` et une partie des `P3` |
+| **Vision** | stratégique à long terme | les `P3` et la ligne « hors du premier indispensable » |
+| **Parking** | idée intéressante, pertinence pas encore démontrée | rien : le document de référence ne connaît pas ce cas, et c'est très bien ainsi |
 
 ## La règle « terminé »
 
@@ -61,6 +82,554 @@ de mon document — stabiliser — est aussi la première du backlog.
 
 ---
 
+# Partie A — mon inventaire fonctionnel, ligne par ligne
+
+Cette partie vient du document, pas de mes mesures : le découpage, les noms, les identifiants, les statuts, les
+priorités et le périmètre écrit dans la cinquième colonne viennent de mon backlog de référence, recopiés sans
+retouche. La sixième colonne est la seule que j'ajoute, et elle est à charge : c'est ce que le produit fait, mesuré
+dans le dépôt et sur le site en ligne, et non ce que j'aimerais y voir. Quand les deux colonnes ne tombent pas
+d'accord, le désaccord est écrit en partie C avec un numéro.
+
+## Comment lire les six statuts du document
+
+Le document range chaque ligne dans un état, et j'ai gardé les états écrits tels quels dans la colonne « Statut écrit » :
+
+| Statut écrit | Ce que le document entend par là | Ce que j'y ai mis en face |
+|---|---|---|
+| `EXISTANT` | déjà opérationnel dans le produit actuel | je les ai toutes repassées, dans le code et à l'écran : c'est l'état le plus juste des six |
+| `PARTIELLEMENT EXISTANT` | une partie du besoin est là, le périmètre cible non | c'est l'état le plus fréquent de mes propres écrans, et je le confirme plus souvent que le document ne l'écrit |
+| `À AMÉLIORER` | là, mais à reprendre | d'accord, et je nomme ce qui manque |
+| `À DÉVELOPPER` | prévu, pas disponible | **cent onze lignes sur cent trente-sept.** C'est le vrai chiffre de notre avancement |
+| `À VALIDER` | besoin identifié, fonctionnement à confirmer | les trois lignes de cet état sont en fait en ligne et fonctionnent : désaccord n° 2 |
+| `HORS MVP` | gardé dans la vision, exclu du premier indispensable | une seule ligne, et c'est cette ligne qui contredit mon sprint 5 : désaccord n° 7 |
+
+Le document range aussi chaque ligne par priorité, et les quatre mots du document ne sont pas les miens :
+
+| Priorité écrite | Ce que le document entend par là | Combien de lignes |
+|---|---|---|
+| `P0` | le cœur du produit, sans quoi la promesse ne tient pas | vingt-cinq |
+| `P1` | la première version solide | trente-cinq |
+| `P2` | l'évolution, après consolidation | cinquante et un |
+| `P3` | le long terme, ou ce qui dépend d'un partenariat | vingt-six |
+
+## Ce que dit le découpage du document, avant les tableaux
+
+Trois espaces, plus une porte d'entrée et un atelier : la page d'accueil pour tout le monde, puis quatre espaces
+utilisateurs — les individus, les universités et centres de formation, les consultants et centres d'employabilité,
+les entreprises —, l'espace d'administration derrière, et le transversal qui sert à tous. Le document de référence pose que le
+module des individus est le cœur du parcours produit et que le reste complète l'écosystème autour. C'est exactement
+l'ordre de mes sprints, et je n'ai rien à y changer.
+
+Les huit principes du document, et ce qu'ils me demandent :
+
+1. **Le parcours de l'individu est le cœur.** Ma chaîne à moi s'arrête avant l'insertion : je documente les écoles,
+   les formations et les bourses, aucun stage ni aucun emploi. Le principe est reçu, la fin de la chaîne non.
+2. **Ne pas surcharger le premier choix de parcours.** Fait : l'écran de direction propose, la personne consulte,
+   puis confirme. La personnalisation est renvoyée après.
+3. **Le profil évolue dans le temps.** Non fait, et c'est écrit en face de `IND03-F05` : rien ne remonte de la
+   progression vers le profil. C'est S4.3.
+4. **Refaire l'orientation ne réinitialise pas le profil.** Fait, et le document de référence la met encore « à développer » :
+   désaccord n° 3.
+5. **Le test sans compte doit réduire la friction, et le travail doit survivre au passage au compte.** Fait à
+   moitié, avec un piège que le tableau du document ne dit pas : la garde est une seule par appareil. C'est S1.4.
+6. **Les fonctions institutionnelles dépendent d'un partenariat.** Reçu, et sans objet tant que l'espace
+   établissement n'existe pas.
+7. **L'administration reste à part.** Reçu en principe, pas en fait : chez moi les référentiels vivent dans des
+   fichiers du dépôt, personne n'a d'écran pour les reprendre. C'est le désaccord n° 6, le plus lourd des onze.
+8. **Le backlog est la source de vérité fonctionnelle.** C'est pour ça que la partie A existe dans ce fichier et
+   plus seulement dans un document à côté. La règle a une conséquence que j'ai mise en partie D : une carte de
+   suivi ne crée pas une fonctionnalité, elle la répète.
+
+Les relations entre modules du document, en une phrase chacun : un individu consulte des formations et interagit avec des
+établissements ; un individu demande un accompagnement ; un individu accède à des opportunités et, à terme, entre
+dans un processus d'évaluation ; une entreprise évalue ses collaborateurs et l'alignement de leur projet ; le suivi
+académique avancé d'une université dépend d'un partenariat ; l'administration fournit à tous les référentiels, les
+règles, les contenus, les réglages et les droits. **Aucune de ces sept relations ne se joue entre deux comptes dans
+mon produit**, pour une raison simple : il n'y a qu'une seule sorte de compte, l'individu. La septième pourtant est
+remplie — l'administration qui fournit les référentiels à tout le monde, c'est moi, à la main, dans les fichiers du
+dépôt, et c'est la seule façon dont elle l'est.
+
+La dernière page du document est un parcours cible en quatorze pas, de l'arrivée sur AliTché jusqu'à l'évolution du profil et la
+possibilité de refaire l'orientation. Les pas 1 à 9 sont en ligne, de l'arrivée au choix de la direction puis à sa
+validation. Le pas 10, créer ou compléter le profil quand il le faut, est le plus creux : deux champs. Les pas 11 et
+12, démarrer le parcours et le suivre, sont en ligne. Au pas 13, on accède aux formations, aux écoles et aux
+bourses, mais à rien qui ressemble à un stage, un emploi ou un accompagnement. Au pas 14, on peut refaire son
+orientation, on ne peut pas encore faire évoluer son profil avec le temps.
+
+## Une seule des lignes du document a un détail sous elle
+
+`IND03-F03`, le remplissage du profil, est découpée en sept blocs dans le document de référence : informations personnelles,
+parcours académique, compétences, expériences, certifications, documents, projets et réalisations. Suivant chacun,
+le document écrit la règle qui compte : refaire l'orientation ne réinitialise pas le profil, les informations personnelles
+restent, et seul le résultat d'orientation est remplacé après validation. Mon écran du profil tient aujourd'hui sur
+deux champs, nom et photo, face à ces sept blocs. C'est l'écart le plus simple à voir de tout l'inventaire.
+
+
+## Le chapitre 4 — la page d'accueil
+
+### LP01 — Présentation d’AliTché (le document ne nomme pas ce bloc) — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `LP01-F01` | Présentation d’AliTché | EXISTANT / À AMÉLIORER | P1 | Proposition de valeur, problème traité, promesse. | La page d'accueil est en ligne et dit qui elle aide et ce qu'elle promet. Le mot que j'avais exclu et les quatre onglets morts l'ont quittée le 23/09 (S1.5). |
+| `LP01-F02` | Présentation du parcours AliTché | À DÉVELOPPER | P1 | Expliquer le passage de l’admission à l’insertion. | À moitié fait : l'accueil raconte trois étapes numérotées, du parcours guidé à la lecture du profil. Le titre du document, « de l'admission à l'insertion », ne s'y lit pas : mon parcours s'arrête avant l'insertion. |
+| `LP01-F03` | Accès au démarrage rapide | EXISTANT | P0 | Entrée directe vers le Trial / questionnaire. | C'est fait : le bouton « Découvrir mon profil » ouvre le test sans demander de compte. |
+| `LP01-F04` | Accès aux espaces utilisateurs | À DÉVELOPPER | P1 | Accès individus, établissements, consultants, entreprises. | Les quatre accès n'existaient que comme texte ; je les ai retirés le 23/09 parce qu'un clic ne produisait rien et qu'aucune adresse du site ne leur correspondait. À remettre quand les espaces existent. |
+| `LP01-F05` | Présentation de l’écosystème | À DÉVELOPPER | P2 | Formation, accompagnement, opportunités, entreprises. | Rien : l'accueil ne parle que des candidats, ni des établissements, ni des entreprises, ni de l'accompagnement. |
+
+
+## Le chapitre 5 — les individus
+
+### IND01 — Onboarding & accès — 4 lignes au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND01-F01` | Inscription | EXISTANT | P0 | Création de compte. | C'est fait : la création de compte en ligne, avec vérification de l'adresse e-mail. Le chemin de vérification doit être unique, c'est S2.1. |
+| `IND01-F02` | Connexion | EXISTANT | P0 | Accès au compte. | C'est fait : la connexion par mot de passe, et le bouton Google affiché sur l'écran de connexion depuis le 23/09. Ses deux réglages chez le fournisseur attendent la carte bancaire que je n'ai pas. |
+| `IND01-F03` | Gestion de session | À AMÉLIORER | P1 | Maintien de session, déconnexion, sécurité de base. | À moitié : la session tient, la déconnexion est nette, un second appel de connexion n'évince plus le premier. Ce qui reste dur, c'est la reprise quand la connexion est lente. |
+| `IND01-F04` | Démarrage rapide / Trial | EXISTANT | P0 | Questionnaire sans création préalable de compte. | C'est fait : le test sans compte, enchaîné sur six écrans, du message d'accueil du test jusqu'à l'écran de direction. |
+| `IND01-F05` | Passage du Trial au compte | PARTIELLEMENT EXISTANT | P0 | Conserver les résultats et choix déjà effectués lors de la création du profil. | À moitié : le résultat du test est gardé sur l'appareil puis poussé sur le compte à l'inscription. Ce qui manque est un piège : la clé de garde est une seule par appareil, pas une par personne, donc un ordinateur partagé peut porter le profil de la personne précédente dans le compte suivant. C'est S1.4. |
+
+### IND02 — Orientation & recommandations — 8 lignes au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND02-F01` | Questionnaire d’orientation | EXISTANT | P0 | 23 questions structurées en 6 sections : cognition, motivations/passions, talents, intérêts, réalité, positionnement. | C'est fait, mais pas au chiffre écrit : 31 questions en cinq groupes — « Votre situation », « Votre profil », « Vos centres d'intérêt », « Vos aptitudes », « Vos contraintes ». Selon la situation déclarée, on en répond 29 ou 30. Le document en annonce 23 en six sections, et « talents » n'a pas de groupe à son nom chez moi. Désaccord n° 1. |
+| `IND02-F02` | Génération du résultat d’orientation | EXISTANT | P0 | Production du profil / résultat à partir des réponses. | C'est fait : le classement sort des réponses, et personne ne déclare son domaine à l'avance, il est déduit. |
+| `IND02-F03` | Consultation du résultat | EXISTANT | P0 | Présentation claire du résultat. | C'est fait : le classement des domaines, une phrase de profil pour chacun, et la part qui revient à chaque domaine. |
+| `IND02-F04` | Sauvegarde du résultat | EXISTANT | P1 | Conserver le résultat pour le retrouver. | C'est fait : gardé sur l'appareil, et sur le compte quand il y en a un. L'avertissement à l'écran quand l'envoi n'a pas pu partir est en ligne depuis S1.3. |
+| `IND02-F05` | Téléchargement / export du résultat | À VALIDER | P1 | Format et niveau d’export à confirmer. | C'est fait, quatre sorties : impression, envoi par le partage du navigateur, copie dans le presse-papiers, fichier texte téléchargé. Ce qui manque est un seul format, le PDF. Désaccord n° 2. |
+| `IND02-F06` | Recommandations de voies / formations | EXISTANT | P0 | Les recommandations incluent la voie et les formations associées. | C'est fait : cinq modules par domaine retenu, et derrière, les formations du catalogue qui mènent à une adresse. |
+| `IND02-F07` | Exploration des recommandations | EXISTANT | P0 | Parcourir les options proposées avant décision. | C'est fait : les trois écrans « domaine, tous ses métiers, puis spécialisations » sont en ligne et se construisent avec leurs données. |
+| `IND02-F08` | Choix d’une voie | EXISTANT | P0 | L’utilisateur peut sélectionner une voie recommandée. | C'est fait : la direction se choisit puis se confirme à l'écran de ciblage, et le choix s'écrit dans le profil. |
+| `IND02-F09` | Consultation du parcours associé | PARTIELLEMENT EXISTANT | P0 | Voir le parcours lié à la voie choisie. | C'est fait : le parcours lié s'affiche, pistes, modules, semaines, et ce que chaque module apporte. |
+| `IND02-F10` | Validation du parcours envisagé | À VALIDER | P0 | Validation avant démarrage définitif. | C'est fait : la direction confirmée devient le parcours, et repart sur un autre appareil avec le profil. Ce qui reste à valider est le mot à l'écran, pas le mécanisme. Désaccord n° 2. |
+
+### IND03 — Profil individuel — 3 lignes au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND03-F01` | Création du profil | EXISTANT / PARTIELLEMENT EXISTANT | P0 | Création après ou pendant le passage du Trial au compte. | À moitié : l'identité tient en deux champs, nom et photo. Les réponses du test ne remplissent pas encore l'écran du profil, c'est S3.3. |
+| `IND03-F02` | Consultation du profil | À AMÉLIORER | P1 | Vue consolidée des informations personnelles et du parcours. | À moitié : « Mon Profil » affiche la photo et le nom, avec le lien vers les réglages du compte. La vue consolidée qu'il demande, profil et parcours ensemble, n'existe pas. |
+| `IND03-F03` | Remplissage du profil | À DÉVELOPPER | P0 | Fonctionnalité regroupant les sous-parties ci-dessous. | Pas fait, et son statut est juste : c'est exactement ce qui manque. Deux champs seulement sont remplis. |
+| `IND03-F04` | Modification du profil | À DÉVELOPPER | P0 | Modifier les informations existantes. | À moitié : le nom et la photo se modifient et repartent sur le compte. Rien d'autre n'est modifiable. |
+| `IND03-F05` | Actualisation du profil | À DÉVELOPPER | P1 | Mettre à jour le profil au fil du temps. | Pas fait : le profil ne bouge plus après le test. S4.3. |
+| `IND03-F06` | Refaire son orientation | À DÉVELOPPER | P1 | Rejouer l’orientation sans supprimer les informations personnelles. | C'est fait : depuis mon espace, le bouton d'accueil ramène au test, et le compte garde sa photo et son nom. Désaccord n° 3. |
+
+### IND04 — Parcours — 2 lignes au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND04-F01` | Consultation du parcours | PARTIELLEMENT EXISTANT | P0 | Voir le parcours recommandé après le choix de la voie. | C'est fait : le parcours recommandé s'affiche dès la direction confirmée, avec ses modules et leurs semaines. |
+| `IND04-F02` | Validation du parcours | À VALIDER | P0 | Valider et démarrer le parcours. | C'est fait : la validation se fait à l'écran de ciblage, et le premier module s'ouvre depuis le parcours. Désaccord n° 2. |
+| `IND04-F03` | Personnalisation du parcours | HORS MVP | P2 | Ajouter, retirer, remplacer, réordonner ou ajouter une étape personnelle. Fonction dédiée ultérieurement. | Marqué hors du premier indispensable dans le document, programmé en S5.4 chez moi. Je range ma tâche : désaccord n° 7. |
+
+### IND05 — Progression
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND05-F01` | Visualisation de la progression | À DÉVELOPPER | P1 | Vue synthétique de l’avancement. | C'est fait : le tableau de bord affiche les modules faits sur le total et le pourcentage qui en sort, calculés, jamais écrits à la main. Désaccord n° 4. |
+| `IND05-F02` | Suivi des étapes | À DÉVELOPPER | P1 | Voir les étapes du parcours. | C'est fait : les pistes et leurs modules s'affichent dans l'ordre. Désaccord n° 4. |
+| `IND05-F03` | Mise à jour de l’avancement | À DÉVELOPPER | P1 | Actualiser les étapes réalisées. | À moitié : la progression est enregistrée, sur le compte et sur l'appareil, mais elle ne remonte pas au profil. C'est S4.3, et c'est le seul de ses cinq lignes qui mérite son « à développer ». |
+| `IND05-F04` | Validation d’une étape | À DÉVELOPPER | P1 | Marquer une étape comme terminée. | C'est fait : un module se marque terminé à l'écran et l'état repart sur le compte. Désaccord n° 4. |
+| `IND05-F05` | Historique du parcours | À DÉVELOPPER | P2 | Historique des évolutions. | Pas faite : aucune histoire des changements de direction n'est gardée. |
+
+### IND06 — Opportunités
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND06-F01` | Découverte des opportunités | À DÉVELOPPER | P1 | Stages, emplois, formations, programmes, concours ou autres opportunités pertinentes. | À moitié, et c'est le mot exact : 173 lignes d'écoles, de formations et de bourses à l'écran, 159 avec une adresse réelle. Aucun stage, aucun emploi, aucun concours, aucun programme. Désaccord n° 5. |
+| `IND06-F02` | Consultation d’une opportunité | À DÉVELOPPER | P1 | Détails et conditions. | À moitié : la fiche d'une chance affiche ses conditions et son adresse ; les détails d'un stage ou d'un emploi manquent faute d'offre. Désaccord n° 5. |
+| `IND06-F03` | Recommandation d’opportunités | À DÉVELOPPER | P2 | Personnalisation selon le profil et le parcours. | À moitié : les chances sont reliées au domaine, pas encore au métier visé. C'est ma ligne E1. |
+| `IND06-F04` | Sauvegarde d’une opportunité | À DÉVELOPPER | P2 | Retrouver une opportunité. | Rien de ce côté : ni mise de côté pour retrouver une chance plus tard, ni trace d'une candidature. |
+| `IND06-F05` | Candidature | À DÉVELOPPER | P2 | Candidature directe ou redirection selon le cas. | Pas faite : AliTché ne poste aucune candidature et ne redirige vers aucun formulaire d'offre. |
+| `IND06-F06` | Suivi des candidatures | À DÉVELOPPER | P2 | Statut des candidatures. | Rien de ce côté : ni mise de côté pour retrouver une chance plus tard, ni trace d'une candidature. |
+
+### IND07 — Notifications & rappels
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND07-F01` | Notifications | À DÉVELOPPER | P1 | Informations liées au parcours et aux opportunités. | Aucune notification dans le produit : ni écran, ni table, ni envoi. Les seuls messages sont les avertissements à l'écran de S1.3. |
+| `IND07-F02` | Rappels | À DÉVELOPPER | P2 | Rappels d’étapes, actions ou échéances. | Aucune notification dans le produit : ni écran, ni table, ni envoi. Les seuls messages sont les avertissements à l'écran de S1.3. |
+| `IND07-F03` | Préférences de notification | À DÉVELOPPER | P2 | Canaux et types de notifications. | Aucune notification dans le produit : ni écran, ni table, ni envoi. Les seuls messages sont les avertissements à l'écran de S1.3. |
+
+### IND08 — Accompagnement
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `IND08-F01` | Demande d’accompagnement | À DÉVELOPPER | P2 | Solliciter un accompagnement. | Rien : AliTché n'a ni conseiller, ni mise en relation, ni suivi d'accompagnement. Ce bloc est dans ma « Vision ». |
+| `IND08-F02` | Mise en relation | À DÉVELOPPER | P2 | Connexion avec consultant / centre d’employabilité. | Rien : AliTché n'a ni conseiller, ni mise en relation, ni suivi d'accompagnement. Ce bloc est dans ma « Vision ». |
+| `IND08-F03` | Suivi de l’accompagnement | À DÉVELOPPER | P2 | Historique et suivi. | Rien : AliTché n'a ni conseiller, ni mise en relation, ni suivi d'accompagnement. Ce bloc est dans ma « Vision ». |
+
+
+## Le chapitre 6 — les universités et centres de formation
+
+### UNI01 — Onboarding & accès
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI01-F01` | Création de compte établissement | À DÉVELOPPER | P1 | — | Aucune route d'établissement, aucun écran, aucune table. |
+| `UNI01-F02` | Connexion | À DÉVELOPPER | P1 | — | Aucune route d'établissement, aucun écran, aucune table. |
+| `UNI01-F03` | Gestion des utilisateurs internes et rôles | À DÉVELOPPER | P2 | — | Aucune route d'établissement, aucun écran, aucune table. |
+
+### UNI02 — Profil établissement
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI02-F01` | Profil de l’établissement | À DÉVELOPPER | P1 | — | Aucune route d'établissement, aucun écran, aucune table. |
+| `UNI02-F02` | Informations et présentation | À DÉVELOPPER | P1 | — | Aucune route d'établissement, aucun écran, aucune table. |
+| `UNI02-F03` | Gestion des campus / sites | À DÉVELOPPER | P2 | — | Aucune route d'établissement, aucun écran, aucune table. |
+
+### UNI03 — Formations & catalogue
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI03-F01` | Création / gestion des formations | À DÉVELOPPER | P1 | — | Aucune saisie possible par un établissement : les formations du catalogue sont nos lignes à nous. C'est ma ligne E8. |
+| `UNI03-F02` | Programme et contenu des formations | À DÉVELOPPER | P1 | — | Aucune saisie possible par un établissement : les formations du catalogue sont nos lignes à nous. C'est ma ligne E8. |
+| `UNI03-F03` | Conditions d’admission | À DÉVELOPPER | P1 | — | Aucune saisie possible par un établissement : les formations du catalogue sont nos lignes à nous. C'est ma ligne E8. |
+| `UNI03-F04` | Publication / visibilité des formations | À DÉVELOPPER | P1 | — | Aucune saisie possible par un établissement : les formations du catalogue sont nos lignes à nous. C'est ma ligne E8. |
+
+### UNI04 — Candidatures & admissions
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI04-F01` | Réception des candidatures | À DÉVELOPPER | P2 | — | Rien : AliTché ne transmet aucun dossier à une école. |
+| `UNI04-F02` | Traitement des candidatures | À DÉVELOPPER | P2 | — | Rien : AliTché ne transmet aucun dossier à une école. |
+| `UNI04-F03` | Décision / statut de candidature | À DÉVELOPPER | P2 | — | Rien : AliTché ne transmet aucun dossier à une école. |
+
+### UNI05 — Suivi académique
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI05-F01` | Suivi des cours | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F02` | Gestion de la présence physique | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F03` | Gestion de la présence en ligne | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F04` | Gestion des examens | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F05` | Saisie et consultation des notes | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F06` | Calcul automatique des moyennes | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F07` | Validation académique | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F08` | Tableau de bord étudiant | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+| `UNI05-F09` | Tableau de bord établissement | À DÉVELOPPER | P3 | Partenariat requis | Rien : le suivi de cours n'existe pas, et son propre chapitre 12 le conditionne à un partenariat valide. |
+
+### UNI06 — Interaction avec les individus
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `UNI06-F01` | Consultation des profils autorisés | À DÉVELOPPER | P2 | Selon règles de confidentialité | Rien : aucun profil n'est consultable par un tiers, même avec un accord. |
+| `UNI06-F02` | Échanges / notifications | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par un tiers, même avec un accord. |
+
+
+## Le chapitre 7 — les consultants et centres d'employabilité
+
+### CON01 — Onboarding & accès
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON01-F01` | Création de compte | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+| `CON01-F02` | Connexion | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+| `CON01-F03` | Rôles et accès | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+
+### CON02 — Profil consultant / centre
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON02-F01` | Profil professionnel | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+| `CON02-F02` | Expertises et services | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+| `CON02-F03` | Disponibilités | À DÉVELOPPER | P2 | — | Aucune route de consultant, aucun écran, aucune table. |
+
+### CON03 — Accompagnement
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON03-F01` | Prise en charge d’un individu | À DÉVELOPPER | P2 | — | Rien : la prise en charge d'un individu n'existe pas dans le produit. |
+| `CON03-F02` | Plan d’accompagnement | À DÉVELOPPER | P2 | — | Rien : la prise en charge d'un individu n'existe pas dans le produit. |
+| `CON03-F03` | Suivi des actions | À DÉVELOPPER | P2 | — | Rien : la prise en charge d'un individu n'existe pas dans le produit. |
+
+### CON04 — Suivi des individus
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON04-F01` | Consultation des profils autorisés | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par un tiers, même avec un accord. |
+| `CON04-F02` | Suivi de progression | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par un tiers, même avec un accord. |
+| `CON04-F03` | Historique d’accompagnement | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par un tiers, même avec un accord. |
+
+### CON05 — Ressources & recommandations
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON05-F01` | Recommandation de ressources | À DÉVELOPPER | P2 | — | Rien. |
+| `CON05-F02` | Orientation vers opportunités | À DÉVELOPPER | P2 | — | Rien. |
+
+### CON06 — Suivi & statistiques
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `CON06-F01` | Tableau de bord | À DÉVELOPPER | P3 | — | Rien. |
+| `CON06-F02` | Indicateurs d’accompagnement | À DÉVELOPPER | P3 | — | Rien. |
+
+
+## Le chapitre 8 — les entreprises
+
+### ENT01 — Onboarding & accès
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT01-F01` | Création de compte entreprise | À DÉVELOPPER | P2 | — | Aucune route d'entreprise, aucun écran, aucune table. |
+| `ENT01-F02` | Connexion | À DÉVELOPPER | P2 | — | Aucune route d'entreprise, aucun écran, aucune table. |
+| `ENT01-F03` | Gestion des rôles internes | À DÉVELOPPER | P2 | — | Aucune route d'entreprise, aucun écran, aucune table. |
+
+### ENT02 — Profil entreprise
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT02-F01` | Profil de l’entreprise | À DÉVELOPPER | P2 | — | Aucune route d'entreprise, aucun écran, aucune table. |
+| `ENT02-F02` | Secteurs, métiers et besoins | À DÉVELOPPER | P2 | — | Aucune route d'entreprise, aucun écran, aucune table. |
+
+### ENT03 — Opportunités
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT03-F01` | Création d’offres / opportunités | À DÉVELOPPER | P2 | — | Rien : AliTché ne publie aucune offre. |
+| `ENT03-F02` | Gestion des offres | À DÉVELOPPER | P2 | — | Rien : AliTché ne publie aucune offre. |
+| `ENT03-F03` | Suivi des candidatures | À DÉVELOPPER | P2 | — | Rien : AliTché ne publie aucune offre. |
+
+### ENT04 — Recherche & sélection de profils
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT04-F01` | Recherche de profils | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par une entreprise. |
+| `ENT04-F02` | Filtres par compétences / expérience | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par une entreprise. |
+| `ENT04-F03` | Consultation de profils autorisés | À DÉVELOPPER | P2 | — | Rien : aucun profil n'est consultable par une entreprise. |
+
+### ENT05 — Évaluation des collaborateurs
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT05-F01` | Création d’une évaluation | À DÉVELOPPER | P3 | — | Rien : aucune évaluation de collaborateur. |
+| `ENT05-F02` | Évaluation périodique ou à la demande | À DÉVELOPPER | P3 | — | Rien : aucune évaluation de collaborateur. |
+| `ENT05-F03` | Test de compétences et de performance | À DÉVELOPPER | P3 | — | Rien : aucune évaluation de collaborateur. |
+| `ENT05-F04` | Passage de l’évaluation par le collaborateur | À DÉVELOPPER | P3 | — | Rien : aucune évaluation de collaborateur. |
+| `ENT05-F05` | Analyse automatique des résultats | À DÉVELOPPER | P3 | — | Rien : aucune évaluation de collaborateur. |
+
+### ENT06 — Mise à niveau & développement des compétences
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT06-F01` | Identification des écarts de compétences | À DÉVELOPPER | P3 | — | Rien : les écarts de compétences ne se calculent pas pour une entreprise. |
+| `ENT06-F02` | Recommandation de formations | À DÉVELOPPER | P3 | — | Rien : les écarts de compétences ne se calculent pas pour une entreprise. |
+| `ENT06-F03` | Plan de montée en compétences | À DÉVELOPPER | P3 | — | Rien : les écarts de compétences ne se calculent pas pour une entreprise. |
+| `ENT06-F04` | Suivi de la progression | À DÉVELOPPER | P3 | — | Rien : les écarts de compétences ne se calculent pas pour une entreprise. |
+
+### ENT07 — Alignement projet professionnel / entreprise
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT07-F01` | Évaluation de l’alignement | À DÉVELOPPER | P3 | Comparer projet professionnel et objectifs de l’entreprise. | Rien. |
+| `ENT07-F02` | Identification des écarts | À DÉVELOPPER | P3 | — | Rien. |
+| `ENT07-F03` | Recommandation d’actions | À DÉVELOPPER | P3 | Formation, mobilité interne, évolution de rôle, mentorat, accompagnement. | Rien. |
+
+### ENT08 — Suivi des collaborateurs
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ENT08-F01` | Vue collaborateurs | À DÉVELOPPER | P3 | — | Rien. |
+| `ENT08-F02` | Historique des évaluations | À DÉVELOPPER | P3 | — | Rien. |
+| `ENT08-F03` | Suivi des actions de développement | À DÉVELOPPER | P3 | — | Rien. |
+
+
+## Le chapitre 9 — l'espace d'administration
+
+### ADM01 — Utilisateurs
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM01-F01` | Gestion des utilisateurs | À DÉVELOPPER | P1 | — | Rien : aucun écran d'administration. Les comptes se consultent chez le fournisseur de la base de données, et je ne peux pas ouvrir cette console d'ici. |
+| `ADM01-F02` | Gestion des rôles et droits | À DÉVELOPPER | P1 | — | Rien : aucun écran d'administration dans le produit. |
+
+### ADM02 — Orientation — 2 lignes au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM02-F01` | Référentiel d’orientation | À DÉVELOPPER | P0 | — | Les données sont là et à jour, 14 domaines, 11 fonctions, 84 métiers génériques et 113 spécialisations, ingérés de la base de référence. Ce qui n'existe pas est un écran pour les modifier : tout passe par un fichier du dépôt, un commit, puis une poussée en ligne. |
+| `ADM02-F02` | Gestion des règles d’orientation | À DÉVELOPPER | P0 | — | Les poids du barème sont dans le code et 91 paires de cœur, 97 paires de terrain sont vérifiés à chaque contrôle automatique. Aucun écran. |
+
+### ADM03 — Référentiel métiers / emplois
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM03-F01` | Référentiel des métiers / emplois | À DÉVELOPPER | P1 | — | Nos 45 fiches à l'écran sur les 84 de la base de référence, et 15 libellés attendent encore leur fiche. |
+
+### ADM04 — Référentiel formations — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM04-F01` | Référentiel des formations | À DÉVELOPPER | P0 | — | 95 lignes de formation dans le catalogue, 159 adresses relues entre le 2026-09-21 et aujourd'hui. Le catalogue est un fichier du dépôt, pas un écran. |
+
+### ADM05 — Référentiel parcours — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM05-F01` | Référentiel des parcours | À DÉVELOPPER | P0 | — | 51 modules et le moteur qui les assemble ; les règles sont dans le code et ne se administrent pas. |
+
+### ADM06 — Référentiel compétences
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM06-F01` | Référentiel des compétences | À DÉVELOPPER | P1 | — | Les compétences existent dans les données, trois à quatre par spécialisation, plus celles de la base de référence. Elles ne sont ni partagées ni reconnues : S4.4. |
+
+### ADM07 — Opportunités
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM07-F01` | Gestion des opportunités | À DÉVELOPPER | P1 | — | 173 lignes, dont 159 avec une adresse d'origine et zéro adresse d'agrégateur. Relues par lots de 26, 77, 6 puis 50. Aucun écran pour les reprendre. |
+
+### ADM08 — Établissements
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM08-F01` | Gestion des établissements | À DÉVELOPPER | P1 | — | 36 lignes d'établissements dans le même catalogue, rien d'éditable. |
+
+### ADM09 — Entreprises
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM09-F01` | Gestion des entreprises | À DÉVELOPPER | P2 | — | Rien. |
+
+### ADM10 — Consultants
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM10-F01` | Gestion des consultants / centres | À DÉVELOPPER | P2 | — | Rien. |
+
+### ADM11 — Partenariats
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM11-F01` | Gestion des partenariats | À DÉVELOPPER | P2 | — | Rien : la notion de partenariat n'existe ni dans les données ni à l'écran. |
+| `ADM11-F02` | Activation des fonctionnalités selon partenariat | À DÉVELOPPER | P2 | Notamment suivi académique universitaire. | Rien : la notion de partenariat n'existe ni dans les données ni à l'écran. |
+
+### ADM12 — Contenus
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM12-F01` | Gestion des contenus | À DÉVELOPPER | P1 | — | Les textes du produit vivent dans le code du dépôt ; aucun écran de saisie, et c'est pour ça que S2.7 se fait à la main. |
+
+### ADM13 — Notifications
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM13-F01` | Gestion des notifications | À DÉVELOPPER | P2 | — | Rien : aucune notification à piloter. |
+
+### ADM14 — Tableaux de bord & statistiques
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `ADM14-F01` | Tableaux de bord administratifs | À DÉVELOPPER | P2 | — | Rien côté AliTché : le seul tableau de bord est celui du candidat, aucun indicateur d'usage. |
+| `ADM14-F02` | Statistiques et indicateurs | À DÉVELOPPER | P2 | — | Rien côté AliTché : le seul tableau de bord est celui du candidat, aucun indicateur d'usage. |
+
+
+## Le chapitre 10 — le transversal
+
+### TR01 — Authentification (le document ne nomme pas ce bloc) — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR01-F01` | Authentification | PARTIELLEMENT EXISTANT | P0 | Mécanisme commun aux espaces. | Un seul mécanisme de compte pour tout le produit : adresse et mot de passe, bouton Google, lien de vérification. Il n'y a pas d'autre espace à brancher pour l'instant. |
+| `TR01-F02` | Gestion des sessions et sécurité | À AMÉLIORER | P1 | — | Session tenue, déconnexion nette, jeton partagé entre les onglets. La tolérance aux connexions lentes reste à faire. |
+
+### TR02 — Gestion des profils (le document ne nomme pas ce bloc) — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR02-F01` | Gestion des profils | PARTIELLEMENT EXISTANT | P0 | — | À moitié : le nom et la photo sur le compte, les réponses du test gardées à côté. Les informations d'état civil (téléphone, pays, niveau d'études) ne sont prises nulle part. |
+
+### TR03 — Recherche (le document ne nomme pas ce bloc)
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR03-F01` | Recherche | À DÉVELOPPER | P1 | Selon les modules. | Rien : aucune recherche dans le produit, ni d'écoles ni de métiers. Ma ligne E3. |
+
+### TR04 — Notifications (le document ne nomme pas ce bloc)
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR04-F01` | Notifications | À DÉVELOPPER | P1 | — | Rien : aucune notification à envoyer. |
+
+### TR05 — Gestion des documents (le document ne nomme pas ce bloc)
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR05-F01` | Gestion des documents | À DÉVELOPPER | P1 | Dépôt, consultation, téléchargement selon droits. | Rien, sauf le résultat que l'on télécharge. |
+
+### TR06 — Moteur de recommandations (le document ne nomme pas ce bloc) — 1 ligne au cœur du produit
+
+| ID | Fonctionnalité | Statut écrit | Priorité écrite | Périmètre écrit | Ce que le produit fait, mesuré |
+|---|---|---|---|---|---|
+| `TR06-F01` | Moteur de recommandations | PARTIELLEMENT EXISTANT | P0 | Oriente les résultats et recommandations. | En ligne et surveillé : le moteur déduit les domaines, choisit les pistes, assemble les modules, et un contrôle automatique refuse la publication d'un parcours qui ne tient pas. |
+
+## Ce que la lecture des cent trente-sept lignes laisse en main
+
+Le décompte est fait à la machine sur les lignes du tableau ci-dessus, et non sur une impression.
+
+| Le chapitre | Lignes | Dont « à développer » | Dont au cœur du produit | Dont à la fois au cœur et absentes |
+|---|---|---|---|---|
+| page d'accueil | cinq | trois | une | aucune |
+| individus | quarante et un | vingt et un | dix-sept | deux |
+| universités et centres | vingt-quatre | vingt-quatre | aucune | aucune |
+| consultants et centres d'employabilité | seize | seize | aucune | aucune |
+| entreprises | vingt-six | vingt-six | aucune | aucune |
+| administration | dix-huit | dix-huit | quatre | quatre |
+| transversal | sept | trois | trois | aucune |
+| **total** | **cent trente-sept** | **cent onze** | **vingt-cinq** | **six** |
+
+Trois choses à retenir de ce tableau, et c'est là qu'est le vrai travail :
+
+**Première chose : soixante-six lignes sur cent onze n'attendent rien, elles attendent un espace.** Les trois
+espaces d'établissements, de consultants et d'entreprises sont pleins dans le document et vides dans le produit, sans une seule
+ligne qui prétende que quoi que ce soit y existe déjà. Le document de référence ne dit pas qu'il faut les ouvrir maintenant, il
+dit où ils en sont. Mes trois cartes de cadrage, dans l'outil de suivi, demandent encore la même réponse qu'en
+septembre : j'ouvre, ou je n'ouvre pas. Rien dans ce tableau ne répond à cette question à ma place.
+
+**Deuxième chose : six lignes seulement sont à la fois au cœur du produit et absentes de mon côté**, et elles sont
+d'une clarté rare :
+
+- `IND03-F03`, remplir le profil, et `IND03-F04`, le modifier. Les deux regardent le même écran, et c'est S3.3.
+- `ADM02-F01` et `ADM02-F02`, le référentiel d'orientation et la gestion de ses règles.
+- `ADM04-F01`, le référentiel des formations.
+- `ADM05-F01`, le référentiel des parcours.
+
+Les quatre dernières méritent qu'on s'y arrête, et c'est le désaccord n° 6 : ces référentiels existent, je les ai
+ingérés de la base de référence, ils sont à l'écran. Ce qui n'existe pas, c'est la possibilité de les reprendre sans
+toucher un fichier du dépôt et sans pousser en ligne. La priorité `P0` porte sur la donnée, et là elle est tenue.
+Elle ne peut pas porter sur un écran d'administration, parce qu'il n'y en a aucun et qu'aucun de mes sprints n'en
+ouvre.
+
+**Troisième chose : le questionnaire et le parcours sont en avance sur l'inventaire du document, pas en retard.** Les vingt et
+une lignes « à développer » du chapitre des individus se partagent en cinq paquets : le profil (quatre lignes), la
+progression (cinq), les opportunités (six), les notifications (trois), l'accompagnement (trois). Six de ces lignes
+sont pourtant en ligne, et je les ai revérifiées une à une : la vue d'ensemble de la progression, le suivi des
+étapes, le fait de marquer un module terminé, le fait de refaire son orientation sans rien perdre, et la découverte
+comme la consultation des chances, à moitié. Ce qui reste de vrai manque chez l'individu tient en trois phrases : le
+profil ne se remplit pas, la progression ne remonte pas au profil, et il n'y a ni stages, ni emplois, ni
+notifications, ni accompagnement. Sur ce dernier point, le document de référence et mon produit sont d'accord, et mon calendrier
+aussi.
+
+---
+
+# Partie B — ce que je fais, dans l'ordre
+
+Cette partie est celle d'avant, inchangée. Les cinq sprints, leurs vingt-neuf tâches, leurs preuves et leurs dates
+sont exactement ceux que j'ai écrits depuis le 23 septembre, à un détail près : je ne reprends pas la plume ici pour
+dire où en est une tâche, je la laisse où elle était. Les seules choses nouvelles sont ce paragraphe, la table de
+correspondance en fin de partie, et la note de suspension que le désaccord n° 7 m'a fait poser sous la tâche `S5.4`.
+
+J'ai choisi de ne pas coller les identifiants de référence dans chacune des vingt-neuf tâches. Deux raisons, et je
+les dis parce qu'elles se discuteront un jour : d'abord, une tâche mienne couvre souvent plusieurs des lignes du document, et
+le nombre de lignes variées rendrait chaque bloc illisible ; ensuite, les blocs des sprints portent mes preuves, et
+les toucher pour une raison de rangement serait le meilleur moyen d'y introduire une erreur. La correspondance tient
+donc dans une seule table, à la fin de cette partie. Quand une carte de l'outil de suivi cherche son identifiant,
+elle la trouve là.
+
 # Sprint 1 — Stabiliser
 
 *Ma priorité 0 : « avant d'ajouter de nouvelles fonctionnalités ».*
@@ -86,7 +655,7 @@ Objectif du sprint : qu'aucun écran d'AliTché ne puisse surprendre désagréab
   choix de direction. Pour chacun : un champ vide, un champ faux, un champ trop long, un double envoi. Quatre
   cas notés quelque part, et le message affiché est lisible par quelqu'un qui n'a pas fait d'informatique.
 - **Taille** : trois jours.
-- **Où ça se joue** : `src/components/auth/`, `src/pages/`, `src/components/profile/ProfileSettings.tsx`.
+- **Où ça se joue** : `src/components/auth/`, `src/pages/`, dont `ProfileSettings.tsx`.
 
 ### S1.3 — Dire à l'utilisateur quand quelque chose n'a pas été enregistré
 
@@ -471,7 +1040,7 @@ ont réellement essayé, pas ce qu'on imagine.
   modifiable plus tard depuis le profil, et elle alimente réellement les recommandations — pas seulement affichée.
 - **Taille** : trois jours.
 - **Où ça se joue** : `src/components/test/WelcomeScreen.tsx`, `src/data/questions.ts`,
-  `src/components/profile/ProfileSettings.tsx`.
+  `src/pages/ProfileSettings.tsx`.
 
 ### S3.4 — Expliquer chaque recommandation
 
@@ -584,7 +1153,7 @@ la progression actualise, le profil valorise.*
   profil, et la vérification que ce qui est privé ne sort pas par le lien partagé de S3.5.
 - **Taille** : une semaine.
 - **Où ça se joue** : `src/data/` pour la forme du profil, `src/services/profile.api.ts`,
-  `src/components/profile/ProfileSettings.tsx`.
+  `src/pages/ProfileSettings.tsx`.
 
 ---
 
@@ -639,6 +1208,10 @@ en interne, c'est une capacité à atteindre, pas une tâche de ce sprint.*
   modules réellement présents, et rien de ce qui était validé n'est perdu.
 - **Taille** : une semaine.
 - **Où ça se joue** : `src/utils/pathwayEngine.ts`, `src/components/pathway/PathwayView.tsx`.
+- **Suspendue le 2026-10-04** : le backlog de référence classe cette ligne `IND04-F03` « hors du premier
+  indispensable », et mon principe numéro 2 dit de ne pas surcharger le premier choix de parcours. Je la range en
+  « Ensuite » ; le désaccord n° 7 de la partie C porte la contradiction, et le calendrier garde ses jours écrits
+  tels quels jusqu'à ce que je reprenne le calcul.
 
 ---
 
@@ -813,15 +1386,238 @@ c'est la première qui est retenue : les dix tests démarrent le 03/11. Ce n'ét
 règle du backlog dit que les sprints 4 et 5 n'avancent pas avant six de ces dix retours écrits : la date des tests
 décide en réalité du démarrage du sprint 4.
 
-# Et ClickUp
+---
+
+# La correspondance entre mes tâches et les lignes du document
+
+Les identifiants en italique sont les six lignes que j'ajoute à l'inventaire, et qui attendent que je les reçoive
+ou que je les refuse : elles sont écrites en partie C.
+
+### Sprint 1 — stabiliser
+
+| Ma tâche | Les lignes du document | Ce que la correspondance dit de moi |
+|---|---|---|
+| `S1.1` trois états par écran, ordinateur et téléphone | `LP01-F01`, les cinq lignes de `IND01`, `IND02-F01`, `IND03-F02`, `IND04-F01`, la première de `IND05` | je ne construis rien : je vérifie que ce qui est marqué « existant » l'est vraiment, écran par écran |
+| `S1.2` formulaires, champ par champ | `TR01-F01`, `IND01-F01`, `IND01-F02`, `TR02-F01` | les deux entrées de compte sont les seules portes du produit, elles doivent être sûres avant d'en ouvrir d'autres |
+| `S1.3` avertir quand une sauvegarde échoue | `IND01-F05`, `IND02-F04`, `IND03-F01`, `IND05-F03` | la ligne `IND02-F04` dit « conserver le résultat » ; tant que l'échec est muet, elle est vraie à moitié |
+| `S1.4` un compte ne voit pas les données d'un autre | `TR01-F02`, `TR02-F01`, `IND01-F05` | c'est le piège de la clé de garde unique par appareil, écrit en face de `IND01-F05` |
+| `S1.5` retirer les fausses promesses de l'interface | `LP01-F01`, `LP01-F04` | les quatre onglets sont ma ligne retirée le 23/09 ; l'inventaire les redemande, et il aura raison le jour où les espaces existeront |
+| `S1.6` rejouer le parcours complet cinq fois | l'annexe entière, les quatorze pas | aucune ligne ne se ferme sans ce jeu-là ; c'est l'annexe qui décide de ce qu'un parcours complet veut dire |
+
+### Sprint 2 — corriger les incohérences
+
+| Ma tâche | Les lignes du document | Ce que la correspondance dit de moi |
+|---|---|---|
+| `S2.1` un seul chemin pour vérifier son adresse | `IND01-F01`, `TR01-F01` | deux chemins ouverts en même temps, c'est une seule ligne de l'inventaire qui tient mal |
+| `S2.2` finir Google, retirer le lien sans mot de passe | `IND01-F02`, `TR01-F01` | la ligne est en ligne, le réglage chez le fournisseur attend ma carte bancaire |
+| `S2.3` la fiche d'identité du dépôt | *`TR07-F03`* | une tâche technique sans ligne ; elle mérite d'en recevoir une, parce que sans elle je ne sais plus ce qui fait foi |
+| `S2.4` ranger le dépôt | *`TR07-F03`* | idem, et les trois gestes restants m'attendent |
+| `S2.5` écrire le contenu du produit à un seul endroit | *`TR07-F02`*, `ADM02-F01`, `ADM03-F01`, `ADM04-F01` | ces référentiels sans écran ont au moins un lieu où leurs nombres sont vérifiés |
+| `S2.6` relire le catalogue ligne par ligne | `ADM04-F01`, `ADM07-F01`, `ADM08-F01` | la relecture remplace l'écran d'administration que l'inventaire suppose et que je n'ai pas |
+| `S2.7` écrire en français ce qui est en anglais | `ADM04-F01`, `ADM08-F01`, `ADM12-F01` | la ligne `ADM12-F01`, « gestion des contenus », est exactement cela, sans écran |
+
+### Sprint 3 — rendre le parcours fluide
+
+| Ma tâche | Les lignes du document | Ce que la correspondance dit de moi |
+|---|---|---|
+| `S3.1` une adresse par étape | *`TR07-F01`*, `IND01-F04`, `IND02-F03` | découper par adresse est ce qui a rendu possible le poids d'aujourd'hui |
+| `S3.2` reprendre trois jours après, sur un autre appareil | `IND01-F05`, `IND02-F04`, `TR01-F02` | le « conserver son travail » de l'inventaire, testé avec de la vraie distance |
+| `S3.3` un vrai écran de profil avant le questionnaire | `IND03-F01`, `IND03-F02`, `IND03-F03` | les sept blocs de la ligne `IND03-F03` sont le cahier des charges de cette tâche |
+| `S3.4` expliquer chaque recommandation | `TR06-F01`, `IND02-F03` | une recommandation sans raison reste une affirmation |
+| `S3.5` un lien partagé qui ouvre le vrai profil | *`TR02-F02`* | rien dans l'inventaire ne prévoit qu'un candidat montre son profil à quelqu'un |
+| `S3.6` un tableau de bord qui guide l'action | `IND05-F01`, `IND05-F02`, `IND04-F01` | les deux lignes de progression sont là, mais ne disent pas quoi faire ensuite |
+| `S3.7` tester avec dix personnes hors de l'équipe | le statut « à valider », partout | aucune ligne ne se ferme pour moi avant ce test ; c'est le document qui a écrit le protocole |
+
+### Sprint 4 — connecter les données entre elles
+
+| Ma tâche | Les lignes du document | Ce que la correspondance dit de moi |
+|---|---|---|
+| `S4.1` garder les réponses et pouvoir les relire | `IND02-F04`, `IND03-F01` | l'inventaire ne demande nulle part que les réponses restent lisibles après coup ; c'est une ligne que j'ajoute, rattachée à la sauvegarde |
+| `S4.2` un changement de barème ne jette plus les anciens profils | `TR06-F01` | dans l'inventaire le moteur est une ligne ; dans le produit il a une version, et les profils gardés sur un appareil portent la leur |
+| `S4.3` la progression dans un module met à jour le profil | `IND03-F05`, `IND05-F03` | les deux lignes se tiennent la main : l'une dit que le profil évolue, l'autre que l'avancement s'actualise, et aujourd'hui rien ne circule |
+| `S4.4` faire des compétences une donnée du profil | `ADM06-F01`, `IND03-F03` | le référentiel des compétences est à développer, le mien est dans les données et ne se montre pas |
+| `S4.5` choisir qui voit quoi | *`TR02-F02`*, et les deux lignes « consultation des profils autorisés » chez les établissements et les consultants | la visibilité est réglée du côté de l'institution qui consulte ; le candidat, lui, ne décide de rien |
+
+### Sprint 5 — relier les modules à des formations réelles
+
+| Ma tâche | Les lignes du document | Ce que la correspondance dit de moi |
+|---|---|---|
+| `S5.1` dire où se suit la formation et comment s'y inscrire | `IND06-F02`, `ADM04-F01` | c'est le troisième pas du parcours cible, et le seul que je ne pouvais pas faire sans adresses vraies |
+| `S5.2` relier chaque module à une formation qui existe | `ADM05-F01`, `ADM04-F01`, `IND02-F06` | les deux référentiels se touchent ici, et c'est la donnée qui commande, pas l'écran |
+| `S5.3` valider une compétence acquise | `ADM06-F01`, `IND05-F04` | marquer un module terminé ne prouve rien ; la ligne de compétences est le seul endroit où cette preuve se range |
+| `S5.4` ajouter une formation depuis une recommandation | `IND04-F03` | **rangée** : le document écrit « hors du premier indispensable », je la programmais en sprint 5. Désaccord n° 7, et le document a raison contre moi |
+
+### Mes lignes « Ensuite », et ce qu'elles deviennent dans l'inventaire
+
+| Ma ligne | Les lignes du document | Nature |
+|---|---|---|
+| `E1` rattacher les chances aux métiers | `IND06-F03` | fonctionnalité, déjà dans l'inventaire |
+| `E2` compléter l'offre hors Bénin | `ADM04-F01` | donnée, donc le chapitre 9 |
+| `E3` rendre la recherche utilisable | `TR03-F01` | fonctionnalité transversale, dans l'inventaire |
+| `E4` alléger le premier affichage | *`TR07-F01`* | technique, sans ligne dans l'inventaire |
+| `E5` accessibilité clavier et contrastes | *`TR07-F04`* | technique, sans ligne dans l'inventaire |
+| `E6` une version anglaise de l'accueil | `ADM12-F01`, `LP01-F01` | contenu, dans l'inventaire |
+| `E7` la politique de conservation des données | *`TR02-F03`* | fonctionnalité, sans ligne dans l'inventaire |
+| `E8` recevoir les contenus des centres et universités | `ADM11-F02`, `ADM12-F01`, `UNI03-F01`, `CON05-F01` | fonctionnalité, jusqu'au partenariat près |
+
+### Mes trois blocs du bas, et leurs lignes dans l'inventaire
+
+Ma liste « plus tard » tombe presque entièrement dans les `P2` et les `P1` : le catalogue de compétences partagé est
+la ligne `ADM06-F01`, les opportunités d'emploi et de stage sont la ligne `IND06-F01`, l'accompagnement est tout le
+bloc `IND08`, la reprise de session plus tolérante est la ligne `TR01-F02`, les tableaux de bord d'usage sont la
+ligne `ADM14-F02`. Une seule de mes lignes n'a rien en face : « profil professionnel imprimable », qui n'existe que
+comme adjectif dans l'inventaire.
+
+Ma « vision » est le chapitre 6, le chapitre 7, le chapitre 8 et leur `P3`, plus la question du partenariat. Le
+désaccord n'est pas sur le fond mais sur la valeur qu'on donne à ces lignes : le document les écrit comme un périmètre
+à venir, je les lis comme une décision à prendre.
+
+Mon « parking » déborde du document, et c'est normal : il décrit ce que le produit devrait faire, pas ce qu'on pourrait
+lui ajouter sans raison. Rien de mon parking ne demande une ligne.
+
+---
+
+# Partie C — où le document de référence et le produit ne disent pas la même chose
+
+Onze écarts, numérotés, et chacun fini par une proposition. Aucun n'est un reproche : l'inventaire a été écrit pour
+dire ce que le produit devrait contenir, mes mesures disent ce qu'il contient. Là où les deux se contredisent, je dis
+ce que je fais en attendant, et qui tranche.
+
+**1. Le questionnaire du document n'est pas celui du produit.** La ligne `IND02-F01` écrit : 23 questions structurées
+en 6 sections — cognition, motivations et passions, talents, intérêts, réalité, positionnement. Le produit en pose
+31, réparties en cinq groupes qui s'affichent à l'écran : « Votre situation », « Votre profil », « Vos centres
+d'intérêt », « Vos aptitudes », « Vos contraintes ». Selon la situation déclarée, quelqu'un en répond 29 ou 30, et ce
+nombre est calculé sur les questions réelles, pas écrit à la main. Deux des six noms du document ne se retrouvent
+nulle part : « talents » et « positionnement ». **Ma proposition :** laisser les 31 questions et les cinq groupes, et
+reprendre les six mots du document comme thèmes de couverture, pas comme découpage d'écran. Ce que je me dois :
+vérifier que les six thèmes sont tous touchés par au moins une question, et le dire ici. C'est une relecture de
+texte, pas un chantier.
+
+**2. Les trois lignes « à valider » sont en fait en ligne.** `IND02-F05` (télécharger ou exporter le résultat) :
+quatre sorties fonctionnent, l'impression, le partage du navigateur, la copie dans le presse-papiers et le fichier
+texte. `IND02-F10` et `IND04-F02` (valider le parcours) : le geste existe, il s'écrit dans le profil et il repart sur
+un autre appareil. Le seul manque est un format, le PDF. **Ma proposition :** passer les trois lignes à
+« partiellement existant », avec le PDF comme périmètre restant. Personne ne tranche ici, c'est une mesure.
+
+**3. `IND03-F06` est marquée à développer, elle est faite.** « Refaire son orientation sans supprimer les
+informations personnelles » : depuis mon espace, le bouton d'accueil ramène au test, et le compte garde sa photo et
+son nom. **Ma proposition :** la passer à « partiellement existant », pas « existant », parce que le résultat neuf
+remplace bien l'ancien mais ne laisse aucun moyen de le relire. C'est ma tâche `S4.1`, et c'est le mot qui manque.
+
+**4. Trois lignes de la progression sont en ligne.** `IND05-F01`, `IND05-F02` et `IND05-F04` sont écrites « à
+développer » alors que le tableau de bord calcule les modules faits sur le total, que les pistes s'affichent dans
+l'ordre et qu'un module se marque terminé. `IND05-F03`, « actualiser les étapes réalisées », est à moitié là : le
+geste existe, mais rien de ce qui est coché ne remonte au profil, et c'est exactement ma tâche `S4.3`. La cinquième,
+`IND05-F05`, l'historique des évolutions du parcours, n'existe pas et mérite son statut. **Ma proposition :** trois
+changements de statut, `IND05-F03` passée à « partiellement existant », et `S4.3` garde la main sur ce qui manque.
+
+**5. Les lignes « opportunités » sont à moitié là, et le mot du document est juste.** `IND06-F01` et `IND06-F02`
+sont marquées « à développer » alors que cent soixante-treize lignes d'offres sont à l'écran, dont cent
+cinquante-neuf avec une adresse d'origine. Ce qui manque est dans la phrase même du document : les stages, les
+emplois, les concours. **Ma proposition :** passer les deux lignes à « partiellement existant », et la fin de sa
+note — « ou autres opportunités pertinentes » — devient ma ligne `E1` : rattacher les chances aux métiers visés, pas
+seulement au domaine.
+
+**6. Le plus lourd des onze : le chapitre 9 suppose un écran que je n'ai pas.** Les lignes `ADM02-F01`,
+`ADM02-F02`, `ADM03-F01`, `ADM04-F01`, `ADM05-F01`, `ADM06-F01`, `ADM07-F01` et `ADM08-F01` sont toutes « à
+développer », quatre d'entre elles au cœur du produit. Mes référentiels, eux, existent et viennent de la base du
+document. Ils sont à l'écran, ils sont vérifiés à chaque contrôle automatique, et on ne peut pas les reprendre sans
+toucher un fichier du dépôt et pousser en ligne. **Ma proposition, en trois temps, et c'est là que je demande :** ni
+back-office complet ni statu quo. D'abord écrire dans `docs/CONTENU-PRODUIT.md` ce que chaque référentiel contient
+aujourd'hui, ce qui est fait. Ensuite décider si une reprise de données en autonomie vaut un écran ; ma réponse est
+non pour l'instant, parce que je suis le seul à reprendre les données et que l'écran coûterait plus que le geste.
+Troisièmement, si un jour plusieurs personnes reprennent ces lignes, l'écran devient `P0` pour de vrai, et la
+question se réglera alors, pas avant. Ce qui change si je me trompe : rien à l'écran pour un candidat, tout pour la
+vitesse à laquelle une erreur de donnée meurt.
+
+**7. Ma tâche `S5.4` est hors du premier indispensable du document.** La ligne `IND04-F03` est écrite « hors du
+premier indispensable » : ajout d'une étape personnelle, fonction dédiée plus tard. Je la programmais en sprint 5, et
+mon propre principe numéro 2 dit de ne pas surcharger le premier choix de parcours. **Ma proposition :** `S5.4`
+descend en « Ensuite », les jours que le calendrier a écrits pour le sprint 5 restent tels quels jusqu'à ce que je
+reprenne le calcul, et l'écran de parcours garde sa forme actuelle. C'est moi qui tranche, parce que c'est mon
+principe et ma semaine.
+
+**8. Soixante-six lignes pour trois espaces, et trois cartes qui demandent encore s'ils s'ouvrent.** Les chapitres
+6, 7 et 8 du document sont complets, priorisés, et sans une ligne qui prétende exister. Dans l'outil de suivi, trois
+cartes de cadrage attendent la même réponse depuis septembre. **Ma proposition :** ces trois chapitres restent dans
+l'inventaire avec leurs `P2` et leurs `P3`, ma « Vision » les reçoit tels quels, et aucune ligne de ces trois espaces
+n'entre dans un sprint tant que la carte de cadrage est ouverte. Ce qui est décidé ici n'est pas le périmètre mais la
+séquence.
+
+**9. `LP01-F04` redemande ce que j'ai retiré le 23 septembre.** « Accès aux espaces utilisateurs, individus,
+établissements, consultants, entreprises » : j'ai enlevé les quatre onglets le 23/09 parce qu'un clic ne produisait
+rien et qu'aucune adresse du site ne leur correspondait. **Ma proposition :** la ligne reste « à développer », et
+l'accueil ne reparle des quatre espaces que quand trois d'entre eux auront au moins un compte ouvrable. Garder un
+bouton mort pour faire complet est exactement la classe de mensonge que ma tâche `S1.5` est en train de nettoyer.
+
+**10. Le piège que la ligne `IND01-F05` ne dit pas.** Elle est marquée « partiellement existant », et le mot est
+juste, mais le manque n'est pas celui qu'on croit : le résultat du test est gardé sous une seule clé par appareil,
+sans distinction de personne. Sur un ordinateur partagé — un cyber, un téléphone de famille, un poste d'atelier —, le
+compte suivant peut ouvrir le profil du visiteur précédent. **Ma proposition :** ne rien attendre de la
+priorisation, c'est une correction, et `S1.4` la porte. Elle passe avant les trois quarts de l'inventaire, même si le
+document ne la nomme nulle part sous cette forme.
+
+**11. Le document de référence ne vit pas dans le dépôt.** Le fichier `Backlog_de_reference_AliTche.docx` est dans
+mon dossier de téléchargements. La partie A de ce fichier en porte les cent trente-sept lignes, donc le dépôt n'est
+pas aveugle, mais l'original disparaîtrait avec l'ordinateur. **Ma proposition :** copier le document dans le dépôt,
+dans un dossier à part des documents de travail, dès que je le dis. Je ne le fais pas de moi-même, parce qu'un
+document binaire livré dans un dépôt d'écriture est une décision, pas un rangement.
+
+---
+
+# Partie D — ce qui est écrit dans l'outil de suivi
 
 ClickUp est le miroir, pas l'autorité. Ce que je fais, ce que je dois faire et ce qui est fait se lisent d'abord
-ici ; ClickUp sert à voir l'avancement dans le temps et à suivre mes activités jour par jour.
+ici ; ClickUp sert à voir l'avancement dans le temps et à suivre mes activités jour par jour. Depuis cette
+réorganisation, le miroir a une règle de plus à tenir : chaque carte de fonctionnalité porte le numéro de la ligne
+de référence qu'elle répète, et l'outil ne décide jamais du périmètre.
 
-**Où le travail se pose, mesuré le 03/10/2026.** J'ai rangé ClickUp à la main le 25/09/2026 : le travail d'AliTché
-vit dans mon espace de travail le plus récent, en deux espaces — « AliTché » pour ce qu'on construit, « Project
-management » pour ce qu'on suit dans le temps. Les identifiants comptent plus que les noms, parce que les noms
-changent pendant qu'on travaille.
+## Les règles de conversion du document, appliquées
+
+Le document pose cinq translations et une convention. Je les applique telles quelles, parce qu'elles sont
+exactement ce que mon miroir avait de mieux à faire.
+
+| Élément du backlog | Traduction dans l'outil | La règle posée | Ce que j'en fais ici |
+|---|---|---|---|
+| `EPIC` | tâche parent | une tâche principale représente un grand bloc fonctionnel | mes blocs fonctionnels existent déjà : les dossiers par acteur, et les dix modules de `docs/MODULES.md` |
+| Fonctionnalité | sous-tâche | chaque fonctionnalité doit pouvoir être développée et validée indépendamment | une carte par ligne de la partie A, jamais une carte pour deux lignes |
+| Sous-fonctionnalité | sous-tâche de niveau inférieur, ou liste de vérification | à utiliser seulement quand un découpage est nécessaire | le seul cas que j'ai rencontré : les sept blocs de `IND03-F03`, qui tiennent en une liste de vérification, pas en sept cartes |
+| Critère de validation | liste de vérification, critères d'acceptation | permet de vérifier que la fonctionnalité répond au besoin | c'est déjà ma colonne « comment on saura que c'est fini », recopiée dans la carte |
+| Travail technique | tâche technique rattachée | une tâche technique doit toujours être reliée à une fonctionnalité du backlog | mes tâches de rangement et de contrôle se rattachent aux six lignes que je propose en partie C |
+
+La convention recommandée — conserver les identifiants du backlog dans les tâches, par exemple `IND03-F03`,
+pour retrouver la correspondance entre le document, l'outil et le développement — est la chose qui manquait à mon
+miroir. Je l'adopte sans discussion : le numéro passe en tête du titre de la carte. Une carte qui ne porte pas de
+numéro est donc une carte de mes sprints, et elle porte son propre `S3.4`.
+
+## Le métier neuf des deux listes de l'espace d'avancement
+
+C'est la réponse à la question que je me posais depuis septembre : deux listes se marchaient dessus, l'une portée
+par les tâches, l'autre par le calendrier. Elles ont maintenant deux objets différents, et ça se voit à leurs
+identifiants.
+
+**« Action Items » porte le périmètre ouvert.** La liste `1200440000046344` avait été créée comme une liste de
+service, avec ses quatre états en anglais venus d'un moule tout prêt. Elle devient l'endroit où se lisent les lignes
+de la partie A qui ne fonctionnent pas encore et qui comptent le plus : les lignes à la priorité `P0` ou `P1` que
+le statut écrit ne marque pas comme existantes. J'en ai recompté quarante et une sur les cent trente-sept, et
+trente-trois une fois retirés les huit qui appartiennent aux trois espaces dont je n'ai pas décidé l'ouverture.
+Une carte par ligne, nommée par son identifiant, avec ce qu'elle change, comment on saura que c'est fini, et un
+renvoi à ce fichier. C'est là que se lit « qu'est-ce qui reste, et dans quel ordre de gravité ».
+
+**« sprint planning » porte le temps.** La liste `1200440000046312` garde ce qu'elle contient : les cinq jalons de
+sprint avec leurs dates, et les cinq fiches de session de test. Elle ne reçoit aucune ligne de périmètre. Ce qui
+change pour elle, c'est une phrase dans chaque jalon : le nombre de tâches du sprint et l'adresse où elles se
+lisent, la table de correspondance de la partie B. C'est là que se lit « où j'en suis dans le temps ».
+
+Les deux listes se rejoignent par les identifiants, et nulle part ailleurs. Une carte d'« Action Items » qui devient
+un travail daté ne quitte pas la partie A : elle est reprise par une carte de sprint, et la carte de suivi porte les
+deux numéros, le `S` et celui du document.
+
+## Où le travail se pose, mesuré le 03/10/2026
+
+J'ai rangé ClickUp à la main le 25/09/2026 : le travail d'AliTché vit dans mon espace de travail le plus récent, en
+deux espaces — « AliTché » pour ce qu'on construit, « Project management » pour ce qu'on suit dans le temps. Les
+identifiants comptent plus que les noms, parce que les noms changent pendant qu'on travaille.
 
 | Ce qui porte le travail | Où | Identifiant | Ce que ça contient |
 |---|---|---|---|
@@ -832,62 +1628,80 @@ changent pendant qu'on travaille.
 | Cadrage — Consultants et centres d'employabilité | `1200440000047029` | une carte : idem |
 | Cadrage — Entreprises et recruteurs | `1200440000047034` | une carte : idem |
 | sprint planning | espace Project management | `1200440000046312` | les cinq jalons de sprint avec leurs dates, et les cinq fiches de session de test |
-| Action Items | espace Project management | `1200440000046344` | la liste de service, telle qu'elle a été créée |
+| Action Items | espace Project management | `1200440000046344` | la liste de service, telle qu'elle a été créée, et le métier neuf écrit plus haut |
 
-**Ce que j'y ai écrit le 03/10/2026.** Quarante-quatre cartes, prises une à une dans ce document, aucune inventée pour
-faire bonne mesure : vingt-neuf tâches et lignes « Ensuite » chez les candidats, quatre pour la page d'accueil, six
-pour le catalogue et les documents, cinq jalons pour le calendrier. Chaque carte porte le numéro de sa tâche, ce
-qu'elle change, comment on saura que c'est fini, sa taille, et renvoie à ce fichier. Trois cartes sont fermées et
-portent leur preuve : la fiche d'identité du dépôt (commit `e0cc79a`), ce que contient AliTché écrit à un seul
-endroit (commit `90369b2`), les quatre onglets morts retirés de l'accueil (commit `6005e19`). Huit cartes portent
-« en cours », parce que leur dépôt est écrit et leur preuve à l'écran non faite. Une porte « bloqué » : la connexion
-Google, dont les deux réglages chez le fournisseur ne se font pas sans la carte bancaire que je n'ai pas.
+## Ce que j'y ai écrit le 03/10/2026
 
-**Ce que le miroir ne peut pas dire, et comment je m'en passe.** Les listes du dossier AliTché n'ont que deux
-statuts, « à faire » et « achevé ». Le « où j'en suis vraiment » ne se lit donc pas dans le statut : c'est
-l'étiquette qui le porte — non commencé, en cours, en test, validé, bloqué. Le sprint n'est pas non plus une case à
-cocher : une étiquette « sprint 1 » à « sprint 5 » et les deux dates de la carte font le travail. La liste de
-planning a quatre états en anglais, parce qu'elle vient d'un moule tout prêt ; mes cinq jalons y sont ouverts « à
-faire », avec les dates du calendrier ci-dessus.
+Quarante-quatre cartes, prises une à une dans ce document, aucune inventée pour faire bonne mesure : vingt-neuf
+tâches et lignes « Ensuite » chez les candidats, quatre pour la page d'accueil, six pour le catalogue et les
+documents, cinq jalons pour le calendrier. Chaque carte porte le numéro de sa tâche, ce qu'elle change, comment on
+saura que c'est fini, sa taille, et renvoie à ce fichier. Trois cartes sont fermées et portent leur preuve : la fiche
+d'identité du dépôt (commit `e0cc79a`), ce que contient AliTché écrit à un seul endroit (commit `90369b2`), les
+quatre onglets morts retirés de l'accueil (commit `6005e19`). Huit cartes portent « en cours », parce que leur dépôt
+est écrit et leur preuve à l'écran non faite. Une porte « bloqué » : la connexion Google, dont les deux réglages chez
+le fournisseur ne se font pas sans la carte bancaire que je n'ai pas.
 
-**Le budget décide du rythme.** Le service coupe à cent appels par jour, lectures comprises, et ce compteur est
-partagé avec mes autres sessions. Le quota d'aujourd'hui s'est épuisé sur la dernière relecture que je voulais faire.
-`docs/MODULES.md` en garde la trace : quarante cartes envoyées le 26/09 au matin, relues le 01/10 seulement, parce
-que le compteur était plein entre-temps. D'où la règle : relire par identifiant avant de réécrire, parce que rejouer
-un appel déjà passé fait une carte en double. Le miroir est écrit et relu carte par carte ; seul le contenu des
-listes de l'espace d'avant reste non recompté, et je ne le devine pas.
+## Ce que le miroir ne peut pas dire, et comment je m'en passe
 
-**Ce que le miroir me doit encore, écrit le 2026-10-04.** Trois écritures sont prêtes et aucune ne se devine :
+Les listes du dossier AliTché n'ont que deux statuts, « à faire » et « achevé ». Le « où j'en suis vraiment » ne se
+lit donc pas dans le statut : c'est l'étiquette qui le porte — non commencé, en cours, en test, validé, bloqué. Le
+sprint n'est pas non plus une case à cocher : une étiquette « sprint 1 » à « sprint 5 » et les deux dates de la carte
+font le travail. La liste de planning a quatre états en anglais, parce qu'elle vient d'un moule tout prêt ; mes cinq
+jalons y sont ouverts « à faire », avec les dates du calendrier de la partie B.
 
-1. « Alléger le premier affichage », chez les candidats : fermer la carte avec sa preuve mesurée sur le fichier
-   servi en ligne aujourd'hui — 409 853 octets, 118,8 kilo-octets comprimés, contre 550 616 et 164 la veille ; les
+## Le budget décide du rythme
+
+Le service coupe à cent appels par jour, lectures comprises, et ce compteur est partagé avec mes autres sessions.
+D'où la règle : relire par identifiant avant de réécrire, parce que rejouer un appel déjà passé fait une carte en
+double. Le miroir est écrit et relu carte par carte. À l'heure où j'écris, le compteur est plein et le service
+annonce la remise à zéro le soir du 2026-10-04 ; les écritures ci-dessous sont donc en file, pas en échec.
+
+## Ce que le miroir me doit encore, écrit le 2026-10-04
+
+Cinq écritures sont prêtes et aucune ne se devine. Les trois premières étaient dues avant la réorganisation, les
+deux dernières la réorganisation elle-même :
+
+1. « Alléger le premier affichage », chez les candidats : fermer la carte avec sa preuve mesurée sur le fichier servi
+   en ligne aujourd'hui — 409 853 octets, 118,8 kilo-octets comprimés, contre 550 616 et 164 la veille ; les
    catalogues tiennent dans leur propre fichier de 142 744 octets (38,5 kilo-octets comprimés), que seul paie qui
    lance le test ou ouvre son espace. Commit `04aca30`.
 2. Les cartes du module 4, chez les candidats : porter la preuve du commit `5a356c9`, relue dans le fichier servi —
    cent soixante-treize lignes d'offre, cent cinquante-neuf adresses, et zéro adresse d'agrégateur.
 3. « Retirer les trois écrans qui promettent sans tenir », à la page d'accueil : la clarifier, parce que son libellé
    ne dit pas quels trois écrans et qu'on ne ferme pas une carte qu'on ne peut pas reconnaître.
+4. Le métier neuf d'« Action Items » : trente-trois cartes, une par ligne ouverte de `P0` ou `P1` hors des trois
+   espaces non décidés, chacune nommée par son identifiant de référence et rattachée à sa ligne de la partie A.
+5. L'étiquette d'identifiant sur les cartes qui existent déjà et portent une ligne de référence : les vingt-neuf
+   cartes de mes tâches ne reçoivent pas le numéro du document, elles gardent le `S` et renvoient à la table de correspondance,
+   parce qu'une tâche mienne couvre plusieurs des lignes du document.
 
-Les trois passent d'abord par une relecture par identifiant, listes `1200440000047021` et `1200440000046011` : la vue
-d'arbre ment depuis qu'un dossier contient un sous-dossier, et l'écriture sans relecture produit des doublons. À
-l'heure où j'écris, le compteur est plein et le service annonce la remise à zéro dans dix-neuf heures quarante,
-soit vers 21 h 46 ce soir. Deux choses ne se poussent pas, parce qu'elles m'attendent moi et non le miroir : la preuve
-par deux comptes réels, et la décision sur la question des compétences déjà développées.
+Les cinq passent d'abord par une relecture par identifiant, listes `1200440000047021`, `1200440000046011`,
+`1200440000046344` et `1200440000046312` : la vue d'arbre ment depuis qu'un dossier contient un sous-dossier, et
+l'écriture sans relecture produit des doublons. Deux choses ne se poussent pas, parce qu'elles m'attendent moi et non
+le miroir : la preuve par deux comptes réels, et la décision sur la question des compétences déjà développées.
 
-**Le plan du 23/09 est dépassé, pas inachevé.** Il promettait dix dossiers de module, une liste dans chacun et
-quatre-vingt-quatre cartes. J'ai tranché autrement le 25/09, et c'est écrit dans `docs/MODULES.md` : des dossiers par
-acteur, pas par module. Les cartes des dix modules tiennent donc dans une seule liste, « Backlog — Individus », et
-c'est l'étiquette qui les rend filtrables module par module. Cette liste compte maintenant cent huit cartes :
-soixante-dix-neuf fonctionnalités de module, et les vingt-neuf tâches de ce document.
+## Le plan du 23/09 est dépassé, pas inachevé
 
-**L'espace de travail d'avant.** AliTché y occupe un dossier découpé lui aussi par acteur — « Espace
-utilisateurs », « Landing page », « Espace admin », une liste dans chacun, relevé à l'instant. Les six listes de
-sprint que le plan du 23/09 y avait comptées n'y sont plus : la reprise à la souris a défait cette découpe.
-J'affirme cela et rien de plus, parce que le recomptage de leur contenu est tombé après la coupure. Et je ne
-supprime rien : le connecteur ne sait pas supprimer une liste, et une carte effacée emporte avec elle la décision
-qui l'avait fait écrire.
+Le plan promettait dix dossiers de module, une liste dans chacun et quatre-vingt-quatre cartes. J'ai tranché autrement le
+25/09, et c'est écrit dans `docs/MODULES.md` : des dossiers par acteur, pas par module. Les cartes des dix modules
+tiennent donc dans une seule liste, « Backlog — Individus », et c'est l'étiquette qui les rend filtrables module par
+module. Cette liste compte maintenant cent huit cartes : soixante-dix-neuf fonctionnalités de module, et les
+vingt-neuf tâches de ce document. Les cent trente-sept lignes de la partie A ne sont pas cent trente-sept cartes de
+plus : celles qui attendent un espace n'entrent dans aucun sprint tant que la carte de cadrage est ouverte, et le
+reste se suit par « Action Items ».
 
-**Règle de sens.** Les cartes viennent de ce fichier, jamais l'inverse. Une retouche faite dans l'interface entre
-deux séances — une priorité changée, une carte créée à la volée — est une demande de portée, pas un avancement :
-elle passe d'abord ici, puis le miroir est corrigé le jour même. Le détail des cartes de module vit dans
-`docs/MODULES.md` ; ce document-ci porte les tâches, et ClickUp les répète.
+## L'espace de travail d'avant
+
+AliTché y occupe un dossier découpé lui aussi par acteur — « Espace utilisateurs », « Landing page », « Espace
+admin », une liste dans chacun, relevé à l'instant. Les six listes de sprint que le plan du 23/09 y avait comptées
+n'y sont plus : la reprise à la souris a défait cette découpe. J'affirme cela et rien de plus, parce que le
+recomptage de leur contenu est tombé après la coupure. Et je ne supprime rien : le connecteur ne sait pas supprimer
+une liste, et une carte effacée emporte avec elle la décision qui l'avait fait écrire.
+
+## Règle de sens
+
+Les cartes viennent de ce fichier, jamais l'inverse. Une retouche faite dans l'interface entre deux séances — une
+priorité changée, une carte créée à la volée — est une demande de portée, pas un avancement : elle passe d'abord
+ici, puis le miroir est corrigé le jour même. Le détail des cartes de module vit dans `docs/MODULES.md` ; ce
+document-ci porte les tâches et l'inventaire, et ClickUp les répète. Ce que mon principe numéro huit ajoute, et que
+je vais dorénavant vérifier à chaque écriture : une carte de suivi ne crée pas une fonctionnalité, elle la répète.

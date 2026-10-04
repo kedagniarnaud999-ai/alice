@@ -271,7 +271,15 @@ const admissibles: Record<string, number[]> = {
 };
 
 /** Chiffres écrits dans docs/ pour autre chose que le catalogue : à assumer nommément. */
-const HORS_CATALOGUE: { fichier: string; nombre: number; mot: string; raison: string }[] = [];
+const HORS_CATALOGUE: { fichier: string; nombre: number; mot: string; raison: string }[] = [
+  {
+    fichier: 'BACKLOG.md',
+    nombre: 23,
+    mot: 'questions',
+    raison:
+      "la ligne IND02-F01 du backlog de référence écrit « 23 questions structurées en 6 sections » : ce chiffre est le sien, recopié tel quel, et non une mesure de mon catalogue",
+  },
+];
 
 const MOTS = ['questions', 'question', 'modules', 'module', 'domaines', 'domaine', 'métiers', 'metiers', 'metier', 'axes', 'axe'];
 const REGEX = new RegExp(`\\b(\\d{1,3})\\s+(${MOTS.join('|')})\\b`, 'g');
