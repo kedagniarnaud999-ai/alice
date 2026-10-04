@@ -824,6 +824,23 @@ que le compteur était plein entre-temps. D'où la règle : relire par identifia
 un appel déjà passé fait une carte en double. Le miroir est écrit et relu carte par carte ; seul le contenu des
 listes de l'espace d'avant reste non recompté, et je ne le devine pas.
 
+**Ce que le miroir me doit encore, écrit le 2026-10-04.** Trois écritures sont prêtes et aucune ne se devine :
+
+1. « Alléger le premier affichage », chez les candidats : fermer la carte avec sa preuve mesurée sur le fichier
+   servi en ligne aujourd'hui — 409 853 octets, 118,8 kilo-octets comprimés, contre 550 616 et 164 la veille ; les
+   catalogues tiennent dans leur propre fichier de 142 744 octets (38,5 kilo-octets comprimés), que seul paie qui
+   lance le test ou ouvre son espace. Commit `04aca30`.
+2. Les cartes du module 4, chez les candidats : porter la preuve du commit `5a356c9`, relue dans le fichier servi —
+   cent soixante-treize lignes d'offre, cent cinquante-neuf adresses, et zéro adresse d'agrégateur.
+3. « Retirer les trois écrans qui promettent sans tenir », à la page d'accueil : la clarifier, parce que son libellé
+   ne dit pas quels trois écrans et qu'on ne ferme pas une carte qu'on ne peut pas reconnaître.
+
+Les trois passent d'abord par une relecture par identifiant, listes `1200440000047021` et `1200440000046011` : la vue
+d'arbre ment depuis qu'un dossier contient un sous-dossier, et l'écriture sans relecture produit des doublons. À
+l'heure où j'écris, le compteur est plein et le service annonce la remise à zéro dans dix-neuf heures quarante,
+soit vers 21 h 46 ce soir. Deux choses ne se poussent pas, parce qu'elles m'attendent moi et non le miroir : la preuve
+par deux comptes réels, et la décision sur la question des compétences déjà développées.
+
 **Le plan du 23/09 est dépassé, pas inachevé.** Il promettait dix dossiers de module, une liste dans chacun et
 quatre-vingt-quatre cartes. J'ai tranché autrement le 25/09, et c'est écrit dans `docs/MODULES.md` : des dossiers par
 acteur, pas par module. Les cartes des dix modules tiennent donc dans une seule liste, « Backlog — Individus », et
