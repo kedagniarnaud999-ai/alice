@@ -89,8 +89,10 @@ const branches = SITUATIONS.map((s) => getVisibleQuestions(branchFor(s)).length)
 
 // ——— Le référentiel reçu du fondateur ———
 //
-// Ses 14 domaines, ses 11 fonctions, ses 63 métiers génériques et ses 113 spécialisations
-// ne portent aucun score : ils nomment et documentent. Ce qui est à nous dans ce fichier —
+// Ses 14 domaines, ses 11 fonctions, ses 84 métiers génériques et ses 113 spécialisations
+// ne portent aucun score : ils nomment et documentent. Sa base corrigée distingue elle-même
+// les métiers transversaux (46) de ceux qu'un domaine qualifie (38), et ne dit plus rien
+// d'approximatif ligne à ligne. Ce qui est à nous dans ce fichier —
 // le domaine de carrière qui héberge chacun de ses domaines, la répartition de ses fonctions
 // sur nos six axes, et le rang de nos 45 fiches sous ses métiers génériques — se vérifie ici.
 
@@ -99,7 +101,8 @@ const codesFonctions = REFERENTIEL_FONCTIONS.map((f) => f.code);
 const codesGeneriques = REFERENTIEL_METIERS.map((m) => m.code);
 const codesSpecialisations = REFERENTIEL_SPECIALISATIONS.map((s) => s.code);
 const generiqueParCode = new Map(REFERENTIEL_METIERS.map((m) => [m.code, m]));
-const specialisationsApproximatives = REFERENTIEL_SPECIALISATIONS.filter((s) => s.approximatif).length;
+const generiquesTransversaux = REFERENTIEL_METIERS.filter((m) => !m.qualifieParDomaine).length;
+const generiquesQualifies = REFERENTIEL_METIERS.filter((m) => m.qualifieParDomaine).length;
 const fichesClassees = Object.keys(METIER_PAR_FICHE);
 const rangsApproximatifs = fichesClassees.filter((id) => METIER_PAR_FICHE[id].approximatif).length;
 const competencesMin = min(REFERENTIEL_SPECIALISATIONS.map((s) => s.competences.length));
@@ -148,8 +151,9 @@ const compteurs: { cle: string; valeur: number }[] = [
   { cle: 'referentiel.domaines', valeur: REFERENTIEL_DOMAINES.length },
   { cle: 'referentiel.fonctions', valeur: REFERENTIEL_FONCTIONS.length },
   { cle: 'referentiel.metiers.generiques', valeur: REFERENTIEL_METIERS.length },
+  { cle: 'referentiel.metiers.generiques.transversaux', valeur: generiquesTransversaux },
+  { cle: 'referentiel.metiers.generiques.qualifies.par.domaine', valeur: generiquesQualifies },
   { cle: 'referentiel.specialisations', valeur: REFERENTIEL_SPECIALISATIONS.length },
-  { cle: 'referentiel.specialisations.approximatives', valeur: specialisationsApproximatives },
   { cle: 'referentiel.fiches.classees', valeur: fichesClassees.length },
   { cle: 'referentiel.fiches.classees.approximatives', valeur: rangsApproximatifs },
 ];
@@ -352,13 +356,29 @@ REFERENTIEL_SPECIALISATIONS.forEach((s) => {
   if (!s.definition.trim() || !s.formation.trim() || !s.debouches.trim() || s.competences.length === 0) {
     failures.push(`${s.code} (${s.libelle}) a une fiche incomplète : définition, compétences, formation et débouchés sont dus`);
   }
-  if (parent.fonction !== s.fonction && !s.approximatif) {
+  if (parent.fonction !== s.fonction) {
     failures.push(
-      `${s.code} se range sous ${s.parent} (${parent.libelle}) dont la fonction est ${parent.fonction}, alors que la ligne déclare ${s.fonction} : le lien est dit strict, il ne l'est pas — passe-le en approximatif ou change de parent`
+      `${s.code} se range sous ${s.parent} (${parent.libelle}) dont la fonction est ${parent.fonction}, alors que la ligne déclare ${s.fonction} : sa base corrigée ne laisse plus de lien approximatif, l'une des deux déclarations est fausse`
     );
   }
 });
 
+// Un métier que sa « Portée » dit qualifié par un domaine ne doit rien spécialiser d'un autre.
+const domainesParGeneriqueQualifie = new Map<string, Set<string>>();
+REFERENTIEL_SPECIALISATIONS.forEach((s) => {
+  const generique = generiqueParCode.get(s.parent);
+  if (!generique || !generique.qualifieParDomaine) return;
+  const ensemble = domainesParGeneriqueQualifie.get(s.parent) ?? new Set<string>();
+  ensemble.add(s.domaine);
+  domainesParGeneriqueQualifie.set(s.parent, ensemble);
+});
+domainesParGeneriqueQualifie.forEach((domaines, code) => {
+  if (domaines.size > 1) {
+    failures.push(
+      `${code} (${generiqueParCode.get(code)?.libelle}) est dit qualifié par un domaine mais spécialise ${domaines.size} domaines : ${[...domaines].join(', ')}`
+    );
+  }
+});
 const idsFiches = CROSS_OCCUPATIONS.map((o) => o.id);
 const classees = new Set(fichesClassees);
 idsFiches.forEach((id) => {
@@ -397,8 +417,7 @@ CROSS_OCCUPATIONS.forEach((fiche) => {
     .sort((a, b) => a.code.localeCompare(b.code));
   const projete = postesPourFiche(fiche.id);
   if (projete.postes.length > 0) projeteCount += 1;
-  const approximationAttendue =
-    attendu.length > 0 && (rang.approximatif || attendu.some((s) => s.approximatif));
+  const approximationAttendue = attendu.length > 0 && rang.approximatif;
 
   attendu.forEach((s, index) => {
     const ligne = projete.postes[index];
@@ -425,7 +444,7 @@ CROSS_OCCUPATIONS.forEach((fiche) => {
 });
 
 console.log(
-  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues (${specialisationsApproximatives} liens dits approximatifs), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation, ${projeteCount} fiche(s) avec postes nommés dans la projection`
+  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues, ${codesGeneriques.length} métiers génériques (${generiquesTransversaux} transversaux, ${generiquesQualifies} qualifiés par domaine), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation, ${projeteCount} fiche(s) avec postes nommés dans la projection`
 );
 
 if (failures.length > 0) {

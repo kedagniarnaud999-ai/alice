@@ -121,9 +121,9 @@ chantier E2.
 ## Le référentiel des 113 spécialisations
 
 Le 3 octobre 2026, j'ai remis une base de nomenclature validée à deux, et elle est entrée dans le dépôt le jour même,
-dans `src/data/referentiel.ts`. Elle tient quatre niveaux : 14 domaines, 11 fonctions, 63 métiers génériques et 113
-spécialisations. Chaque spécialisation porte sa fiche rédigée — ce qu'elle est, trois ou quatre compétences qu'elle
-demande, comment y accéder, et ce qu'on en fait.
+dans `src/data/referentiel.ts`. Le 4 octobre, sa version corrigée l'a remplacée. Elle tient quatre niveaux :
+14 domaines, 11 fonctions, 84 métiers génériques et 113 spécialisations. Chaque spécialisation porte sa fiche rédigée
+— ce qu'elle est, trois ou quatre compétences qu'elle demande, comment y accéder, et ce qu'on en fait.
 
 Ce référentiel ne porte aucun score. Il nomme et il documente. Le questionnaire, lui, continue de mesurer les 11
 domaines de carrière et les six axes de fonction du produit : c'est ce que nous savons mesurer, et un niveau que l'on
@@ -135,32 +135,30 @@ Trois choses viennent donc de nous, et c'est nous qui les défendons :
   dans notre ingénierie, et un seul de ces logements est dit approximatif : ses métiers de l'eau, de l'hydrologie et de
   l'assainissement n'ont pas de domaine qui leur soit propre chez nous ;
 - la manière dont ses 11 fonctions se répartissent sur nos six axes, avec des poids qui somment à un ;
-- le rang de nos 45 fiches sous ses 63 métiers génériques. 23 fiches s'y rangent exactement ; 22 le font par
+- le rang de nos 45 fiches sous ses 84 métiers génériques. 25 fiches s'y rangent exactement ; 20 le font par
   approximation, parce que notre fiche est plus étroite ou plus large que le métier générique.
 
-Sur ses 113 spécialisations, 18 se rattachent à un métier générique de façon approximative, et les motifs sont de deux
-sortes, à parts égales. Neuf sont des métiers du soin et de l'accompagnement — médecin, infirmier, sage-femme,
-kinésithérapeute, travailleur social, éducateur spécialisé, conseiller d'orientation : le métier générique les
-englobe sans les contenir. Neuf sont des postes plus récents ou plus spécialisés que lui, de la vente, du numérique, de
-la banque et de l'environnement — chef de rayon, responsable e-commerce, growth hacker, chargé de clientèle bancaire,
-hydrologue. Le lien sert à la navigation, pas à faire croire que la spécialisation est une sous-catégorie stricte du
-métier générique.
-
-Deux lignes sont en désaccord avec leur parent : le chargé de clientèle bancaire et l'agent de microfinance se rangent
-sous « chargé de relation client », qui est une fonction de vente, alors qu'elles se déclarent finance. C'est la
-fonction de la ligne qui est retenue partout, parce que c'est elle que lit l'écran.
+Chaque spécialisation nomme maintenant elle-même son métier générique : le lien n'est plus une supposition de ma part,
+et il n'y a plus de drapeau d'approximation ligne à ligne. La nuance qu'il introduit est ailleurs, et elle est
+intéressante : sur ses 84 métiers génériques, 38 ne servent qu'un seul domaine — le « Technicien agricole » n'existe
+que pour l'agriculture — et 46 restent transversaux, partagés entre tous les domaines. Ses deux lignes qui étaient en
+désaccord avec leur parent, le chargé de clientèle bancaire et l'agent de microfinance, sont reclassées : elles
+déclarent désormais la fonction de leur parent, comme tout le monde.
 
 Ses 113 spécialisations ne restent pas dans le fichier : elles se lisent à l'écran, sous chaque fiche, dans une liste
 dépliable qui dit « les postes que ce métier recouvre ». Ce sont les titres tels qu'on les trouve sur une offre d'emploi
 — chef de projet WASH, gérant de ferme, responsable e-commerce. Ils renseignent, ils ne se choisissent pas à la place du
-métier : la sélection reste le domaine, la fonction, le métier, l'axe. 41 de nos 45 fiches portent au moins un titre ;
-les autres restent sans poste nommé en attendant que la base s'enrichisse. 89 de ses 113 titres atteignent l'écran, en
-227 lignes, parce qu'un même titre peut se ranger sous deux fiches. Les 24 autres n'y sont pas : aucune de nos fiches
-ne se range sous le métier générique qui les porte. La correspondance est incomplète, pas la base.
+métier : la sélection reste le domaine, la fonction, le métier, l'axe. 42 de nos 45 fiches portent au moins un titre ;
+les trois autres se rangent sous un de ses métiers génériques qui ne spécialise encore rien dans sa base — directeur
+administratif et financier, et les deux fiches qui se logent sous « responsable formation professionnelle ». 64 de ses
+113 titres atteignent l'écran, en 116 lignes, parce qu'un même titre peut se ranger sous plusieurs fiches. Les 49
+autres n'y sont pas : aucune de nos fiches ne se range sous le métier générique qui les porte. La correspondance est
+incomplète, pas la base.
 
-Le doute du lien descend jusqu'à l'écran, mais une seule fois par fiche : quand le rang de la fiche ou le rattachement
-d'un titre est dit approximatif, la liste le déclare en une phrase sous les titres, au lieu de porter un avertissement
-ligne à ligne.
+Le doute qui reste est le mien, et il descend jusqu'à l'écran une seule fois par fiche : quand son rang dans sa
+nomenclature est défendable et non strict, la liste le déclare en une phrase sous les titres, au lieu de porter un
+avertissement ligne à ligne. Cela concerne 19 de nos 42 fiches affichées ; les postes qu'elles ouvrent, eux, sont
+nommés par sa base, pas par moi.
 
 Changer ce que l'on montre a changé une règle. Une fonction qui n'ouvrait qu'un seul métier du domaine était tenue pour
 un cul-de-sac et ne se recommandait pas. C'était exact tant que le métier était la dernière marche à choisir ; ça ne
@@ -222,9 +220,10 @@ paires.coeur = 91
 paires.terrain = 97
 referentiel.domaines = 14
 referentiel.fonctions = 11
-referentiel.metiers.generiques = 63
+referentiel.metiers.generiques = 84
+referentiel.metiers.generiques.transversaux = 46
+referentiel.metiers.generiques.qualifies.par.domaine = 38
 referentiel.specialisations = 113
-referentiel.specialisations.approximatives = 18
 referentiel.fiches.classees = 45
-referentiel.fiches.classees.approximatives = 22
+referentiel.fiches.classees.approximatives = 20
 <!-- COMPTEURS : fin -->
