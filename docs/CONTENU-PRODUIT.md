@@ -147,29 +147,38 @@ déclarent désormais la fonction de leur parent, comme tout le monde.
 
 Ses 113 spécialisations ne restent pas dans le fichier : elles se lisent à l'écran, sous chaque fiche, dans une liste
 dépliable qui dit « les postes que ce métier recouvre ». Ce sont les titres tels qu'on les trouve sur une offre d'emploi
-— chef de projet WASH, gérant de ferme, responsable e-commerce. Ils renseignent, ils ne se choisissent pas à la place du
+— gouvernante, chef de chantier, responsable e-commerce. Ils renseignent, ils ne se choisissent pas à la place du
 métier : la sélection reste le domaine, la fonction, le métier, l'axe. 42 de nos 45 fiches portent au moins un titre ;
 les trois autres se rangent sous un de ses métiers génériques qui ne spécialise encore rien dans sa base — directeur
-administratif et financier, et les deux fiches qui se logent sous « responsable formation professionnelle ». 64 de ses
-113 titres atteignent l'écran, en 116 lignes, parce qu'un même titre peut se ranger sous plusieurs fiches. Les 49
-autres n'y sont pas : aucune de nos fiches ne se range sous le métier générique qui les porte. La correspondance est
-incomplète, pas la base.
+administratif et financier, et les deux fiches qui se logent sous « responsable formation professionnelle ».
+
+Le métier générique qui range une fiche est souvent un niveau, pas une famille : le même rang se retrouve devant des
+fiches qui n'ont rien de commun. Sans tri, toutes ces fiches afficheraient la même liste, y compris des titres qui ne
+sont pas des leurs. Un titre ne descend donc sur une fiche que si le domaine qu'il déclare est un domaine que cette
+fiche ouvre : 52 de ses 113 titres atteignent l'écran, en 83 lignes, parce qu'un même titre peut rester sous plusieurs
+fiches. Les 61 autres n'y sont pas : soit aucune de nos fiches ne se range sous le métier générique qui les porte, soit
+le domaine qu'ils déclarent n'est ouvert par aucune fiche de ce rang. La correspondance est incomplète, pas la base.
+Le tri raccourcit 9 fiches ; sur 5 autres il ne laisse plus aucun titre, et là je garde le rang entier plutôt que de
+faire croire qu'une fiche n'ouvre rien — la liste vient du seau, et elle est dite en approximation.
 
 Le doute qui reste est le mien, et il descend jusqu'à l'écran une seule fois par fiche : quand son rang dans sa
-nomenclature est défendable et non strict, la liste le déclare en une phrase sous les titres, au lieu de porter un
-avertissement ligne à ligne. Cela concerne 19 de nos 42 fiches affichées ; les postes qu'elles ouvrent, eux, sont
-nommés par sa base, pas par moi.
+nomenclature est défendable et non strict, ou quand sa liste vient du rang entier faute de domaine commun, la liste le
+déclare en une phrase sous les titres, au lieu de porter un avertissement ligne à ligne. Cela concerne 21 de nos 42
+fiches affichées ; les postes qu'elles ouvrent, eux, sont nommés par sa base, pas par moi.
 
 Changer ce que l'on montre a changé une règle. Une fonction qui n'ouvrait qu'un seul métier du domaine était tenue pour
 un cul-de-sac et ne se recommandait pas. C'était exact tant que le métier était la dernière marche à choisir ; ça ne
 l'est plus depuis qu'il ouvre des titres. La règle dit maintenant ce que la personne voit : un métier seul cesse d'être
 un cul-de-sac dès qu'il reste deux postes ou plus à choisir derrière lui. Sur les 66 rangements d'une fonction sous un
-domaine, 60 passaient, ils sont 63. Les trois qui restent fermés le sont pour de vraies raisons : l'un ne s'appuie sur
-aucun métier du domaine, les deux autres n'en ouvrent qu'un seul, qui ne porte qu'un titre.
+domaine, 60 passaient avant les titres, 63 dès qu'ils se sont mis à en ouvrir, ils sont 62 depuis que les listes se
+trient — le tri en ferme un de plus. Les quatre qui restent fermés le sont pour de vraies raisons : la fonction de
+conception ne s'appuie sur aucun métier du domaine en ingénierie, et n'en ouvre qu'un seul en santé, en social et en
+logistique, avec un seul titre derrière lui, donc rien à choisir.
 
 Rien de tout cela n'est trié à la main sans contrôle : `src/checks/contenu.check.ts` relit le référentiel — ses codes,
-ses liens, ses fiches rédigées, nos trois tables de correspondance — et vérifie que la liste lue à l'écran,
-`src/data/postesNommes.ts`, reste exactement ce que le référentiel dit.
+ses liens, ses fiches rédigées, nos trois tables de correspondance — et recalcule ce que la liste lue à l'écran,
+`src/data/postesNommes.ts`, devrait donner une fois triée par domaine, rang entier compris quand le tri ne laisse rien.
+Si les deux diffèrent, le contrôle rougit.
 
 ## Ce que cette fiche ne dit pas
 

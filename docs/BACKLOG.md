@@ -1667,9 +1667,11 @@ Cinq écritures sont prêtes et aucune ne se devine. Les trois premières étaie
 deux dernières la réorganisation elle-même :
 
 1. « Alléger le premier affichage », chez les candidats : fermer la carte avec sa preuve mesurée sur le fichier servi
-   en ligne aujourd'hui — 409 853 octets, 118,8 kilo-octets comprimés, contre 550 616 et 164 la veille ; les
-   catalogues tiennent dans leur propre fichier de 142 744 octets (38,5 kilo-octets comprimés), que seul paie qui
-   lance le test ou ouvre son espace. Commit `04aca30`.
+   en ligne — 409 853 octets, 118,8 kilo-octets comprimés au commit `04aca30` du 2026-10-03, contre 550 616 et 164 la
+   veille. Les catalogues tiennent dans leur propre fichier de 142 744 octets (38,5 kilo-octets comprimés), que seul
+   paie qui lance le test ou ouvre son espace. Relu le 2026-10-04 sur le fichier réellement servi, trois commits plus
+   loin : 409 815 octets, 118,7 kilo-octets comprimés. C'est ce dernier chiffre que je mets sur la carte, commit
+   `3b44fca`.
 2. Les cartes du module 4, chez les candidats : porter la preuve du commit `5a356c9`, relue dans le fichier servi —
    cent soixante-treize lignes d'offre, cent cinquante-neuf adresses, et zéro adresse d'agrégateur.
 3. « Retirer les trois écrans qui promettent sans tenir », à la page d'accueil : la clarifier, parce que son libellé

@@ -6,13 +6,19 @@
  * lisent des intitulés sans embarquer les définitions, compétences et formations du référentiel
  * dans le paquet livré. `src/checks/contenu.check.ts` rougit dès que les deux tables divergent.
  *
- * 116 lignes de postes pour 42 fiches : un poste compte pour toutes les fiches rangées
- * sous le même métier générique, et 3 fiches n'en ouvrent aucun parce que le métier
- * générique qui les range ne spécialise rien dans sa base (responsable_administratif_financier, coordinateur_pedagogique, charge_developpement_formation).
+ * 83 lignes de postes pour 42 fiches. Un titre compte pour une fiche quand le métier
+ * générique qui la range le porte, et quand le domaine propre du titre est un domaine que
+ * la fiche ouvre. Un seau de sa nomenclature est un niveau, pas une famille : sans ce tri,
+ * plusieurs fiches rangées sous le même seau afficheraient la même liste, y compris des
+ * titres qui ne sont pas des leurs. Quand le tri ne laisse plus aucun titre, la liste du
+ * seau est gardée entière et marquée en approximation. Trois fiches n'ouvrent aucun poste,
+ * parce que le métier générique qui les range ne spécialise encore rien dans sa base :
+ * responsable_administratif_financier, coordinateur_pedagogique, charge_developpement_formation.
  *
- * `approximation` dit que le rang de la fiche est défendable et non strict. C'est mon jugement, plus
- * un drapeau de sa base : la sienne nomme elle-même le parent de chaque spécialisation. L'écran le dit
- * une fois par fiche plutôt que de porter un doute ligne à ligne.
+ * `approximation` dit deux choses : le rang de la fiche dans sa nomenclature est défendable
+ * et non strict — c'est mon jugement, sa base à lui nommant elle-même le parent de chaque
+ * spécialisation — ou le tri par domaine n'a rien laissé et la liste vient du seau entier.
+ * L'écran le dit une fois par fiche plutôt que de porter un doute ligne à ligne.
  */
 
 export interface PosteNomme {
@@ -30,11 +36,6 @@ const AUCUN: PostesDeFiche = { postes: [], approximation: false };
 const PAR_FICHE: Record<string, PostesDeFiche> = {
   gestionnaire_projet_ict4d: {
     postes: [
-      { code: 'SP011', libelle: 'Chef de projet agricole / développement rural' },
-      { code: 'SP022', libelle: 'Chef de projet industriel agroalimentaire' },
-      { code: 'SP030', libelle: 'Chef de projet technique / installation industrielle' },
-      { code: 'SP046', libelle: 'Chef de projet construction / BTP' },
-      { code: 'SP064', libelle: 'Chef de projet eau-assainissement (WASH)' },
       { code: 'SP106', libelle: 'Chef de projet de développement' }
     ],
     approximation: false,
@@ -48,15 +49,8 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   gestionnaire_etablissement_sante: {
     postes: [
-      { code: 'SP014', libelle: 'Directeur d\'unité agro-industrielle' },
-      { code: 'SP023', libelle: 'Directeur technique / d\'usine' },
-      { code: 'SP038', libelle: 'Directeur de chantier / d\'entreprise BTP' },
-      { code: 'SP047', libelle: 'Chef d\'escale / Directeur d\'exploitation aéroportuaire' },
-      { code: 'SP082', libelle: 'Directeur d\'agence bancaire' },
-      { code: 'SP089', libelle: 'Directeur d\'établissement scolaire / Proviseur' },
       { code: 'SP095', libelle: 'Directeur d\'hôpital / Administrateur de centre de santé' },
-      { code: 'SP103', libelle: 'Directeur d\'ONG' },
-      { code: 'SP109', libelle: 'Directeur de centre social / ONG sociale' }
+      { code: 'SP103', libelle: 'Directeur d\'ONG' }
     ],
     approximation: true,
   },
@@ -69,7 +63,6 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   charge_marketing_digital: {
     postes: [
-      { code: 'SP021', libelle: 'Chargé marketing produits alimentaires' },
       { code: 'SP035', libelle: 'Responsable e-commerce' },
       { code: 'SP080', libelle: 'Growth hacker' },
       { code: 'SP081', libelle: 'Responsable marketing digital' }
@@ -153,8 +146,6 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   formateur_technique_tvet: {
     postes: [
-      { code: 'SP013', libelle: 'Formateur agricole / vulgarisateur' },
-      { code: 'SP057', libelle: 'Formateur en sûreté aéroportuaire' },
       { code: 'SP090', libelle: 'Enseignant / Professeur' },
       { code: 'SP091', libelle: 'Formateur professionnel' }
     ],
@@ -169,10 +160,7 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   chef_produit_touristique: {
     postes: [
-      { code: 'SP021', libelle: 'Chargé marketing produits alimentaires' },
-      { code: 'SP035', libelle: 'Responsable e-commerce' },
-      { code: 'SP080', libelle: 'Growth hacker' },
-      { code: 'SP081', libelle: 'Responsable marketing digital' }
+      { code: 'SP035', libelle: 'Responsable e-commerce' }
     ],
     approximation: true,
   },
@@ -200,7 +188,6 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   responsable_agrotourisme: {
     postes: [
       { code: 'SP001', libelle: 'Chef d\'exploitation agricole / Gérant de ferme' },
-      { code: 'SP031', libelle: 'Gérant de commerce / point de vente' },
       { code: 'SP066', libelle: 'Directeur d\'hôtel / Gérant de restaurant' }
     ],
     approximation: true,
@@ -225,25 +212,13 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   administrateur_socio_educatif: {
     postes: [
-      { code: 'SP014', libelle: 'Directeur d\'unité agro-industrielle' },
-      { code: 'SP023', libelle: 'Directeur technique / d\'usine' },
-      { code: 'SP038', libelle: 'Directeur de chantier / d\'entreprise BTP' },
-      { code: 'SP047', libelle: 'Chef d\'escale / Directeur d\'exploitation aéroportuaire' },
-      { code: 'SP082', libelle: 'Directeur d\'agence bancaire' },
       { code: 'SP089', libelle: 'Directeur d\'établissement scolaire / Proviseur' },
-      { code: 'SP095', libelle: 'Directeur d\'hôpital / Administrateur de centre de santé' },
-      { code: 'SP103', libelle: 'Directeur d\'ONG' },
       { code: 'SP109', libelle: 'Directeur de centre social / ONG sociale' }
     ],
     approximation: true,
   },
   agent_developpement_local: {
     postes: [
-      { code: 'SP011', libelle: 'Chef de projet agricole / développement rural' },
-      { code: 'SP022', libelle: 'Chef de projet industriel agroalimentaire' },
-      { code: 'SP030', libelle: 'Chef de projet technique / installation industrielle' },
-      { code: 'SP046', libelle: 'Chef de projet construction / BTP' },
-      { code: 'SP064', libelle: 'Chef de projet eau-assainissement (WASH)' },
       { code: 'SP106', libelle: 'Chef de projet de développement' }
     ],
     approximation: true,
@@ -291,8 +266,6 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
   },
   enseignant_primaire: {
     postes: [
-      { code: 'SP013', libelle: 'Formateur agricole / vulgarisateur' },
-      { code: 'SP057', libelle: 'Formateur en sûreté aéroportuaire' },
       { code: 'SP090', libelle: 'Enseignant / Professeur' },
       { code: 'SP091', libelle: 'Formateur professionnel' }
     ],
@@ -315,7 +288,7 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
     postes: [
       { code: 'SP002', libelle: 'Gestionnaire comptable de coopérative agricole' }
     ],
-    approximation: false,
+    approximation: true,
   },
   chef_chantier: {
     postes: [
@@ -346,14 +319,14 @@ const PAR_FICHE: Record<string, PostesDeFiche> = {
     postes: [
       { code: 'SP037', libelle: 'Gestionnaire d\'entrepôt commercial' }
     ],
-    approximation: false,
+    approximation: true,
   },
   attache_commercial: {
     postes: [
       { code: 'SP034', libelle: 'Commercial terrain' }
     ],
     approximation: false,
-  },
+  }
 };
 
 /** Ce que la base nomme comme postes derrière cette fiche, dans son ordre de code. */

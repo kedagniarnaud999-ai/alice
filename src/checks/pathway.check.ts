@@ -1202,6 +1202,8 @@ check(unanchoredDraft === null, 'Une fiche inconnue du catalogue ouvre quand mê
  * ou un seul métier dont les postes nommés se laissent quand même sélectionner.
  */
 let thinnestRecommendation = RECOMMENDED_FUNCTION_COUNT;
+let cellulesChoisissables = 0;
+const cellulesFermees: string[] = [];
 DOMAIN_IDS.forEach((domainId) => {
   const profile = new TestAnalyzer(walkForCores(soleCore(domainId), 0)).analyze();
   const view = functionView(profile, domainId);
@@ -1228,6 +1230,8 @@ DOMAIN_IDS.forEach((domainId) => {
       deQuoiChoisir === (option.closedReason === null),
       `${domainId} / ${option.id} : ${option.openings.length} métier(s) et ${option.postes} poste(s) à choisir, la fonction est dite « ${option.closedReason ?? 'choisissable'} »`
     );
+    if (option.closedReason === null) cellulesChoisissables += 1;
+    else cellulesFermees.push(`${domainId}/${option.id} (${option.openings.length} métier(s), ${option.postes} poste(s))`);
     option.openings.forEach((match) =>
       check(match.occupation.functions.includes(option.id),
         `${domainId} / ${option.id} : « ${match.occupation.title} » rangé sous une fonction qu’il ne déclare pas`)
@@ -1246,7 +1250,7 @@ DOMAIN_IDS.forEach((domainId) => {
 });
 
 notes.push(
-  `domaines contrôlés : ${DOMAIN_IDS.length}, la plus petite recommandation tient à ${thinnestRecommendation} fonction(s)`
+  `domaines contrôlés : ${DOMAIN_IDS.length}, la plus petite recommandation tient à ${thinnestRecommendation} fonction(s), ${cellulesChoisissables}/${DOMAIN_IDS.length * FUNCTION_ROLE_IDS.length} cellules choisissables pour ce profil${cellulesFermees.length > 0 ? ` — fermées : ${cellulesFermees.join(', ')}` : ''}`
 );
 
 /**

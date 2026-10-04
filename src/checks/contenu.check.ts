@@ -414,45 +414,94 @@ REFERENTIEL_FONCTIONS.forEach((f) => {
  * `src/data/postesNommes.ts` est la projection que lisent les écrans : des intitulés
  * et rien d'autre. Elle est recopiée du référentiel pour que le paquet livré n'embarque
  * pas les définitions et les formations, donc elle peut cesser d'y ressembler sans que
- * le référentiel bouge. Ici se dit le seul cas où la duplication est pardonnable : tant
- * que les deux tables concordent.
+ * le référentiel bouge. Ici se dit la règle que la projection doit suivre, et le seul cas
+ * où la duplication est pardonnable : tant que les deux tables concordent.
+ *
+ * La règle du tri, mesurée le 2026-10-04 : un métier générique de sa nomenclature est un
+ * niveau (« à quel niveau, dans quel service »), pas une famille. Sans tri, toutes les
+ * fiches rangées sous le même seau affichent la même liste, y compris des titres qui ne
+ * travaillent pas dans leurs domaines à elles. Un titre ne passe donc que si le domaine
+ * qui est le sien est un domaine que la fiche ouvre. Et quand le tri ne laisse plus rien,
+ * le seau entier est gardé et la fiche le dit en approximation : mieux vaut une liste
+ * marquée douteuse qu'une fiche qui ne nomme plus rien du tout.
  */
-let projeteCount = 0;
-CROSS_OCCUPATIONS.forEach((fiche) => {
+const hoteParDomaine: Record<string, FunctionalDomainId> = {};
+REFERENTIEL_DOMAINES.forEach((domaine) => {
+  hoteParDomaine[domaine.code] = domaine.hote;
+});
+
+function domainesOuverts(fiche: (typeof CROSS_OCCUPATIONS)[number]): FunctionalDomainId[] {
+  return (Object.entries(fiche.core) as [FunctionalDomainId, number][])
+    .filter(([, poids]) => (poids ?? 0) > 0)
+    .map(([domaine]) => domaine);
+}
+
+interface ProjectionAttendue {
+  postes: typeof REFERENTIEL_SPECIALISATIONS;
+  approximation: boolean;
+  triee: boolean;
+  enRepli: boolean;
+}
+
+function projectionAttendue(fiche: (typeof CROSS_OCCUPATIONS)[number]): ProjectionAttendue | null {
   const rang = METIER_PAR_FICHE[fiche.id];
-  if (!rang) return;
-  const attendu = REFERENTIEL_SPECIALISATIONS.filter((s) => s.parent === rang.code)
-    .sort((a, b) => a.code.localeCompare(b.code));
+  if (!rang) return null;
+  const seau = REFERENTIEL_SPECIALISATIONS.filter((s) => s.parent === rang.code).sort(
+    (a, b) => a.code.localeCompare(b.code)
+  );
+  if (seau.length === 0) return { postes: [], approximation: false, triee: false, enRepli: false };
+  const ouverts = domainesOuverts(fiche);
+  const filtres = seau.filter((s) => ouverts.includes(hoteParDomaine[s.domaine]));
+  if (filtres.length > 0) {
+    return { postes: filtres, approximation: rang.approximatif, triee: filtres.length < seau.length, enRepli: false };
+  }
+  return { postes: seau, approximation: true, triee: false, enRepli: true };
+}
+
+let projeteCount = 0;
+let lignesProjetees = 0;
+let fichesTriees = 0;
+let fichesEnRepli = 0;
+const codesProjete = new Set<string>();
+CROSS_OCCUPATIONS.forEach((fiche) => {
+  const attendue = projectionAttendue(fiche);
+  if (!attendue) return;
+  const { postes: attendu, approximation: approximationAttendue } = attendue;
   const projete = postesPourFiche(fiche.id);
-  if (projete.postes.length > 0) projeteCount += 1;
-  const approximationAttendue = attendu.length > 0 && rang.approximatif;
+  if (projete.postes.length > 0) {
+    projeteCount += 1;
+    lignesProjetees += projete.postes.length;
+    projete.postes.forEach((p) => codesProjete.add(p.code));
+  }
+  if (attendue.triee) fichesTriees += 1;
+  if (attendue.enRepli) fichesEnRepli += 1;
 
   attendu.forEach((s, index) => {
     const ligne = projete.postes[index];
     if (!ligne) {
       failures.push(
-        `${s.code} (${s.libelle}) se range sous ${rang.code} donc derrière « ${fiche.id} », mais la projection n'a que ${projete.postes.length} poste(s) pour cette fiche`
+        `${s.code} (${s.libelle}) se range sous ${METIER_PAR_FICHE[fiche.id].code} donc derrière « ${fiche.id} », mais la projection n'a que ${projete.postes.length} poste(s) pour cette fiche`
       );
     } else if (ligne.code !== s.code || ligne.libelle !== s.libelle) {
       failures.push(
-        `La projection écrit « ${ligne.code} ${ligne.libelle} » à la place de « ${s.code} ${s.libelle} » sous ${rang.code} : \`postesNommes.ts\` a dérivé du référentiel`
+        `La projection écrit « ${ligne.code} ${ligne.libelle} » à la place de « ${s.code} ${s.libelle} » sous ${METIER_PAR_FICHE[fiche.id].code} : \`postesNommes.ts\` a dérivé du référentiel, ou n'a pas joué le tri par domaine`
       );
     }
   });
   if (projete.postes.length > attendu.length) {
     failures.push(
-      `La projection donne ${projete.postes.length} poste(s) à « ${fiche.id} », le référentiel n'en donne que ${attendu.length}`
+      `La projection donne ${projete.postes.length} poste(s) à « ${fiche.id} », le référentiel trié n'en donne que ${attendu.length}`
     );
   }
   if (projete.approximation !== approximationAttendue) {
     failures.push(
-      `« ${fiche.id} » est dit en approximation ${projete.approximation} dans la projection alors que le rang et ses postes disent ${approximationAttendue}`
+      `« ${fiche.id} » est dit en approximation ${projete.approximation} dans la projection alors que son rang et son tri disent ${approximationAttendue}`
     );
   }
 });
 
 console.log(
-  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues, ${codesGeneriques.length} métiers génériques (${generiquesTransversaux} transversaux, ${generiquesQualifies} qualifiés par domaine), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation, ${projeteCount} fiche(s) avec postes nommés dans la projection`
+  `Contenu du produit — ${compteurs.length} compteurs comparés au catalogue, ${Object.keys(documents).length - 1} documents scannés, ${parDomaine.length} lignes de tableau relu, ${codesSpecialisations.length} spécialisations du référentiel relues, ${codesGeneriques.length} métiers génériques (${generiquesTransversaux} transversaux, ${generiquesQualifies} qualifiés par domaine), ${fichesClassees.length} fiches rangées (${rangsApproximatifs} rangs approximatifs), compétences de ${competencesMin} à ${competencesMax} par spécialisation, ${projeteCount} fiche(s) avec postes nommés dans la projection (${lignesProjetees} lignes affichées, ${codesProjete.size} titres distincts, ${fichesTriees} fiche(s) raccourcies par le tri par domaine, ${fichesEnRepli} fiche(s) en repli sur le seau entier)`
 );
 
 if (failures.length > 0) {
