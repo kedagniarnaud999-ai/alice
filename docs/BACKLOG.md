@@ -275,8 +275,9 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
 
 ### S2.4 — Ranger le dépôt
 
-- **Ce que ça change** : le projet pèse ce qu'il pèse vraiment. Aujourd'hui, le suivi de versions enregistre
-  10 723 fichiers, dont 10 579 de bibliothèques et 25 d'un serveur abandonné que rien n'appelle.
+- **Ce que ça change** : le projet pèse ce qu'il pèse vraiment. Mesuré de nouveau ce 04/10/2026, le suivi de
+  versions enregistre 10 765 fichiers, dont 10 579 de bibliothèques et 25 d'un serveur abandonné que rien
+  n'appelle. Hors ces deux dossiers, il ne reste que 161 fichiers.
 - **Pourquoi maintenant** : mon principe 7 (modularité) et le bon sens : on ne peut pas faire évoluer
   proprement ce qu'on ne peut pas relire.
 - **Comment on saura que c'est fini** : moins de 300 fichiers suivis ; le serveur abandonné est soit documenté
@@ -289,6 +290,38 @@ Objectif : que le produit, ce qu'il affiche et ce qui est écrit à son sujet di
   serveur abandonné puis dans ses dossiers parents. Écrire cette configuration fait donc partie du rangement. En
   attendant, les deux gardes qui comptent vraiment sont le contrôle de types (`npm run build` commence par `tsc`,
   muet quand tout va bien) et `npm run verify` avec ses trois contrôles.
+- **Le contrôle de style tourne depuis ce 04/10/2026** (le fichier `.eslintrc.cjs`, commit `1146742`) : 88 règles
+  actives sur les 83 fichiers du dépôt, et la commande sort à zéro. Deux précautions prises en mesurant, pas en
+  supposant. Vérifier d'abord que la garde mord : un fichier volontairement fautif, posé puis retiré, lui a bien
+  rendu ses trois erreurs, dont le crochet appelé dans une condition ; une garde muette n'est pas une garde.
+  Régler ensuite chaque règle éteinte sur ce qu'elle coûte vraiment : les variables déclarées et oubliées sont
+  passées en faute, parce que le dépôt en compte zéro aujourd'hui, donc ça ne coûte rien ; le mot `any` reste
+  éteint, parce que ses huit apparitions sont huit fois la même chose — la récupération d'une erreur de connexion,
+  aux six écrans concernés et deux fois dans le fichier qui traduit ces erreurs — et que les corriger est un
+  travail à part, ce qui est écrit dans le fichier de configuration pour que ça ne devienne pas un angle mort ;
+  la limite d'un seul contenu exporté par fichier reste éteinte, mesurée à 83, c'est-à-dire tous les fichiers du
+  dépôt, parce que mes écrans exportent leur composant avec ses types et ses constantes. Le dossier du serveur
+  abandonné est hors de portée du contrôle. Et comme la commande du dépôt traite un seul avertissement comme une
+  faute, une garde qui gémit serait inutilisable : c'est pour ça qu'elle est étroite.
+- **Ce qui reste, et qui se décide** : trois gestes. Chacun est réversible sur le disque, mais tous trois
+  touchent au suivi de versions, donc je ne les fais pas sans les avoir écrits ici.
+  1. Sortir les bibliothèques du suivi. Le fichier d'ignorance du dépôt connaît `node_modules/` depuis le début :
+     ces 10 579 fichiers y sont entrés avant la règle, et le suivi les garde quand même. Le geste est un retrait
+     du suivi, pas une suppression du disque. Vérifié que rien ne disparaît : la liste verrouillée des
+     dépendances est suivie et complète (26 déclarations sur 26 retrouvées, 337 entrées), et les 275 paquets
+     installés sur ce poste s'y trouvent tous — une installation fraîche reproduirait à l'identique ce qui marche
+     aujourd'hui, donc le site en ligne ne dépend pas du fait que le dépôt porte les bibliothèques. Seul ce geste
+     franchit la limite des 300 fichiers, et il laisse 161 fichiers suivis.
+  2. Le serveur abandonné et ses orphelins. Mesuré de nouveau : zéro appel depuis le code du navigateur, aucun
+     script du dépôt ne le construit, le contrôle de style ne le regarde plus. Mais la racine porte encore son
+     instruction de montage : le `Dockerfile` de la racine ne copie que des fichiers de `backend/`, et
+     `railway.json` désigne justement ce `Dockerfile`. Ranger le dossier, c'est ranger ces fichiers avec lui,
+     `nixpacks.toml`, `start.sh` et `Caddyfile` faisant la même chose. Le client d'adresse dans
+     `src/services/api.client.ts` est mort avec lui : 2 626 octets que personne n'appelle, mesuré à zéro
+     référence hors son propre fichier.
+  3. Vingt-deux documents hérités à la racine, en plus de ma fiche d'identité qui sert : des guides de mise en
+     ligne pour des services que je n'utilise plus et des résumés de corrections passées. Soit ils vont dans un
+     dossier `docs/histoire/`, soit ils sortent du dépôt.
 
 ### S2.5 — Écrire ce que contient AliTché, à un seul endroit
 
